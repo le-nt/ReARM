@@ -70,3 +70,19 @@ python tests/reference/check_unsupported.py --rearm build/recomp/rearm \
 Both ARM and Thumb must fail translation with the guest address, ISA mode, and
 `software_interrupt` userop in the diagnostic. A successful translation is a
 test failure for the initial CPU-only profile.
+
+`shared_relocations.c` is a PIC shared-library input with GOT bindings, a
+default-visible data pointer, private data pointers, and a private function
+pointer. Build and validate at an explicit runtime load bias:
+
+```sh
+python tools/validate_e2e.py --rearm build/recomp/rearm --clang clang --cxx clang++ \
+  --emxx third_party/emsdk/upstream/emscripten/em++ \
+  --sla third_party/sla/ARM/ARM7_le.sla --browser --shared \
+  --load-bias 0x10000000 --fixture tests/fixtures/shared_relocations.c
+```
+
+Repeat at `0x20000000`. The independent oracle reads ELF dynamic tables and
+applies supported REL relocations before executing ARM instructions. Unknown
+relocations and unresolved strong imports fail explicitly. Absolute symbols and
+TLS symbol offsets are not rebased; executing TLS is outside this oracle profile.

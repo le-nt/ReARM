@@ -8,6 +8,19 @@ Linux-native output uses the same guest semantics and Android bridge contracts.
 
 ## Execution priorities and current status
 
+Vertical-slice priority: the minimal compiler pipeline and reproduced correctness gate
+already pass. Inventory the earliest supplied authorized Roblox build immediately;
+pull the required compiler/runtime/JNI work forward and attempt native initialization
+as soon as its measured dependencies permit. Use imports, traces and diagnostic
+failures to prioritize rendering, input and authorized networking. Do not wait for all
+R01–R32 gates before first integration. Generalization/optimization follows the first
+working client where practical. Missing proprietary inputs never block public-fixture
+compiler/runtime development.
+
+User-confirmed history: the original project reportedly reached public browser beta
+about eight days after M0. This motivates rapid measured integration; it is not a
+deadline or a specification of the original milestones.
+
 - Work exclusively on `codex/rearm-reconstruction`; preserve original M0 commit
   `b55568513f697465c6ad22339d1b40b1aa4e4ac1` and leave LARL/production 2x2 unchanged.
 - Prioritize code, compilation, execution, and regression fixes over documents.

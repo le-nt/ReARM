@@ -146,7 +146,8 @@ bool has_fallthrough(const std::vector<Op>& ops) {
 }  // namespace
 
 Program lift(const elf::Image& image, const std::filesystem::path& sla_path,
-             std::uint32_t entry, std::uint32_t maximum) {
+             std::uint32_t entry, std::uint32_t maximum,
+             const std::vector<std::uint32_t>& extra_entries) {
   if (!maximum) throw elf::Error("Instruction discovery limit must be positive");
   static std::once_flag identifiers;
   std::call_once(identifiers, [] { AttributeId::initialize(); ElementId::initialize(); });
@@ -178,6 +179,7 @@ Program lift(const elf::Image& image, const std::filesystem::path& sla_path,
     pending.push_back(state);
   };
   queue({entry & ~1u, (entry & 1) != 0, 0, 0}, true);
+  for (auto extra : extra_entries) queue({extra & ~1u, (extra & 1) != 0, 0, 0}, true);
   for (const auto& symbol : image.symbols()) {
     if (symbol.defined() && symbol.type == 2) queue({symbol.value & ~1u, (symbol.value & 1) != 0, 0, 0}, false);
   }

@@ -15,6 +15,7 @@ namespace {
 constexpr std::uint64_t address_limit = std::uint64_t{1} << 32;
 constexpr std::uint64_t max_image_size = 512ull * 1024 * 1024;
 constexpr std::uint32_t max_table_entries = 1'000'000;
+constexpr std::uint64_t max_symbol_name_bytes = 64ull * 1024 * 1024;
 
 std::string hex(std::uint32_t n) {
   std::ostringstream out;
@@ -63,6 +64,11 @@ Image Image::parse(std::span<const std::uint8_t> bytes, std::uint32_t bias) {
   if (r.u16(18) != 40) throw Error("ELF machine is not EM_ARM");
   if (r.u16(40) != 52) throw Error("Invalid ELF32 header size");
   Image image;
+  std::uint64_t symbol_name_bytes = 0;
+  auto account_symbol_name = [&](std::size_t length) {
+    symbol_name_bytes += length + 1;
+    if (symbol_name_bytes > max_symbol_name_bytes) throw Error("ELF symbol names exceed aggregate resource limit");
+  };
   image.type_ = r.u16(16);
   if (image.type_ != 2 && image.type_ != 3) throw Error("Only ET_EXEC and ET_DYN are supported");
   if (image.type_ == 2 && bias) throw Error("ET_EXEC requires zero load bias");
@@ -145,13 +151,14 @@ Image Image::parse(std::span<const std::uint8_t> bytes, std::uint32_t bias) {
           if (name.size() > 65536) throw Error("ELF symbol name exceeds resource limit");
         }
         if (j == string_size) throw Error("Unterminated static symbol name");
+        account_symbol_name(name.size());
         const auto info = bytes[pos + 12];
         const auto symbol_section = r.u16(pos + 14);
         if (symbol_section == 0xffff) throw Error("Extended ELF symbol section indices are unsupported");
         if (symbol_section < 0xff00 && symbol_section >= section_count) throw Error("Static symbol section index out of bounds");
         auto value = r.u32(pos + 4);
         if (symbol_section && symbol_section < 0xff00 && (info & 15) != 6) value = address(value, bias);
-        image.symbols_.push_back({std::move(name), value, r.u32(pos + 8), static_cast<std::uint8_t>(info >> 4), static_cast<std::uint8_t>(info & 15), symbol_section});
+        image.symbols_.push_back({std::move(name), value, r.u32(pos + 8), static_cast<std::uint8_t>(info >> 4), static_cast<std::uint8_t>(info & 15), symbol_section, static_cast<std::uint8_t>(bytes[pos + 13] & 3), false});
       }
     }
   };
@@ -162,18 +169,54 @@ Image Image::parse(std::span<const std::uint8_t> bytes, std::uint32_t bias) {
   const auto [dynaddr, dynsize] = *dynamic;
   if (dynsize % 8 || dynsize / 8 > max_table_entries || !image.mapped(dynaddr, dynsize)) throw Error("Invalid PT_DYNAMIC range");
   std::map<std::uint32_t, std::uint32_t> tags;
+  std::vector<std::uint32_t> needed_offsets;
   bool terminated = false;
   for (std::uint32_t off = 0; off < dynsize; off += 8) {
     const auto tag = image.read32(dynaddr + off);
     if (tag == 0) { terminated = true; break; }
-    // DT_NEEDED may repeat and is not consumed by this initial single-image API.
-    if (tag == 1) continue;
     const auto value = image.read32(dynaddr + off + 4);
+    if (tag == 1) {
+      if (needed_offsets.size() >= 4096) throw Error("ELF dependency count exceeds resource limit");
+      needed_offsets.push_back(value); continue;
+    }
     if (tags.contains(tag) && tags[tag] != value) throw Error("Conflicting duplicate dynamic tag");
     tags[tag] = value;
   }
   if (!terminated) throw Error("PT_DYNAMIC lacks DT_NULL terminator");
   auto ptr = [&](std::uint32_t tag) { return address(tags.at(tag), bias); };
+  auto dynamic_string = [&](std::uint32_t offset) {
+    if (!tags.contains(5) || !tags.contains(10) || offset >= tags[10]) throw Error("Dynamic module string offset out of bounds");
+    const auto strings = ptr(5);
+    if (!image.mapped(strings, tags[10])) throw Error("Dynamic module string table is unmapped");
+    std::string result;
+    for (auto i = offset; i < tags[10]; ++i) {
+      const auto c = image.read8(strings + i);
+      if (!c) return result;
+      result.push_back(static_cast<char>(c));
+      if (result.size() > 4096) throw Error("Dynamic module string exceeds resource limit");
+    }
+    throw Error("Unterminated dynamic module string");
+  };
+  for (const auto offset : needed_offsets) {
+    auto name = dynamic_string(offset);
+    if (name.empty()) throw Error("Empty DT_NEEDED module name");
+    image.dynamic_.needed.push_back(std::move(name));
+  }
+  if (tags.contains(14)) image.dynamic_.soname = dynamic_string(tags[14]);
+  if (tags.contains(12) && tags[12]) image.dynamic_.init = ptr(12);
+  if (tags.contains(13) && tags[13]) image.dynamic_.fini = ptr(13);
+  auto array_metadata = [&](std::uint32_t pointer_tag, std::uint32_t size_tag,
+                            std::uint32_t& array, std::uint32_t& size) {
+    if (!tags.contains(pointer_tag) && !tags.contains(size_tag)) return;
+    if (!tags.contains(pointer_tag) || !tags.contains(size_tag)) throw Error("Incomplete dynamic initializer array metadata");
+    array = ptr(pointer_tag); size = tags[size_tag];
+    if (size % 4 || size / 4 > max_table_entries || array % 4 || !image.mapped(array, size)) throw Error("Invalid dynamic initializer array range");
+  };
+  array_metadata(25, 27, image.dynamic_.init_array, image.dynamic_.init_array_size);
+  array_metadata(26, 28, image.dynamic_.fini_array, image.dynamic_.fini_array_size);
+  image.dynamic_.symbolic = tags.contains(16) || (tags.contains(30) && (tags[30] & 2));
+  image.dynamic_.symbol_versions = tags.contains(0x6ffffff0) || tags.contains(0x6ffffffc) || tags.contains(0x6ffffffe);
+  image.dynamic_.preinit_array = tags.contains(32) || tags.contains(33);
   std::map<std::uint32_t, std::size_t> relocation_indices;
   auto read_rels = [&](std::uint32_t table, std::uint32_t size) {
     if (size % 8 || size / 8 > max_table_entries || !image.mapped(table, size)) throw Error("Invalid ELF REL table range");
@@ -203,24 +246,27 @@ Image Image::parse(std::span<const std::uint8_t> bytes, std::uint32_t bias) {
   if (tags.contains(0x6000000f) || tags.contains(0x60000011) || tags.contains(36)) throw Error("Packed ELF relocations are not supported");
   std::uint32_t symbol_count = 0;
   for (const auto& rel : image.relocations_) symbol_count = std::max(symbol_count, rel.symbol + 1);
+  const auto required_symbols = symbol_count;
+  std::optional<std::uint32_t> declared_symbols;
   if (tags.contains(4)) {
     const auto hash = ptr(4);
     const auto buckets = image.read32(hash);
     const auto chains = image.read32(address(hash, 4));
-    if (buckets > max_table_entries || chains > max_table_entries ||
+    if (!buckets || buckets > max_table_entries || chains > max_table_entries ||
         !image.mapped(hash, 8ull + (std::uint64_t(buckets) + chains) * 4)) throw Error("Invalid SysV hash dimensions");
-    symbol_count = std::max(symbol_count, chains);
+    declared_symbols = chains;
+    symbol_count = chains;
   }
   if (tags.contains(0x6ffffef5)) {
     const auto hash = ptr(0x6ffffef5);
     const auto nbucket = image.read32(hash);
     const auto first = image.read32(address(hash, 4));
     const auto bloom = image.read32(address(hash, 8));
-    if (!bloom || nbucket > max_table_entries || bloom > max_table_entries || first > max_table_entries) throw Error("Invalid GNU hash dimensions");
+    if (!bloom || (bloom & (bloom - 1)) || nbucket > max_table_entries || bloom > max_table_entries || first > max_table_entries) throw Error("Invalid GNU hash dimensions");
     const auto buckets = address(hash, 16 + bloom * 4);
     if (!image.mapped(buckets, std::uint64_t(nbucket) * 4)) throw Error("Invalid GNU hash buckets");
     const auto chains = address(buckets, nbucket * 4);
-    symbol_count = std::max(symbol_count, first);
+    auto gnu_symbols = first;
     std::uint32_t largest = 0;
     for (std::uint32_t i = 0; i < nbucket; ++i) {
       const auto index = image.read32(buckets + i * 4);
@@ -233,11 +279,15 @@ Image Image::parse(std::span<const std::uint8_t> bytes, std::uint32_t bias) {
       for (;;) {
         if (index >= max_table_entries) throw Error("GNU hash chain exceeds resource limit");
         const auto value = image.read32(address(chains, (index - first) * 4));
-        symbol_count = std::max(symbol_count, ++index);
+        gnu_symbols = std::max(gnu_symbols, ++index);
         if (value & 1) break;
       }
     }
+    if (declared_symbols && gnu_symbols > *declared_symbols) throw Error("GNU hash symbols exceed SysV symbol count");
+    if (!declared_symbols) declared_symbols = gnu_symbols;
+    symbol_count = *declared_symbols;
   }
+  if (declared_symbols && required_symbols > *declared_symbols) throw Error("Relocation symbol index exceeds declared dynamic symbol count");
   if (symbol_count > max_table_entries) throw Error("ELF symbol table exceeds resource limit");
   if (symbol_count) {
     if (!tags.contains(6) || !tags.contains(5) || !tags.contains(10) || !tags.contains(11) || tags[11] != 16) throw Error("Missing or invalid dynamic symbol metadata");
@@ -258,12 +308,13 @@ Image Image::parse(std::span<const std::uint8_t> bytes, std::uint32_t bias) {
         if (name.size() > 65536) throw Error("ELF symbol name exceeds resource limit");
       }
       if (j == strsize) throw Error("Unterminated ELF symbol name");
+      account_symbol_name(name.size());
       const auto info = image.read8(pos + 12);
       const auto section = image.read16(pos + 14);
       auto value = image.read32(pos + 4);
       // STT_TLS values are offsets within a TLS image, not guest addresses.
       if (section && section < 0xff00 && (info & 15) != 6) value = address(value, bias);
-      image.symbols_.push_back({std::move(name), value, image.read32(pos + 8), static_cast<std::uint8_t>(info >> 4), static_cast<std::uint8_t>(info & 15), section});
+      image.symbols_.push_back({std::move(name), value, image.read32(pos + 8), static_cast<std::uint8_t>(info >> 4), static_cast<std::uint8_t>(info & 15), section, static_cast<std::uint8_t>(image.read8(pos + 13) & 3), true});
     }
   }
   append_static_symbols();
@@ -322,13 +373,14 @@ std::optional<Symbol> Image::find_symbol(std::string_view name) const {
   for (const auto& symbol : symbols_) if (symbol.name == name && symbol.defined()) return symbol;
   return {};
 }
-void Image::relocate(const Resolver& resolver) {
+void Image::relocate(const Resolver& resolver, bool interpose_defined) {
   if (relocated_) throw Error("ELF REL relocations already applied");
   std::vector<std::pair<std::uint32_t, std::uint32_t>> writes;
   for (const auto& rel : relocations_) {
     if (!rel.type) continue;
     if (rel.type != 2 && rel.type != 3 && rel.type != 21 && rel.type != 22 && rel.type != 23)
       throw Error("Unsupported ARM relocation " + std::to_string(rel.type) + " at " + hex(rel.address));
+    if (rel.address & 3) throw Error("ARM dynamic relocation target is not word-aligned at " + hex(rel.address));
     const auto addend = read32(rel.address);
     std::uint32_t value = 0;
     if (rel.type == 23) {
@@ -338,8 +390,10 @@ void Image::relocate(const Resolver& resolver) {
       if (rel.symbol >= symbols_.size()) throw Error("Relocation symbol index out of bounds");
       const auto& sym = symbols_[rel.symbol];
       std::optional<std::uint32_t> target;
-      if (sym.defined()) target = sym.value;
-      else if (resolver) target = resolver(sym);
+      const bool preemptible = sym.defined() && interpose_defined && resolver &&
+          (sym.binding == 1 || sym.binding == 2) && sym.visibility == 0 && !dynamic_.symbolic;
+      if (preemptible || !sym.defined()) { if (resolver) target = resolver(sym); }
+      if (!target && sym.defined()) target = sym.value;
       if (!target && (sym.binding == 2 || rel.symbol == 0)) target = 0;
       if (!target) throw Error("Unresolved ELF symbol '" + sym.name + "' at " + hex(rel.address));
       const auto thumb = sym.type == 2 ? *target & 1u : 0u;
@@ -352,5 +406,31 @@ void Image::relocate(const Resolver& resolver) {
   }
   for (const auto& [addr, value] : writes) write32(addr, value);
   relocated_ = true;
+}
+
+Image Image::combine(std::vector<Image> images) {
+  if (images.empty()) throw Error("Cannot combine an empty ELF module list");
+  Image combined;
+  combined.bias_ = images.front().bias_;
+  combined.entry_ = images.front().entry_;
+  combined.type_ = images.front().type_;
+  std::uint64_t bytes = 0;
+  for (auto& image : images) {
+    if (!image.relocated_) throw Error("Only already-relocated ELF images may be combined");
+    for (auto& segment : image.segments_) {
+      bytes += segment.bytes.size();
+      if (bytes > max_image_size) throw Error("Combined ELF images exceed mapped-byte limit");
+      combined.segments_.push_back(std::move(segment));
+    }
+    if (combined.symbols_.size() + image.symbols_.size() > max_table_entries) throw Error("Combined ELF symbols exceed resource limit");
+    for (auto& symbol : image.symbols_) combined.symbols_.push_back(std::move(symbol));
+  }
+  std::sort(combined.segments_.begin(), combined.segments_.end(), [](const auto& a, const auto& b) { return a.address < b.address; });
+  for (std::size_t i = 1; i < combined.segments_.size(); ++i) {
+    const auto& previous = combined.segments_[i - 1];
+    if (std::uint64_t(previous.address) + previous.bytes.size() > combined.segments_[i].address) throw Error("Overlapping ELF module mappings");
+  }
+  combined.relocated_ = true;
+  return combined;
 }
 }  // namespace rearm::elf

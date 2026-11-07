@@ -10,7 +10,8 @@ This is an implementation checkpoint. Current test outcomes belong in
   changed, native Linux SLEIGH/compiler builds, CTest and64 translated reference cases
   pass. Fresh Linux bootstrap and hosted CI remain unverified.
 - The loader's passing deterministic tests cover a defined ELF32/core REL subset.
-  They do not establish a full Android dynamic linker. Multi-DSO semantics,
+  They do not establish a full Android dynamic linker. An initial eager multi-DSO
+  profile and constructor execution now pass real-ELF tests; symbol versions,
   advanced/packed relocations, TLS and broader real-linker/fuzz cases remain.
 - Raw SLEIGH capture/discovery and the initial integer emitter execute. Complete normalized IR
   verification beyond the tested integer subset, general indirect-target recovery,
@@ -23,12 +24,11 @@ This is an implementation checkpoint. Current test outcomes belong in
 - No authorized exact Roblox client binaries/assets are present. Client-specific
   milestones remain unavailable until their inventory gates can be satisfied;
   general compiler implementation must continue independently.
-- Local Git CLI authentication is unavailable for writes. Verified branch
-  checkpoints may use the authorized GitHub connector; never force-push main.
+- The earlier local Git authentication failure is resolved; never force-push main.
 - System package and runner-image versions are recorded prerequisites, not a
   content-addressed OS image. Dependency source revisions/SDK/SLA digests are
   locked separately. No stronger reproducibility claim is made before execution.
 - Arbitrary self-modifying or runtime-generated ARM code is outside the initial
   static profile. Unknown required instructions/imports/targets must fail visibly.
-- The goal service last returned `usageLimited`; automatic continuation is not
-  verified available. Local execution still requires an awake, online computer.
+- The reconstruction Goal is active again after user-controlled reset/resume.
+  Local execution still requires an awake, online computer.

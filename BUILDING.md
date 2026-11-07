@@ -54,6 +54,12 @@ executing and comparing its output is not an end-to-end pass. Consult
 `TEST_RESULTS.md` for commands actually executed and their current outcomes;
 this file describes the intended repeatable commands, not a claim that CI ran.
 
+The original Linux baseline bootstrap and public compiler suites at commit
+`ff7d79d9a61efae289d53224eebecdb20d89e5ef` executed successfully in
+[GitHub Actions run 42365430843](https://github.com/le-nt/ReARM/actions/runs/42365430843).
+That is execution evidence for that revision, not a claim that every R01 gate
+or later bootstrap edit has passed. Current results remain in `TEST_RESULTS.md`.
+
 All fixtures used by public CI are source-built. Proprietary clients, generated
 translations of those clients, assets, secrets, and private traces must remain
 outside public artifacts. The original M0 tools remain available as reference.
@@ -93,3 +99,53 @@ $env:EM_CONFIG = "$PWD/third_party/emsdk/.emscripten"
 
 The script sets these for its process. The embedded Python remains the isolated
 test/oracle interpreter. Linux baseline acceptance remains a separate test gate.
+
+## Sharing a checkout between Windows and Linux
+
+Keep native CMake trees, SDK installations and SDK configs separate. Bootstrap
+refuses a build tree created by the other host and refuses to overwrite the
+other host's SDK binaries/configuration. Defaults remain compatible with the CI
+and existing Windows checkout; these overrides support coexistence:
+
+| Linux environment variable | Windows PowerShell parameter | Default |
+|---|---|---|
+| `REARM_DEPENDENCY_ROOT` | `-DependencyRoot` | `third_party` |
+| `REARM_SLEIGH_BUILD_ROOT` | `-SleighBuildRoot` | selected dependency root `/sleigh/build` |
+| `REARM_EMSDK_ROOT` | `-SdkRoot` | selected dependency root `/emsdk` |
+| `REARM_BUILD_ROOT` | `-BuildRoot` | `build/recomp` |
+| `REARM_PYTHON_ENV` | test Python lives under `-ToolsRoot` | `build/venv` on Linux |
+
+For example, Linux alongside an existing Windows build:
+
+```sh
+REARM_SLEIGH_BUILD_ROOT="$PWD/build/linux-sleigh" \
+REARM_BUILD_ROOT="$PWD/build/linux" \
+REARM_EMSDK_ROOT="$PWD/build/linux-emsdk" \
+REARM_PYTHON_ENV="$PWD/build/linux-venv" bash tools/bootstrap.sh
+```
+
+Use `-SleighBuildRoot build/windows-sleigh -BuildRoot build/windows
+-SdkRoot build/windows-emsdk` for the reverse situation. Set overrides to absolute
+paths when invoking build tools from another directory. `-VerifyOnly` also rejects
+a missing configuration instead of allowing an SDK probe to generate one.
+Configuration stays at the selected SDK root `/.emscripten`, matching the pinned
+emsdk activation behavior; choose a separate SDK root to isolate both binaries
+and configuration.
+
+## Preserved M0 pthread toolchain smoke
+
+```sh
+python tools/check_pthreads.py \
+  --emcc third_party/emsdk/upstream/emscripten/emcc --node node --browser
+python -m unittest discover -s tools -p 'test_check_pthreads.py' -v
+```
+
+This compiles unchanged `tests/m0/hello_pthread.c` with Emscripten pthreads,
+places the program's main function on a worker, then executes Node and Chromium.
+The local browser server sends COOP/COEP headers. Passing requires four distinct
+workers, `counter=400000 OK`, exit status zero, and browser cross-origin isolation.
+It writes `build/m0-pthreads/report.json` with hashes and executed output. Both
+backends passed locally using Emscripten 6.0.12; this smoke verifies host WASM
+threading, not statically recompiled ARM pthread semantics or R17 compatibility.
+On Windows use `emcc.exe` and the SDK Python/config variables above; configure
+`PLAYWRIGHT_BROWSERS_PATH` only when using a nondefault browser cache.

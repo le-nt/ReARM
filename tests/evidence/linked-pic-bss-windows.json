@@ -1,0 +1,1091 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-07",
+  "scope": "public source-built fixtures only",
+  "suites": [
+    {
+      "name": "pic-low",
+      "cases": 16,
+      "backends": [
+        "chromium",
+        "native",
+        "node"
+      ],
+      "passed": true,
+      "steps": [
+        {
+          "elapsed_seconds": 0.1817845000041416,
+          "peak_sampled_rss_bytes": 40030208,
+          "fixture": "arm-o0-shared-b10000000",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.1055690999928629,
+          "peak_sampled_rss_bytes": 7569408,
+          "fixture": "arm-o0-shared-b10000000",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 71,
+              "pcode_ops": 292,
+              "translation_seconds": 0.0456696
+            },
+            "instructions_per_second": 672.5452808141779,
+            "pcode_ops_per_second": 2765.9608732076044
+          }
+        },
+        {
+          "elapsed_seconds": 1.7195711999956984,
+          "peak_sampled_rss_bytes": 104198144,
+          "fixture": "arm-o0-shared-b10000000",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 4.984771400006139,
+          "peak_sampled_rss_bytes": 137195520,
+          "fixture": "arm-o0-shared-b10000000",
+          "stage": "wasm_compile"
+        },
+        {
+          "elapsed_seconds": 0.31395270000211895,
+          "peak_sampled_rss_bytes": 41218048,
+          "fixture": "arm-o2-shared-b10000000",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.15731419999792706,
+          "peak_sampled_rss_bytes": 14274560,
+          "fixture": "arm-o2-shared-b10000000",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 34,
+              "pcode_ops": 212,
+              "translation_seconds": 0.0979612
+            },
+            "instructions_per_second": 216.1279782781721,
+            "pcode_ops_per_second": 1347.6215116168378
+          }
+        },
+        {
+          "elapsed_seconds": 1.5546384999906877,
+          "peak_sampled_rss_bytes": 103583744,
+          "fixture": "arm-o2-shared-b10000000",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 4.634379499999341,
+          "peak_sampled_rss_bytes": 136855552,
+          "fixture": "arm-o2-shared-b10000000",
+          "stage": "wasm_compile"
+        },
+        {
+          "elapsed_seconds": 0.16135490000306163,
+          "peak_sampled_rss_bytes": 21602304,
+          "fixture": "thumb-o0-shared-b10000000",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.06418370000028517,
+          "peak_sampled_rss_bytes": 13791232,
+          "fixture": "thumb-o0-shared-b10000000",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 71,
+              "pcode_ops": 212,
+              "translation_seconds": 0.0468619
+            },
+            "instructions_per_second": 1106.1998607073842,
+            "pcode_ops_per_second": 3303.01930239388
+          }
+        },
+        {
+          "elapsed_seconds": 1.5520293999870773,
+          "peak_sampled_rss_bytes": 103112704,
+          "fixture": "thumb-o0-shared-b10000000",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 4.322507600008976,
+          "peak_sampled_rss_bytes": 135651328,
+          "fixture": "thumb-o0-shared-b10000000",
+          "stage": "wasm_compile"
+        },
+        {
+          "elapsed_seconds": 0.1532728999882238,
+          "peak_sampled_rss_bytes": 52084736,
+          "fixture": "thumb-o2-shared-b10000000",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.06265939999138936,
+          "peak_sampled_rss_bytes": 6713344,
+          "fixture": "thumb-o2-shared-b10000000",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 41,
+              "pcode_ops": 178,
+              "translation_seconds": 0.0491141
+            },
+            "instructions_per_second": 654.3311938134456,
+            "pcode_ops_per_second": 2840.7549389949586
+          }
+        },
+        {
+          "elapsed_seconds": 1.3523946999921463,
+          "peak_sampled_rss_bytes": 101613568,
+          "fixture": "thumb-o2-shared-b10000000",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 4.078896799997892,
+          "peak_sampled_rss_bytes": 136040448,
+          "fixture": "thumb-o2-shared-b10000000",
+          "stage": "wasm_compile"
+        }
+      ],
+      "artifacts": [
+        {
+          "name": "arm-o0-shared-b10000000.elf",
+          "sha256": "076ad7ad0d46b96338d69320be1914de2eb22a494dbd496f34f526bb6b612482",
+          "size_bytes": 2612
+        },
+        {
+          "name": "arm-o0-shared-b10000000.cpp",
+          "sha256": "164a0ec9ba78934b719076ff9691195819a39f8d3137996f037c37525fdf2c93",
+          "size_bytes": 57857
+        },
+        {
+          "name": "arm-o0-shared-b10000000.exe",
+          "sha256": "50430bae04c61bc6ffcf7cc8f5834e312c3776cde443bf10d2c8f00d0e83deae",
+          "size_bytes": 84480
+        },
+        {
+          "name": "arm-o0-shared-b10000000.js",
+          "sha256": "7af9fba97fb299f2c180d84216f695c00b819e5b839c30db456bff34f782deba",
+          "size_bytes": 59679
+        },
+        {
+          "name": "arm-o0-shared-b10000000.wasm",
+          "sha256": "d812f16d0d0a8340f482be481972697f1b7994c8a834ae3c48deab5d65f6dc58",
+          "size_bytes": 147225
+        },
+        {
+          "name": "arm-o2-shared-b10000000.elf",
+          "sha256": "b7f95a2c71e631955df293f4868129503ec5d59a745cff2256d5899da4e26cab",
+          "size_bytes": 2436
+        },
+        {
+          "name": "arm-o2-shared-b10000000.cpp",
+          "sha256": "7b52794784b7d9ecc2d49b92f791bbbb34a4a08800550bf8a902f59abc6ed116",
+          "size_bytes": 39067
+        },
+        {
+          "name": "arm-o2-shared-b10000000.exe",
+          "sha256": "4d40ddfcb43f29183376fd0cb875c1cf7ef5af4a85e66e6f326c0a20d8d00a69",
+          "size_bytes": 81920
+        },
+        {
+          "name": "arm-o2-shared-b10000000.js",
+          "sha256": "e9ed800a3be099b76751ff914b40194dc65ee3c49c574a31cc08d8308ae75b77",
+          "size_bytes": 59679
+        },
+        {
+          "name": "arm-o2-shared-b10000000.wasm",
+          "sha256": "f6eb3a9456d0c76e1e755d9e9e7d1b8a5bece7d99a8b89888046a64bec8604c0",
+          "size_bytes": 144885
+        },
+        {
+          "name": "thumb-o0-shared-b10000000.elf",
+          "sha256": "0cd770002092aa69d7a1eb3fdde45ceb7ac6d72a29c69efa002d8da2c6dbb259",
+          "size_bytes": 2468
+        },
+        {
+          "name": "thumb-o0-shared-b10000000.cpp",
+          "sha256": "236c0b14c4b23129a13af6c13fbf98f4d2bf773d4ff4ddabaa6245c9b20fb459",
+          "size_bytes": 46809
+        },
+        {
+          "name": "thumb-o0-shared-b10000000.exe",
+          "sha256": "219d2c8d618edd0694aef2280a9dc4884185904d32cd701dc10b5048580984f4",
+          "size_bytes": 83968
+        },
+        {
+          "name": "thumb-o0-shared-b10000000.js",
+          "sha256": "041687b10cefdd0e7c5879cb6ce9a7517b34ea311cf5abc20f6659ac422d3da0",
+          "size_bytes": 59681
+        },
+        {
+          "name": "thumb-o0-shared-b10000000.wasm",
+          "sha256": "ec8bf2cb57d85e2ab6eec600000f9f263d533de12c89c992bae202aa0c393910",
+          "size_bytes": 148252
+        },
+        {
+          "name": "thumb-o2-shared-b10000000.elf",
+          "sha256": "9df1a9aa043ee96429ae1e18f3619a90e4b86b682e58c68662e243ddda6f805e",
+          "size_bytes": 2420
+        },
+        {
+          "name": "thumb-o2-shared-b10000000.cpp",
+          "sha256": "953f3d31453b4201ac60b1df22acb7f420c8558d30dd2a098f3517a39183dda7",
+          "size_bytes": 34981
+        },
+        {
+          "name": "thumb-o2-shared-b10000000.exe",
+          "sha256": "e90cccace3c7d278f559ef8cbafcad1888351c44569ccbbf863eec9cd36b3bdf",
+          "size_bytes": 82432
+        },
+        {
+          "name": "thumb-o2-shared-b10000000.js",
+          "sha256": "f731fe833534019d5ea86a279ef1c3e370e9e3fe19b01057dbbe59bc73212e4a",
+          "size_bytes": 59681
+        },
+        {
+          "name": "thumb-o2-shared-b10000000.wasm",
+          "sha256": "cc2e114624735fb262039c48a747da42a6b321a71ddeeb0d00ac18f7db7c6114",
+          "size_bytes": 146784
+        }
+      ]
+    },
+    {
+      "name": "pic-high",
+      "cases": 16,
+      "backends": [
+        "chromium",
+        "native",
+        "node"
+      ],
+      "passed": true,
+      "steps": [
+        {
+          "elapsed_seconds": 0.152266300006886,
+          "peak_sampled_rss_bytes": 50434048,
+          "fixture": "arm-o0-shared-b20000000",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.06437310000183061,
+          "peak_sampled_rss_bytes": 8019968,
+          "fixture": "arm-o0-shared-b20000000",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 71,
+              "pcode_ops": 292,
+              "translation_seconds": 0.0418622
+            },
+            "instructions_per_second": 1102.9451742728086,
+            "pcode_ops_per_second": 4536.056209685354
+          }
+        },
+        {
+          "elapsed_seconds": 1.4361052000022028,
+          "peak_sampled_rss_bytes": 105099264,
+          "fixture": "arm-o0-shared-b20000000",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 4.070325099994079,
+          "peak_sampled_rss_bytes": 136585216,
+          "fixture": "arm-o0-shared-b20000000",
+          "stage": "wasm_compile"
+        },
+        {
+          "elapsed_seconds": 0.1689087999984622,
+          "peak_sampled_rss_bytes": 21655552,
+          "fixture": "arm-o2-shared-b20000000",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.07589259999804199,
+          "peak_sampled_rss_bytes": 8675328,
+          "fixture": "arm-o2-shared-b20000000",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 34,
+              "pcode_ops": 212,
+              "translation_seconds": 0.0541194
+            },
+            "instructions_per_second": 448.0015179461132,
+            "pcode_ops_per_second": 2793.421229546353
+          }
+        },
+        {
+          "elapsed_seconds": 1.999531699999352,
+          "peak_sampled_rss_bytes": 104456192,
+          "fixture": "arm-o2-shared-b20000000",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 4.217311900007189,
+          "peak_sampled_rss_bytes": 135405568,
+          "fixture": "arm-o2-shared-b20000000",
+          "stage": "wasm_compile"
+        },
+        {
+          "elapsed_seconds": 0.14527470000030007,
+          "peak_sampled_rss_bytes": 40964096,
+          "fixture": "thumb-o0-shared-b20000000",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.06723060000513215,
+          "peak_sampled_rss_bytes": 13279232,
+          "fixture": "thumb-o0-shared-b20000000",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 71,
+              "pcode_ops": 212,
+              "translation_seconds": 0.0550666
+            },
+            "instructions_per_second": 1056.066731437472,
+            "pcode_ops_per_second": 3153.3260149963953
+          }
+        },
+        {
+          "elapsed_seconds": 1.498870800001896,
+          "peak_sampled_rss_bytes": 103751680,
+          "fixture": "thumb-o0-shared-b20000000",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 4.568165299991961,
+          "peak_sampled_rss_bytes": 135565312,
+          "fixture": "thumb-o0-shared-b20000000",
+          "stage": "wasm_compile"
+        },
+        {
+          "elapsed_seconds": 0.14880490000359714,
+          "peak_sampled_rss_bytes": 47247360,
+          "fixture": "thumb-o2-shared-b20000000",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.07030560000566766,
+          "peak_sampled_rss_bytes": 8593408,
+          "fixture": "thumb-o2-shared-b20000000",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 41,
+              "pcode_ops": 178,
+              "translation_seconds": 0.0456779
+            },
+            "instructions_per_second": 583.1683393171355,
+            "pcode_ops_per_second": 2531.8040097182957
+          }
+        },
+        {
+          "elapsed_seconds": 1.3051782999973511,
+          "peak_sampled_rss_bytes": 104312832,
+          "fixture": "thumb-o2-shared-b20000000",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 4.214647500004503,
+          "peak_sampled_rss_bytes": 135499776,
+          "fixture": "thumb-o2-shared-b20000000",
+          "stage": "wasm_compile"
+        }
+      ],
+      "artifacts": [
+        {
+          "name": "arm-o0-shared-b20000000.elf",
+          "sha256": "076ad7ad0d46b96338d69320be1914de2eb22a494dbd496f34f526bb6b612482",
+          "size_bytes": 2612
+        },
+        {
+          "name": "arm-o0-shared-b20000000.cpp",
+          "sha256": "c033028eb2df335cac71c21c1d0261b7125e27754ae88e2e6929760b423b43eb",
+          "size_bytes": 57857
+        },
+        {
+          "name": "arm-o0-shared-b20000000.exe",
+          "sha256": "1b23a75986edce62c02cce0c31b6e5c7ad113b64311ebb8bcaf2d0c489021b10",
+          "size_bytes": 84480
+        },
+        {
+          "name": "arm-o0-shared-b20000000.js",
+          "sha256": "3c39148ea7815855d055d2db6d5be95e80079ce53142fe11b911c82a68d54a54",
+          "size_bytes": 59679
+        },
+        {
+          "name": "arm-o0-shared-b20000000.wasm",
+          "sha256": "4f92dff5e6ce34b9254f2d2d273c1c228333ef3fd4702ea4b4f31f006ff3a5f3",
+          "size_bytes": 147225
+        },
+        {
+          "name": "arm-o2-shared-b20000000.elf",
+          "sha256": "b7f95a2c71e631955df293f4868129503ec5d59a745cff2256d5899da4e26cab",
+          "size_bytes": 2436
+        },
+        {
+          "name": "arm-o2-shared-b20000000.cpp",
+          "sha256": "fef930eefbaf0bbfed3ff7995bcc0853841fac072d04bd5837156067970f0be6",
+          "size_bytes": 39067
+        },
+        {
+          "name": "arm-o2-shared-b20000000.exe",
+          "sha256": "5906d2602426970e63e1f015a8ca3ef9eadb6bcdf0d56c770fe7be0bf6397d41",
+          "size_bytes": 81920
+        },
+        {
+          "name": "arm-o2-shared-b20000000.js",
+          "sha256": "004a57536e0b0189cd49b38cc9cbf12aa5a972a90b97c9febd8db7c7b2dfe3cd",
+          "size_bytes": 59679
+        },
+        {
+          "name": "arm-o2-shared-b20000000.wasm",
+          "sha256": "371d3a63a51f3baee667c48beaae308a808c643fc9cd6d70d841b4c6d41cb1e8",
+          "size_bytes": 144885
+        },
+        {
+          "name": "thumb-o0-shared-b20000000.elf",
+          "sha256": "0cd770002092aa69d7a1eb3fdde45ceb7ac6d72a29c69efa002d8da2c6dbb259",
+          "size_bytes": 2468
+        },
+        {
+          "name": "thumb-o0-shared-b20000000.cpp",
+          "sha256": "7afbce27439f042144054dc0e9692c799e8d0087f38a6c92224be28e1aeb50c4",
+          "size_bytes": 46809
+        },
+        {
+          "name": "thumb-o0-shared-b20000000.exe",
+          "sha256": "673c9fa81edeb76db00ee0892bfabd5853a6725d9e9c04851b62373cac4d80be",
+          "size_bytes": 83968
+        },
+        {
+          "name": "thumb-o0-shared-b20000000.js",
+          "sha256": "ce31c21f3a0a1d6648dc46c89a407215c0d9bb600906f5c025b374fee1de6506",
+          "size_bytes": 59681
+        },
+        {
+          "name": "thumb-o0-shared-b20000000.wasm",
+          "sha256": "45033f8b8cbf90ad27c87698f4dda2a3bebc2ec7de4c1fe3e7df191ad9c180f6",
+          "size_bytes": 148252
+        },
+        {
+          "name": "thumb-o2-shared-b20000000.elf",
+          "sha256": "9df1a9aa043ee96429ae1e18f3619a90e4b86b682e58c68662e243ddda6f805e",
+          "size_bytes": 2420
+        },
+        {
+          "name": "thumb-o2-shared-b20000000.cpp",
+          "sha256": "d1b43ab4fad02a2bf55fa70ede730efe1f57ed76a2f3e61658fc42ba986a4f76",
+          "size_bytes": 34981
+        },
+        {
+          "name": "thumb-o2-shared-b20000000.exe",
+          "sha256": "40951024c102a17c7cc789772911a6845eb3b582917e616a58fd9149a034df0f",
+          "size_bytes": 82432
+        },
+        {
+          "name": "thumb-o2-shared-b20000000.js",
+          "sha256": "d986e4b57950a2afea83ba16b33279cd5d723f6c2466cb35e9abe88bae24fe96",
+          "size_bytes": 59681
+        },
+        {
+          "name": "thumb-o2-shared-b20000000.wasm",
+          "sha256": "f73f464767d792ccdebe212441235e7bb591308b55f1961617d1e9ba6b29c2be",
+          "size_bytes": 146784
+        }
+      ]
+    },
+    {
+      "name": "linked-constructors",
+      "cases": 4,
+      "backends": [
+        "chromium",
+        "native",
+        "node"
+      ],
+      "passed": true,
+      "steps": [
+        {
+          "elapsed_seconds": 0.08664439999847673,
+          "peak_sampled_rss_bytes": 10657792,
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 65,
+              "pcode_ops": 301,
+              "translation_seconds": 0.0536734
+            },
+            "instructions_per_second": 750.1927418407046,
+            "pcode_ops_per_second": 3473.96946606234
+          }
+        },
+        {
+          "elapsed_seconds": 1.5536864999885438,
+          "peak_sampled_rss_bytes": 106635264,
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 4.28846060000069,
+          "peak_sampled_rss_bytes": 136232960,
+          "stage": "wasm_compile"
+        },
+        {
+          "elapsed_seconds": 0.07232739999017213,
+          "peak_sampled_rss_bytes": null,
+          "stage": "native"
+        },
+        {
+          "elapsed_seconds": 0.06344600000011269,
+          "peak_sampled_rss_bytes": 37175296,
+          "stage": "node"
+        },
+        {
+          "elapsed_seconds": 0.05129740000120364,
+          "peak_sampled_rss_bytes": null,
+          "stage": "native"
+        },
+        {
+          "elapsed_seconds": 0.06663879999541678,
+          "peak_sampled_rss_bytes": 36102144,
+          "stage": "node"
+        },
+        {
+          "elapsed_seconds": 0.027687900001183152,
+          "peak_sampled_rss_bytes": null,
+          "stage": "native"
+        },
+        {
+          "elapsed_seconds": 0.06461969998781569,
+          "peak_sampled_rss_bytes": 27938816,
+          "stage": "node"
+        },
+        {
+          "elapsed_seconds": 0.11787279999407474,
+          "peak_sampled_rss_bytes": null,
+          "stage": "native"
+        },
+        {
+          "elapsed_seconds": 0.06935180000436958,
+          "peak_sampled_rss_bytes": 37146624,
+          "stage": "node"
+        }
+      ],
+      "artifacts": [
+        {
+          "name": "linked.cpp",
+          "sha256": "803b7dbe9d5f89cb4616101ef785088b03bca32a0b1da5fbae90b5c224418c27",
+          "size_bytes": 59648
+        },
+        {
+          "name": "linked.exe",
+          "sha256": "626c8bd043bc8db44f5813acadbf44ce98b3becf335b9e3008e89783943e28d1",
+          "size_bytes": 87040
+        },
+        {
+          "name": "linked.js",
+          "sha256": "fe332d50c111a9298e04a8f3e14adfcdfc4d30420cc1487f6f819fb1c01de759",
+          "size_bytes": 59662
+        },
+        {
+          "name": "linked.wasm",
+          "sha256": "da10e6dc3e0693f8e926ebcec129ea8d019fd2bd3a5322d76ddc9c041be75a26",
+          "size_bytes": 150340
+        }
+      ]
+    },
+    {
+      "name": "large-bss",
+      "cases": 16,
+      "backends": [
+        "chromium",
+        "native",
+        "node"
+      ],
+      "passed": true,
+      "steps": [
+        {
+          "elapsed_seconds": 0.1506221000017831,
+          "peak_sampled_rss_bytes": 21417984,
+          "fixture": "arm-o0",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.09527810000872705,
+          "peak_sampled_rss_bytes": 19365888,
+          "fixture": "arm-o0",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 44,
+              "pcode_ops": 172,
+              "translation_seconds": 0.0478763
+            },
+            "instructions_per_second": 461.80601833967927,
+            "pcode_ops_per_second": 1805.24170805511
+          }
+        },
+        {
+          "elapsed_seconds": 1.1784746000048472,
+          "peak_sampled_rss_bytes": 103616512,
+          "fixture": "arm-o0",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 3.645772899995791,
+          "peak_sampled_rss_bytes": 134873088,
+          "fixture": "arm-o0",
+          "stage": "wasm_compile"
+        },
+        {
+          "elapsed_seconds": 0.16591509999125265,
+          "peak_sampled_rss_bytes": 53837824,
+          "fixture": "arm-o2",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.10047920000215527,
+          "peak_sampled_rss_bytes": 21086208,
+          "fixture": "arm-o2",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 50,
+              "pcode_ops": 285,
+              "translation_seconds": 0.0611436
+            },
+            "instructions_per_second": 497.615426863744,
+            "pcode_ops_per_second": 2836.4079331233406
+          }
+        },
+        {
+          "elapsed_seconds": 1.2817398000042886,
+          "peak_sampled_rss_bytes": 105766912,
+          "fixture": "arm-o2",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 3.3568476000073133,
+          "peak_sampled_rss_bytes": 137437184,
+          "fixture": "arm-o2",
+          "stage": "wasm_compile"
+        },
+        {
+          "elapsed_seconds": 0.18079389999911655,
+          "peak_sampled_rss_bytes": 21422080,
+          "fixture": "thumb-o0",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.06886859999212902,
+          "peak_sampled_rss_bytes": 13250560,
+          "fixture": "thumb-o0",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 43,
+              "pcode_ops": 133,
+              "translation_seconds": 0.0574774
+            },
+            "instructions_per_second": 624.3774376844376,
+            "pcode_ops_per_second": 1931.2139351634933
+          }
+        },
+        {
+          "elapsed_seconds": 1.1752459999988787,
+          "peak_sampled_rss_bytes": 103739392,
+          "fixture": "thumb-o0",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 3.960220199995092,
+          "peak_sampled_rss_bytes": 135544832,
+          "fixture": "thumb-o0",
+          "stage": "wasm_compile"
+        },
+        {
+          "elapsed_seconds": 0.15859039999486413,
+          "peak_sampled_rss_bytes": 21426176,
+          "fixture": "thumb-o2",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.06409699999494478,
+          "peak_sampled_rss_bytes": 12521472,
+          "fixture": "thumb-o2",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 48,
+              "pcode_ops": 224,
+              "translation_seconds": 0.0524298
+            },
+            "instructions_per_second": 748.8650015411903,
+            "pcode_ops_per_second": 3494.7033405255547
+          }
+        },
+        {
+          "elapsed_seconds": 1.285739899991313,
+          "peak_sampled_rss_bytes": 103051264,
+          "fixture": "thumb-o2",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 3.5385708000103477,
+          "peak_sampled_rss_bytes": 135319552,
+          "fixture": "thumb-o2",
+          "stage": "wasm_compile"
+        }
+      ],
+      "artifacts": [
+        {
+          "name": "arm-o0.elf",
+          "sha256": "4d078ea0abee87878136ca8c9ebbd8bb58456e4ba70bb9382d5da4ef155a469f",
+          "size_bytes": 70172
+        },
+        {
+          "name": "arm-o0.cpp",
+          "sha256": "bb486aa634cd7c13ab36786a651dd6dfb59ccb2cd0629542d02be9f817ef0b7e",
+          "size_bytes": 33322
+        },
+        {
+          "name": "arm-o0.exe",
+          "sha256": "651b7d4a63d7d51e6c1697f00f1309c76d9c5de23334e34d29f6050ecdd3c458",
+          "size_bytes": 78848
+        },
+        {
+          "name": "arm-o0.js",
+          "sha256": "d318e7ea494f38daa4f9878f6550d4c5b716297bf34eb408cce535e61093b392",
+          "size_bytes": 59662
+        },
+        {
+          "name": "arm-o0.wasm",
+          "sha256": "cb77f776a8b6772ea567ce1c7327eedafdaf71f327cc692587816a12b4fcf8e3",
+          "size_bytes": 142736
+        },
+        {
+          "name": "arm-o2.elf",
+          "sha256": "0c28dd37c2a348f69d32ea3eb268a3be1c8f9116cc6844ddf228706348406c92",
+          "size_bytes": 70172
+        },
+        {
+          "name": "arm-o2.cpp",
+          "sha256": "a519969e18b7f6837655b5cad9542f54a47318c2c56879a8b6b37c8e9ffc5b96",
+          "size_bytes": 47947
+        },
+        {
+          "name": "arm-o2.exe",
+          "sha256": "40a73d416850987655d19628c86fc0f52117b6d800a8d6cd4d5c371e1221e2c7",
+          "size_bytes": 80384
+        },
+        {
+          "name": "arm-o2.js",
+          "sha256": "173ae7dce25f37c9f3778403f8f4b646439411e2b76eac749117e3cea1bef8f6",
+          "size_bytes": 59662
+        },
+        {
+          "name": "arm-o2.wasm",
+          "sha256": "ddf51dab639ac51b2860a388e09e598a6948a9dc6ba5835b8131dc63ad8d37dd",
+          "size_bytes": 144053
+        },
+        {
+          "name": "thumb-o0.elf",
+          "sha256": "21885ce381ec0d56745652cd8a2ae03eb3568a2441e4620c9459c51c1e50e0b7",
+          "size_bytes": 70172
+        },
+        {
+          "name": "thumb-o0.cpp",
+          "sha256": "03133dc213d9590b24b040b53d9cf21d5534cda0fef4b5245c05f7dd19f38acb",
+          "size_bytes": 28930
+        },
+        {
+          "name": "thumb-o0.exe",
+          "sha256": "fdf78516de367d3fcc51529130c68a996f3806b9112641029bef83cca664104b",
+          "size_bytes": 78336
+        },
+        {
+          "name": "thumb-o0.js",
+          "sha256": "fcb60f0e29bef0315d25fdb681d73b1d5271e1bc05e4c5d3597009f02f23a9e2",
+          "size_bytes": 59664
+        },
+        {
+          "name": "thumb-o0.wasm",
+          "sha256": "50803d9429e9b81eb7e106def8683c99c8c8d82a9da61ab93d109cbc7619af66",
+          "size_bytes": 142504
+        },
+        {
+          "name": "thumb-o2.elf",
+          "sha256": "b718ace603508b07d543203d4e5833793ee87122efbcdbd8568f5930e1e6a1cb",
+          "size_bytes": 70172
+        },
+        {
+          "name": "thumb-o2.cpp",
+          "sha256": "f5609314e6189da5ea5278155434d34ff40c13d50e304b9a5e745e4cb0e1d9af",
+          "size_bytes": 40561
+        },
+        {
+          "name": "thumb-o2.exe",
+          "sha256": "d5c47b4ecc49d4af0fa78e730541bb32a1d1593f7e647fe3290a9e3b0cad98c0",
+          "size_bytes": 79872
+        },
+        {
+          "name": "thumb-o2.js",
+          "sha256": "c84254f53c35ff7838de30efafd73da7f38efea9824dff839d75129b30d279a3",
+          "size_bytes": 59664
+        },
+        {
+          "name": "thumb-o2.wasm",
+          "sha256": "50540f4b6ba7f0d3ef8d131e3488b1e49202242276a6618e80d8d16d1fbebffb",
+          "size_bytes": 143488
+        }
+      ]
+    },
+    {
+      "name": "baseline-regression",
+      "cases": 16,
+      "backends": [
+        "chromium",
+        "native",
+        "node"
+      ],
+      "passed": true,
+      "steps": [
+        {
+          "elapsed_seconds": 0.15156820000265725,
+          "peak_sampled_rss_bytes": 21442560,
+          "fixture": "arm-o0",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.07164109998848289,
+          "peak_sampled_rss_bytes": 15257600,
+          "fixture": "arm-o0",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 71,
+              "pcode_ops": 291,
+              "translation_seconds": 0.06027
+            },
+            "instructions_per_second": 991.0512263409418,
+            "pcode_ops_per_second": 4061.914181200198
+          }
+        },
+        {
+          "elapsed_seconds": 1.4238408999954117,
+          "peak_sampled_rss_bytes": 103919616,
+          "fixture": "arm-o0",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 3.759235199991963,
+          "peak_sampled_rss_bytes": 137240576,
+          "fixture": "arm-o0",
+          "stage": "wasm_compile"
+        },
+        {
+          "elapsed_seconds": 0.18331670000043232,
+          "peak_sampled_rss_bytes": 57245696,
+          "fixture": "arm-o2",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.08190059999469668,
+          "peak_sampled_rss_bytes": 16822272,
+          "fixture": "arm-o2",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 29,
+              "pcode_ops": 190,
+              "translation_seconds": 0.0689149
+            },
+            "instructions_per_second": 354.0877600637583,
+            "pcode_ops_per_second": 2319.885324555658
+          }
+        },
+        {
+          "elapsed_seconds": 1.1891695000085747,
+          "peak_sampled_rss_bytes": 103620608,
+          "fixture": "arm-o2",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 3.501611800005776,
+          "peak_sampled_rss_bytes": 135548928,
+          "fixture": "arm-o2",
+          "stage": "wasm_compile"
+        },
+        {
+          "elapsed_seconds": 0.16724959999555722,
+          "peak_sampled_rss_bytes": 29593600,
+          "fixture": "thumb-o0",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.10689110000384971,
+          "peak_sampled_rss_bytes": 17510400,
+          "fixture": "thumb-o0",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 69,
+              "pcode_ops": 219,
+              "translation_seconds": 0.0619881
+            },
+            "instructions_per_second": 645.516792300902,
+            "pcode_ops_per_second": 2048.81416686808
+          }
+        },
+        {
+          "elapsed_seconds": 1.372737199999392,
+          "peak_sampled_rss_bytes": 102690816,
+          "fixture": "thumb-o0",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 3.599690599992755,
+          "peak_sampled_rss_bytes": 136294400,
+          "fixture": "thumb-o0",
+          "stage": "wasm_compile"
+        },
+        {
+          "elapsed_seconds": 0.16868180000165012,
+          "peak_sampled_rss_bytes": 50483200,
+          "fixture": "thumb-o2",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.06763969999155961,
+          "peak_sampled_rss_bytes": 8523776,
+          "fixture": "thumb-o2",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 28,
+              "pcode_ops": 167,
+              "translation_seconds": 0.043191
+            },
+            "instructions_per_second": 413.9580749691966,
+            "pcode_ops_per_second": 2468.964232851994
+          }
+        },
+        {
+          "elapsed_seconds": 1.2420385000004899,
+          "peak_sampled_rss_bytes": 101126144,
+          "fixture": "thumb-o2",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 3.48821370000951,
+          "peak_sampled_rss_bytes": 133959680,
+          "fixture": "thumb-o2",
+          "stage": "wasm_compile"
+        }
+      ],
+      "artifacts": [
+        {
+          "name": "arm-o0.elf",
+          "sha256": "f92e6e86a1200efa6b4c1631e5e84bb25a6421042d8f1d1879a8071c262910c4",
+          "size_bytes": 70176
+        },
+        {
+          "name": "arm-o0.cpp",
+          "sha256": "877ec88f439cad7a8d72bc11e2425e5fd2235d3dfccb7a4971a3d2227b0c4860",
+          "size_bytes": 51708
+        },
+        {
+          "name": "arm-o0.exe",
+          "sha256": "b38dd42c065c5af7dfac0483b7380fef51d163e231f69def06d5e42d468c45bc",
+          "size_bytes": 81920
+        },
+        {
+          "name": "arm-o0.js",
+          "sha256": "d318e7ea494f38daa4f9878f6550d4c5b716297bf34eb408cce535e61093b392",
+          "size_bytes": 59662
+        },
+        {
+          "name": "arm-o0.wasm",
+          "sha256": "b7768eefbc50232662e111fedd08d1f4d34603196f603e2dbaf29463cf331a8a",
+          "size_bytes": 145422
+        },
+        {
+          "name": "arm-o2.elf",
+          "sha256": "360a310c15887439f63662b9961780d0fdb3801feb6946e6a0756c15f68a0f45",
+          "size_bytes": 70176
+        },
+        {
+          "name": "arm-o2.cpp",
+          "sha256": "80f7421e1c9459fdf52d94004f7a4fb0fbdddcd71cf168fa31f08916ea1bb50c",
+          "size_bytes": 31425
+        },
+        {
+          "name": "arm-o2.exe",
+          "sha256": "aa332529e1d3889b9b609cb01395eb64def21c547210579566639f7e057f0e4e",
+          "size_bytes": 78848
+        },
+        {
+          "name": "arm-o2.js",
+          "sha256": "173ae7dce25f37c9f3778403f8f4b646439411e2b76eac749117e3cea1bef8f6",
+          "size_bytes": 59662
+        },
+        {
+          "name": "arm-o2.wasm",
+          "sha256": "01705534bfd023448abae671dab1c8f9b403fa87ba8620d9a3d9d04a57d974f7",
+          "size_bytes": 142442
+        },
+        {
+          "name": "thumb-o0.elf",
+          "sha256": "26b96437b3ca28f55a49f1d540efa1e23b3646f3151d8fea477c2d805d8f2140",
+          "size_bytes": 70176
+        },
+        {
+          "name": "thumb-o0.cpp",
+          "sha256": "3246233a68018f2ee7b44ec919ec0bb2d7bdec29436c54a7bdec51070cc035b3",
+          "size_bytes": 42921
+        },
+        {
+          "name": "thumb-o0.exe",
+          "sha256": "49f24ac73c0d0c2d279f32406dedfcaf80c7e2c031ee4e5dcbe9e3b789ea592f",
+          "size_bytes": 81408
+        },
+        {
+          "name": "thumb-o0.js",
+          "sha256": "fcb60f0e29bef0315d25fdb681d73b1d5271e1bc05e4c5d3597009f02f23a9e2",
+          "size_bytes": 59664
+        },
+        {
+          "name": "thumb-o0.wasm",
+          "sha256": "03569169b8b8786a1c2b224517212d27cde788b1a1546ca55023becf3e73be5e",
+          "size_bytes": 145392
+        },
+        {
+          "name": "thumb-o2.elf",
+          "sha256": "10c4a08ad823029b7181d54c5ab89aca8007efb6502376a8f2fea577252e82ce",
+          "size_bytes": 70176
+        },
+        {
+          "name": "thumb-o2.cpp",
+          "sha256": "e6d47639a6f8ed598581b84a2b66a1cd9c641a877037515b5a35fa1e27e04547",
+          "size_bytes": 27979
+        },
+        {
+          "name": "thumb-o2.exe",
+          "sha256": "6683bfacf59159a433e249bf27b1406b0da7dc5f43e32151e9ef3304264ab078",
+          "size_bytes": 78848
+        },
+        {
+          "name": "thumb-o2.js",
+          "sha256": "c84254f53c35ff7838de30efafd73da7f38efea9824dff839d75129b30d279a3",
+          "size_bytes": 59664
+        },
+        {
+          "name": "thumb-o2.wasm",
+          "sha256": "0b9046a3cb0ad4f10eeaccc8447a48fb495c876dca6bef6de7c28efb47eadf37",
+          "size_bytes": 142610
+        }
+      ]
+    }
+  ],
+  "cases": 68,
+  "backend_comparisons": 204
+}

@@ -32,8 +32,26 @@ Branch: `codex/rearm-reconstruction`. Original M0: `b55568513f697465c6ad22339d1b
 - Integrated IR verifier:47 tests pass. ELF suite39, Python harness22,
   downloader5 and unsupported-SVC rejection2 cases also pass.
 - Fixed the Thumb IT noflow context leak; the minimized regression remains in Git.
-- Next: fresh Linux bootstrap/CI, ET_DYN end-to-end relocations at multiple biases,
-  larger seeded validation, and dispatcher refinements.
+- Next actions now follow the vertical-slice integration strategy below.
+
+## Shared-library vertical slice
+
+- ET_DYN PIC fixtures execute at two load biases:32 input/build cases match
+  independent ARM references on native, Node-WASM and Chromium-WASM backends.
+- Eager multi-DSO linking resolves actual function/data imports and PLT targets.
+  Dependency-first constructors execute before the selected entry; initialized
+  memory and complete final state match the independent reference on all3backends.
+- CTest now includes50 ELF tests,18 real multi-DSO cases and47 IR verifier cases.
+- The4MiB BSS regression passes16 cases on native/Node/Chromium; generated source
+  stays below48KiB by allocating BSS at runtime rather than emitting zero tokens.
+- Preserved M0 pthread toolchain smoke passes Node+Chromium with counter400000;
+  this is not translated ARM pthread support.
+- Client inventory tooling records supplied versions/provenance, hashes, imports,
+  relocations, JNI exports and assets without executing/extracting client code.
+- User confirmed authorized Roblox inputs are not available yet. Continue compiler
+  and runtime foundations; do not repeatedly request inputs or download substitutes.
+- Next: finish and validate JNI32 host foundation, connect guest ABI trampolines,
+  exercise public JNI_OnLoad fixtures, and extend linking/import diagnostics.
 
 ## Environment and blockers
 
@@ -44,10 +62,11 @@ Branch: `codex/rearm-reconstruction`. Original M0: `b55568513f697465c6ad22339d1b
 - Emscripten 6.0.12 and SLEIGH v12.2 built/executed successfully.
 - Local execution requires this computer to remain awake and online; no always-on host verified.
 - No Roblox binaries are present or needed for current general-purpose compiler work.
-- Git CLI push cannot use the Windows credential store. The authenticated GitHub connector
-  publishes verified commits, then local history is synchronized to the remote checkpoint.
+- Git CLI writes now work after the permission change; the earlier credential-store
+  failure is resolved. Verified commits are pushed only to the development branch.
 - Published initial checkpoint: `4ce418b675d201d048c6a78fb85c625f59671740`.
-- Goal service last returned `usageLimited`; workers stopped. Do not claim it is active
-  or unattended-ready until the service confirms restored availability.
+- After the user cleared the diagnostic Goal and requested the original objective,
+  the reconstruction Goal was set back on this same chat; the service confirms active.
+  Existing commits and progress were preserved. Account checks confirmed usage allowed.
 
 Never mark a milestone passed without its actual acceptance evidence.

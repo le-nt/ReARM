@@ -134,6 +134,47 @@ int main() {
     test("static extended section index", [] { auto b = with_static_symbols(fixture()); put16(b, 0x61e, 0xffff); fails([&] { Image::parse(b); }, "Extended ELF"); });
     test("truncated sections", [] { auto b = with_static_symbols(fixture()); b.resize(0x550); fails([&] { Image::parse(b); }, "truncated"); });
     test("absolute symbols retain value", [] { auto b = with_static_symbols(fixture()); put16(b, 0x61e, 0xfff1); auto image = Image::parse(b, 0x10000); require(image.find_symbol("local_fn")->value == 0x1101, "absolute symbol incorrectly biased"); });
+    test("GNU hash only symbol count", [] {
+      auto b = dynamic_fixture(); put32(b, 0x158, 0x6ffffef5);
+      put32(b, 0x2c0, 1); put32(b, 0x2c4, 1); put32(b, 0x2c8, 1); put32(b, 0x2cc, 0);
+      put32(b, 0x2d0, 0); put32(b, 0x2d4, 1); put32(b, 0x2d8, 1);
+      auto image = Image::parse(b); require(image.symbols().size() == 2 && image.find_symbol("foo").has_value(), "GNU hash count");
+    });
+    test("GNU bloom must be power of two", [] {
+      auto b = dynamic_fixture(); put32(b, 0x158, 0x6ffffef5);
+      put32(b, 0x2c0, 1); put32(b, 0x2c4, 1); put32(b, 0x2c8, 3);
+      fails([&] { Image::parse(b); }, "GNU hash dimensions");
+    });
+    test("relocation cannot exceed declared dynsym", [] { auto b = dynamic_fixture(21, 4); fails([&] { Image::parse(b); }, "exceeds declared dynamic symbol count"); });
+    test("SysV hash requires buckets", [] { auto b = dynamic_fixture(); put32(b, 0x2c0, 0); fails([&] { Image::parse(b); }, "SysV hash dimensions"); });
+    test("dynamic relocation alignment", [] { auto b = dynamic_fixture(); put32(b, 0x200, 0x1201); auto image = Image::parse(b); fails([&] { image.relocate(); }, "not word-aligned"); });
+    test("failed relocation batch is transactional", [] {
+      auto b = dynamic_fixture(); put32(b, 0x12c, 16); put32(b, 0x208, 0x1204); put32(b, 0x20c, 99);
+      auto image = Image::parse(b, 0x10000); fails([&] { image.relocate(); }, "Unsupported ARM relocation 99");
+      require(image.read32(0x11200) == 0x1234, "earlier RELATIVE write escaped failed batch");
+    });
+    test("dependency count bounded", [] {
+      auto b = dynamic_fixture(); b.resize(0xa100); put32(b, 68, 0xa000); put32(b, 72, 0xa000);
+      put32(b, 100, 4098 * 8); put32(b, 104, 4098 * 8);
+      for (unsigned i = 0; i < 4097; ++i) { put32(b, 0x120 + i * 8, 1); put32(b, 0x124 + i * 8, 0); }
+      put32(b, 0x120 + 4097 * 8, 0);
+      fails([&] { Image::parse(b); }, "dependency count exceeds");
+    });
+    test("module name length bounded", [] {
+      auto b = dynamic_fixture(); b.resize(0x2100); put32(b, 68, 0x2000); put32(b, 72, 0x2000);
+      put32(b, 0x14c, 0x1300); put32(b, 0x154, 5002); put32(b, 0x160, 14); put32(b, 0x164, 1); put32(b, 0x168, 0);
+      std::fill(b.begin() + 0x401, b.begin() + 0x401 + 5000, static_cast<std::uint8_t>('x'));
+      fails([&] { Image::parse(b); }, "Dynamic module string exceeds");
+    });
+    test("initializer array metadata alignment", [] {
+      auto b = dynamic_fixture(); put32(b, 0x160, 25); put32(b, 0x164, 0x1200); put32(b, 0x168, 27); put32(b, 0x16c, 3); put32(b, 0x170, 0);
+      fails([&] { Image::parse(b); }, "initializer array range");
+    });
+    test("initializer array must have size", [] {
+      auto b = dynamic_fixture(); put32(b, 0x160, 25); put32(b, 0x164, 0x1200); put32(b, 0x168, 0);
+      fails([&] { Image::parse(b); }, "Incomplete dynamic initializer");
+    });
+    test("dynamic visibility retained", [] { auto b = dynamic_fixture(); b[0x25d] = 3; const auto image = Image::parse(b); require(image.symbols()[1].dynamic && image.symbols()[1].visibility == 3, "dynamic visibility"); });
   } catch (...) { return 1; }
   std::cout << "PASS " << tests << " ELF loader/relocation tests\n";
 }

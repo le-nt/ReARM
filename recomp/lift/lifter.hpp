@@ -36,5 +36,6 @@ struct Program {
 // direct p-code edges and exported STT_FUNC seeds, bounded to executable mappings.
 // Dynamic destinations remain runtime dispatcher checks; no speculative sweep.
 Program lift(const elf::Image& image, const std::filesystem::path& sla_path,
-             std::uint32_t entry, std::uint32_t max_instructions = 100000);
+             std::uint32_t entry, std::uint32_t max_instructions = 100000,
+             const std::vector<std::uint32_t>& extra_entries = {});
 }  // namespace rearm::lift

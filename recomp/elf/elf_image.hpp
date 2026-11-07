@@ -31,7 +31,23 @@ struct Symbol {
   std::uint8_t binding{};
   std::uint8_t type{};
   std::uint16_t section{};
+  std::uint8_t visibility{};
+  bool dynamic{};
   bool defined() const { return section != 0; }
+};
+
+struct DynamicInfo {
+  std::string soname;
+  std::vector<std::string> needed;
+  std::uint32_t init{};
+  std::uint32_t fini{};
+  std::uint32_t init_array{};
+  std::uint32_t init_array_size{};
+  std::uint32_t fini_array{};
+  std::uint32_t fini_array_size{};
+  bool symbolic{};
+  bool symbol_versions{};
+  bool preinit_array{};
 };
 
 struct Relocation {
@@ -47,6 +63,9 @@ class Image {
   using Resolver = std::function<std::optional<std::uint32_t>(const Symbol&)>;
   static Image load(const std::filesystem::path& path, std::uint32_t load_bias = 0);
   static Image parse(std::span<const std::uint8_t> file, std::uint32_t load_bias = 0);
+  // Merge already-relocated disjoint modules. No relocation may be applied to
+  // the combined image; input module zero supplies entry/type/load-bias identity.
+  static Image combine(std::vector<Image> images);
 
   std::uint32_t entry() const { return entry_; }
   std::uint32_t load_bias() const { return bias_; }
@@ -54,6 +73,7 @@ class Image {
   const std::vector<Segment>& segments() const { return segments_; }
   const std::vector<Symbol>& symbols() const { return symbols_; }
   const std::vector<Relocation>& relocations() const { return relocations_; }
+  const DynamicInfo& dynamic() const { return dynamic_; }
   std::optional<Symbol> find_symbol(std::string_view name) const;
   bool mapped(std::uint32_t address, std::size_t size = 1) const;
   std::vector<std::uint8_t> read(std::uint32_t address, std::size_t size) const;
@@ -65,7 +85,10 @@ class Image {
   // Supports ELF32 REL NONE, ABS32, REL32, GLOB_DAT, JUMP_SLOT, RELATIVE.
   // Validates and resolves the whole batch before changing memory. A second
   // application is rejected because REL addends reside in the target bytes.
-  void relocate(const Resolver& resolver = {});
+  // When interpose_defined is true, default-visible global/weak definitions are
+  // also offered to resolver. Local, hidden, protected, and symbolic definitions
+  // retain self-binding. Default behavior preserves the single-image contract.
+  void relocate(const Resolver& resolver = {}, bool interpose_defined = false);
 
  private:
   const Segment& segment_at(std::uint32_t address) const;
@@ -77,6 +100,7 @@ class Image {
   std::vector<Segment> segments_;
   std::vector<Symbol> symbols_;
   std::vector<Relocation> relocations_;
+  DynamicInfo dynamic_;
 };
 
 }  // namespace rearm::elf

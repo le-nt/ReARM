@@ -1,0 +1,34 @@
+{
+  "passed": true,
+  "scope": "M0 Emscripten pthread toolchain smoke; not ARM recompilation or guest pthread compatibility",
+  "fixture_sha256": "71b458564af77740dbae960b69df92b8ed25bf32524a3ddb147611f9c307694c",
+  "artifacts": {
+    "hello_pthread.js": {
+      "bytes": 53537,
+      "sha256": "15948cac61a3f65097057f3eb1a3abdb7a37a8aa5f3a248440928bd4b6b11ab9"
+    },
+    "hello_pthread.wasm": {
+      "bytes": 34585,
+      "sha256": "5cb196f5e56a3d05e65e57c1374a1778e99bab9e73f0cec8fbc3032b01dc2100"
+    }
+  },
+  "backends": {
+    "node": {
+      "stdout": "hello from pthread 0\nhello from pthread 1\nhello from pthread 2\nhello from pthread 3\ncounter=400000 OK\n",
+      "exit_code": 0,
+      "passed": true
+    },
+    "chromium": {
+      "passed": true,
+      "exit_code": 0,
+      "stdout": [
+        "hello from pthread 0",
+        "hello from pthread 1",
+        "hello from pthread 3",
+        "hello from pthread 2",
+        "counter=400000 OK"
+      ],
+      "cross_origin_isolated": true
+    }
+  }
+}

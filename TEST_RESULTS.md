@@ -66,3 +66,24 @@ runtime compatibility and Roblox execution remain unverified.
 Repeat the earlier E2E command with `--fixture tests/fixtures/condition_flags.c`,
 `--fixture tests/fixtures/interworking.c`, and `--fixture tests/fixtures/thumb_it.S`,
 using a separate `--out` directory per suite.
+
+## PIC, linked-library and BSS checkpoint — 2026-11-07
+
+- 50 ELF tests,18 real multi-DSO linker cases,47 IR verifier cases pass on Windows.
+  Native Linux builds pass; CTest fixture generation initially failed because LLD
+  was absent. Workspace-local Ubuntu LLD18.1.3 was extracted without sudo; all
+  Linux CTest suites then passed. Hosted CI already installs lld-18 explicitly.
+- 39 reference/oracle/harness tests,5 inventory tests,6 M0-pthread-result validation
+  tests and5 downloader tests pass.
+- Shared PIC: ARM/Thumb O0/O2 at0x10000000 and0x20000000,4 seeds each:
+  **32 cases /96 native+Node+Chromium comparisons PASS**. Real relocations include
+  RELATIVE, GLOB_DAT, ABS32; linked fixtures additionally exercise JUMP_SLOT.
+- Multi-DSO constructors:4 seeds across native/Node/Chromium PASS with initialized
+  memory/full guest-state comparison. Native no-initialization/swapped-bias4cases pass.
+- BSS:4MiB mapping,16 cases /48 backend comparisons PASS. Generated C++ sizes
+  33,322/47,947/28,930/40,561 bytes, all under the128KiB regression gate.
+- Existing baseline rerun after constructor integration:16 cases /48 comparisons PASS.
+- Preserved M0 Emscripten pthread smoke runs under Node and isolated Chromium:
+  four distinct workers, counter400000 OK, exit0. This does not establish R17.
+- Prior hosted clean Linux runs42365389357 and42365430843 at ff7d79d succeeded.
+  The extended workflow is a new gate and must be observed independently.
