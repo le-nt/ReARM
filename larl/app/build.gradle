@@ -1,0 +1,113 @@
+import java.security.MessageDigest
+import java.util.Properties
+
+plugins {
+    id 'com.android.application'
+}
+
+def legacyFixtureDir = rootProject.file('versions_test/2.217/lib/armeabi')
+def legacyAssetDir = rootProject.file('versions_test/2.217/assets')
+def generatedAssetsDir = layout.buildDirectory.dir('generated/legacyAssets')
+def generatedJniDir = layout.buildDirectory.dir('generated/legacyJni')
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.isFile()) {
+    localPropertiesFile.withInputStream { localProperties.load(it) }
+}
+def javaString = { value -> '"' + value.replace('\\', '\\\\').replace('"', '\\"') + '"' }
+
+tasks.register('stageLegacyBundle') {
+    inputs.file(new File(legacyFixtureDir, 'libroblox.so'))
+    inputs.file(new File(legacyAssetDir, 'main.1.com.roblox.client.obb'))
+    outputs.dir(generatedAssetsDir)
+
+    doLast {
+        File source = new File(legacyFixtureDir, 'libroblox.so')
+        if (!source.isFile()) {
+            throw new GradleException("Missing build-local fixture: ${source}")
+        }
+
+        File outputDir = generatedAssetsDir.get().file('versions/2.217/armeabi-v7a').asFile
+        outputDir.mkdirs()
+        File destination = new File(outputDir, 'libroblox.so')
+        destination.bytes = source.bytes
+        File obbSource = new File(legacyAssetDir, 'main.1.com.roblox.client.obb')
+        if (!obbSource.isFile()) {
+            throw new GradleException("Missing build-local game assets: ${obbSource}")
+        }
+        File obbDestination = new File(outputDir, 'main.1.com.roblox.client.obb')
+        obbDestination.bytes = obbSource.bytes
+
+        MessageDigest digest = MessageDigest.getInstance('SHA-256')
+        String sha256 = digest.digest(destination.bytes).collect { String.format('%02x', it) }.join()
+        String obbSha256 = digest.digest(obbDestination.bytes).collect { String.format('%02x', it) }.join()
+        new File(outputDir, 'bundle.properties').text = """version=2.217
+abi=armeabi-v7a
+sha256=${sha256}
+file=libroblox.so
+obbFile=main.1.com.roblox.client.obb
+obbSha256=${obbSha256}
+"""
+    }
+}
+
+tasks.register('stageLegacyJni', Copy) {
+    from(new File(legacyFixtureDir, 'libfmodex.so'))
+    into(generatedJniDir.map { it.dir('armeabi-v7a') })
+    doFirst {
+        if (!new File(legacyFixtureDir, 'libfmodex.so').isFile()) {
+            throw new GradleException("Missing build-local dependency: ${new File(legacyFixtureDir, 'libfmodex.so')}")
+        }
+    }
+}
+
+android {
+    namespace 'com.larl.loader'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.larl.loader'
+        minSdk 21
+        targetSdk 35
+        versionCode 1
+        versionName '0.1.0'
+        buildConfigField 'String', 'HEXAGON_BASE_URL', javaString(localProperties.getProperty('hexagonBaseUrl', 'http://www.hexagon.pw/'))
+        buildConfigField 'String', 'HEXAGON_ROBLOSECURITY', javaString(localProperties.getProperty('hexagonRoblosecurity', ''))
+        buildConfigField 'int', 'HEXAGON_PLACE_ID', localProperties.getProperty('hexagonPlaceId', '23924')
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    sourceSets {
+        main {
+            assets.srcDirs += generatedAssetsDir
+            jniLibs.srcDirs += generatedJniDir
+        }
+    }
+
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.13.2'
+}
+
+tasks.configureEach {
+    if (name == 'mergeDebugAssets' || name == 'mergeReleaseAssets') {
+        dependsOn(tasks.named('stageLegacyBundle'))
+    }
+    if (name.endsWith('JniLibFolders')) {
+        dependsOn(tasks.named('stageLegacyJni'))
+    }
+}

@@ -1,0 +1,7 @@
+.gradle/
+build/
+local.properties
+*.iml
+
+# Proprietary, prepatched test inputs are intentionally build-local.
+versions_test/

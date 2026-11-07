@@ -1,0 +1,19 @@
+# Build outputs
+build/
+compile_commands.json
+
+# Third-party build/install byproducts (sources are submodules, see third_party/VERSIONS)
+third_party/sleigh-install/
+*.log
+
+# larl: secrets and proprietary, prepatched test inputs stay build-local
+larl/local.properties
+larl/versions_test/
+larl/.gradle/
+larl/build/
+larl/app/build/
+
+# Game inputs and extracted assets are never committed
+*.obb
+*.apk
+games/*/inputs/

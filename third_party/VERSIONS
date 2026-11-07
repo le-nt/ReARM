@@ -1,0 +1,4 @@
+# Pinned third-party versions for microdroid.
+emsdk     6.0.12          third_party/emsdk (./emsdk install 6.0.12 && ./emsdk activate 6.0.12)
+sleigh    v12.2           third_party/sleigh (lifting-bits packaging of Ghidra 12.2, ref Ghidra_12.2_build)
+sla       ARM:LE:32:v7    third_party/sla/ARM/ARM7_le.sla (compiled from Ghidra 12.2 ARM7_le.slaspec)

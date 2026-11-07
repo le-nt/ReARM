@@ -1,0 +1,6 @@
+[submodule "third_party/emsdk"]
+	path = third_party/emsdk
+	url = https://github.com/emscripten-core/emsdk.git
+[submodule "third_party/sleigh"]
+	path = third_party/sleigh
+	url = https://github.com/lifting-bits/sleigh.git

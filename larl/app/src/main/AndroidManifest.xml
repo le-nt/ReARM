@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-feature android:glEsVersion="0x00020000" android:required="true" />
+
+    <application
+        android:allowBackup="false"
+        android:label="LARL"
+        android:usesCleartextTraffic="true"
+        android:theme="@style/Theme.Larl">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.roblox.client.ActivityGlView"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="false"
+            android:process=":game"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.Larl.Game" />
+    </application>
+</manifest>

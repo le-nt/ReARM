@@ -1,0 +1,6 @@
+# This file is intentionally tracked without credentials. Copy it to local.properties.
+# local.properties is ignored and must never be committed.
+sdk.dir=/home/mollomm1/Android/Sdk
+hexagonBaseUrl=http://www.hexagon.pw/
+hexagonRoblosecurity=
+hexagonPlaceId=23924
