@@ -87,3 +87,15 @@ using a separate `--out` directory per suite.
   four distinct workers, counter400000 OK, exit0. This does not establish R17.
 - Prior hosted clean Linux runs42365389357 and42365430843 at ff7d79d succeeded.
   The extended workflow is a new gate and must be observed independently.
+
+## JNI32 host foundation
+
+- Added bounded guest-pointer JNI 1.6 tables, thread attachment, local/global
+  references, exception state, explicit class/method registry and transactional
+  RegisterNatives. Unsupported functions trap with their slot/function identity.
+- 38 JNI host tests pass on Windows and Linux, including eight concurrent host
+  threads. All five CTest suites pass on both hosts after integration.
+- This is a host subset only: generated guest calls, class loading/bytecode,
+  Java method execution and real client JNI_OnLoad remain unverified.
+- Next: AAPCS32 callback adapter and public ARM/Thumb JNI_OnLoad execution through
+  the generated static dispatcher, followed by native/Node/Chromium checks.

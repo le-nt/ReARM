@@ -70,3 +70,15 @@ Branch: `codex/rearm-reconstruction`. Original M0: `b55568513f697465c6ad22339d1b
   Existing commits and progress were preserved. Account checks confirmed usage allowed.
 
 Never mark a milestone passed without its actual acceptance evidence.
+
+## JNI32 host foundation
+
+- Added bounded guest-pointer JNI 1.6 tables, thread attachment, local/global
+  references, exception state, explicit class/method registry and transactional
+  RegisterNatives. Unsupported functions trap with their slot/function identity.
+- 38 JNI host tests pass on Windows and Linux, including eight concurrent host
+  threads. All five CTest suites pass on both hosts after integration.
+- This is a host subset only: generated guest calls, class loading/bytecode,
+  Java method execution and real client JNI_OnLoad remain unverified.
+- Next: AAPCS32 callback adapter and public ARM/Thumb JNI_OnLoad execution through
+  the generated static dispatcher, followed by native/Node/Chromium checks.
