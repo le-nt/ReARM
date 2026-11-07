@@ -5,6 +5,15 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+enable_testing()
+add_library(rearm_elf elf/elf_image.cpp)
+target_include_directories(rearm_elf PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+add_executable(elf_tests ../tests/elf/elf_image_test.cpp)
+target_link_libraries(elf_tests PRIVATE rearm_elf)
+add_test(NAME elf_loader_relocations COMMAND elf_tests)
+option(REARM_BUILD_SLEIGH_TOOLS "Build tools requiring the pinned SLEIGH dependency" ON)
+if(REARM_BUILD_SLEIGH_TOOLS)
+
 # libsla is built out of tree from third_party/sleigh (see third_party/VERSIONS); its install
 # rules require every processor spec, so link the static archive and headers directly.
 set(MICRODROID_SLEIGH_BUILD "${CMAKE_CURRENT_SOURCE_DIR}/../third_party/sleigh/build"
@@ -20,3 +29,4 @@ set_target_properties(sla PROPERTIES
 
 add_executable(sla_probe tools/sla_probe.cpp)
 target_link_libraries(sla_probe PRIVATE sla)
+endif()
