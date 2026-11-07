@@ -109,7 +109,56 @@ Image Image::parse(std::span<const std::uint8_t> bytes, std::uint32_t bias) {
     if (std::uint64_t(previous.address) + previous.bytes.size() > image.segments_[i].address)
       throw Error("Overlapping PT_LOAD ranges are not supported");
   }
-  if (!dynamic) return image;
+  // Section tables enrich analysis only. PT_LOAD/PT_DYNAMIC remain sufficient
+  // for loading sectionless Android libraries, and dynamic indices stay first.
+  auto append_static_symbols = [&] {
+    const auto section_offset = r.u32(32);
+    const auto section_count = r.u16(48);
+    if (!section_offset && !section_count) return;
+    if (!section_offset || !section_count || r.u16(46) != 40) throw Error("Invalid or unsupported section header table");
+    r.range(section_offset, std::uint64_t(section_count) * 40);
+    for (std::uint32_t section_index = 0; section_index < section_count; ++section_index) {
+      const auto section = std::uint64_t(section_offset) + section_index * 40;
+      if (r.u32(section + 4) != 2) continue;  // SHT_SYMTAB, not SHT_DYNSYM
+      const auto symbols = r.u32(section + 16);
+      const auto size = r.u32(section + 20);
+      const auto link = r.u32(section + 24);
+      if (r.u32(section + 36) != 16 || size % 16 || size / 16 > max_table_entries) throw Error("Invalid static symbol table dimensions");
+      if (link >= section_count) throw Error("Static symbol string table link out of bounds");
+      r.range(symbols, size);
+      const auto strings_section = std::uint64_t(section_offset) + link * 40;
+      if (r.u32(strings_section + 4) != 3) throw Error("Static symbol table does not link a string table");
+      const auto strings = r.u32(strings_section + 16);
+      const auto string_size = r.u32(strings_section + 20);
+      r.range(strings, string_size);
+      if (image.symbols_.size() + size / 16 > max_table_entries) throw Error("Combined ELF symbols exceed resource limit");
+      for (std::uint32_t i = 0; i < size / 16; ++i) {
+        const auto pos = std::uint64_t(symbols) + i * 16;
+        const auto name_offset = r.u32(pos);
+        if (name_offset >= string_size) throw Error("Static symbol string offset out of bounds");
+        std::string name;
+        auto j = name_offset;
+        for (; j < string_size; ++j) {
+          const auto c = bytes[std::uint64_t(strings) + j];
+          if (!c) break;
+          name.push_back(static_cast<char>(c));
+          if (name.size() > 65536) throw Error("ELF symbol name exceeds resource limit");
+        }
+        if (j == string_size) throw Error("Unterminated static symbol name");
+        const auto info = bytes[pos + 12];
+        const auto symbol_section = r.u16(pos + 14);
+        if (symbol_section == 0xffff) throw Error("Extended ELF symbol section indices are unsupported");
+        if (symbol_section < 0xff00 && symbol_section >= section_count) throw Error("Static symbol section index out of bounds");
+        auto value = r.u32(pos + 4);
+        if (symbol_section && symbol_section < 0xff00 && (info & 15) != 6) value = address(value, bias);
+        image.symbols_.push_back({std::move(name), value, r.u32(pos + 8), static_cast<std::uint8_t>(info >> 4), static_cast<std::uint8_t>(info & 15), symbol_section});
+      }
+    }
+  };
+  if (!dynamic) {
+    append_static_symbols();
+    return image;
+  }
   const auto [dynaddr, dynsize] = *dynamic;
   if (dynsize % 8 || dynsize / 8 > max_table_entries || !image.mapped(dynaddr, dynsize)) throw Error("Invalid PT_DYNAMIC range");
   std::map<std::uint32_t, std::uint32_t> tags;
@@ -213,10 +262,11 @@ Image Image::parse(std::span<const std::uint8_t> bytes, std::uint32_t bias) {
       const auto section = image.read16(pos + 14);
       auto value = image.read32(pos + 4);
       // STT_TLS values are offsets within a TLS image, not guest addresses.
-      if (section && section != 0xfff1 && (info & 15) != 6) value = address(value, bias);
+      if (section && section < 0xff00 && (info & 15) != 6) value = address(value, bias);
       image.symbols_.push_back({std::move(name), value, image.read32(pos + 8), static_cast<std::uint8_t>(info >> 4), static_cast<std::uint8_t>(info & 15), section});
     }
   }
+  append_static_symbols();
   return image;
 }
 

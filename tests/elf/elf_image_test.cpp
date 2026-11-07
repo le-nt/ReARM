@@ -56,6 +56,21 @@ std::vector<std::uint8_t> dynamic_fixture(std::uint32_t reltype = 23, std::uint3
   put32(b, 0x300, 0x1234);
   return b;
 }
+std::vector<std::uint8_t> with_static_symbols(std::vector<std::uint8_t> b) {
+  b.resize(0x700);
+  put32(b, 32, 0x500); put16(b, 46, 40); put16(b, 48, 4);
+  // Section 0 null; 1 symbols; 2 strings; 3 executable bytes.
+  put32(b, 0x52c, 2); put32(b, 0x538, 0x600); put32(b, 0x53c, 32);
+  put32(b, 0x540, 2); put32(b, 0x54c, 16);
+  put32(b, 0x554, 3); put32(b, 0x560, 0x640); put32(b, 0x564, 16);
+  put32(b, 0x57c, 1); put32(b, 0x580, 6); put32(b, 0x584, 0x1000);
+  put32(b, 0x588, 0x100); put32(b, 0x58c, 0x400);
+  put32(b, 0x610, 1); put32(b, 0x614, 0x1101); put32(b, 0x618, 8);
+  b[0x61c] = 0x12; put16(b, 0x61e, 3);
+  const char names[] = "\0local_fn\0";
+  for (std::size_t i = 0; i < sizeof(names); ++i) b[0x640 + i] = names[i];
+  return b;
+}
 }
 
 int main() {
@@ -110,6 +125,15 @@ int main() {
     test("dynamic must terminate", [] { auto b = dynamic_fixture(); for (unsigned i = 0; i < 12; ++i) { put32(b, 0x120 + i * 8, 1); put32(b, 0x124 + i * 8, 1); } fails([&] { Image::parse(b); }, "DT_NULL"); });
     test("memory wraparound", [] { auto image = Image::parse(fixture()); require(!image.mapped(0xffffffff, 2), "wraparound mapped"); fails([&] { image.read32(0xffffffff); }, "Unmapped"); });
     test("write read", [] { auto image = Image::parse(fixture()); image.write32(0x1101, 0xfedcba98); require(image.read32(0x1101) == 0xfedcba98, "unaligned mapped writes"); });
+    test("static symbol lookup", [] { auto image = Image::parse(with_static_symbols(fixture()), 0x10000); const auto symbol = image.find_symbol("local_fn"); require(symbol && symbol->value == 0x11101 && symbol->type == 2 && symbol->size == 8, "static symbol metadata/bias"); });
+    test("static symbols preserve dynamic indices", [] { auto image = Image::parse(with_static_symbols(dynamic_fixture(22, 1))); require(image.find_symbol("local_fn").has_value(), "static symbol missing"); image.relocate(); require(image.read32(0x1200) == 0x1301, "static symbols shifted dynamic symbol indices"); });
+    test("static string link", [] { auto b = with_static_symbols(fixture()); put32(b, 0x540, 4); fails([&] { Image::parse(b); }, "link out of bounds"); });
+    test("static string offset", [] { auto b = with_static_symbols(fixture()); put32(b, 0x610, 16); fails([&] { Image::parse(b); }, "string offset"); });
+    test("static symbol dimensions", [] { auto b = with_static_symbols(fixture()); put32(b, 0x54c, 15); fails([&] { Image::parse(b); }, "symbol table dimensions"); });
+    test("static section index", [] { auto b = with_static_symbols(fixture()); put16(b, 0x61e, 4); fails([&] { Image::parse(b); }, "section index"); });
+    test("static extended section index", [] { auto b = with_static_symbols(fixture()); put16(b, 0x61e, 0xffff); fails([&] { Image::parse(b); }, "Extended ELF"); });
+    test("truncated sections", [] { auto b = with_static_symbols(fixture()); b.resize(0x550); fails([&] { Image::parse(b); }, "truncated"); });
+    test("absolute symbols retain value", [] { auto b = with_static_symbols(fixture()); put16(b, 0x61e, 0xfff1); auto image = Image::parse(b, 0x10000); require(image.find_symbol("local_fn")->value == 0x1101, "absolute symbol incorrectly biased"); });
   } catch (...) { return 1; }
   std::cout << "PASS " << tests << " ELF loader/relocation tests\n";
 }

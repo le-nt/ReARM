@@ -1,0 +1,66 @@
+name: Public compiler validation
+
+on:
+  push:
+    branches: [main, codex/rearm-reconstruction]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: public-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  linux-e2e:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      CC: clang-18
+      CXX: clang++-18
+      REARM_JOBS: "4"
+      REARM_INSTALL_BROWSER: "0"
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Install baseline host packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-18 lld-18 cmake ninja-build zlib1g-dev python3-venv nodejs
+      - name: Bootstrap locked dependencies and build
+        run: bash tools/bootstrap.sh
+      - name: Native loader and compiler tests
+        run: |
+          ctest --test-dir build/recomp --output-on-failure --no-tests=error
+          build/venv/bin/python -m unittest discover -s tests/reference -p 'test_*.py' -v
+          node --test tools/download.test.mjs
+          build/venv/bin/python tests/reference/check_unsupported.py \
+            --rearm build/recomp/rearm --clang clang-18 \
+            --sla third_party/sla/ARM/ARM7_le.sla
+      - name: Install pinned Chromium and system libraries
+        run: build/venv/bin/python -m playwright install --with-deps chromium
+      - name: ARM ELF to native and WASM differential validation
+        run: |
+          for fixture in early_pipeline condition_flags interworking thumb_it; do
+            extension=c
+            if [ "$fixture" = thumb_it ]; then extension=S; fi
+            build/venv/bin/python tools/validate_e2e.py \
+              --rearm build/recomp/rearm \
+              --sla third_party/sla/ARM/ARM7_le.sla \
+              --clang clang-18 --cxx clang++-18 \
+              --emxx third_party/emsdk/upstream/emscripten/em++ \
+              --fixture "tests/fixtures/$fixture.$extension" \
+              --out "build/e2e-$fixture" --node node --browser
+          done
+      - name: Retain public-fixture evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: public-validation-evidence
+          path: |
+            build/evidence/
+            build/e2e-*/*.json
+            build/negative/*.json
+            build/recomp/Testing/Temporary/LastTest.log
+          if-no-files-found: warn

@@ -11,6 +11,9 @@ target_include_directories(rearm_elf PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 add_executable(elf_tests ../tests/elf/elf_image_test.cpp)
 target_link_libraries(elf_tests PRIVATE rearm_elf)
 add_test(NAME elf_loader_relocations COMMAND elf_tests)
+get_filename_component(REARM_COMPILER_BIN "${CMAKE_CXX_COMPILER}" DIRECTORY)
+set_tests_properties(elf_loader_relocations PROPERTIES TIMEOUT 30
+  ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:${REARM_COMPILER_BIN}")
 option(REARM_BUILD_SLEIGH_TOOLS "Build tools requiring the pinned SLEIGH dependency" ON)
 if(REARM_BUILD_SLEIGH_TOOLS)
 
@@ -29,4 +32,14 @@ set_target_properties(sla PROPERTIES
 
 add_executable(sla_probe tools/sla_probe.cpp)
 target_link_libraries(sla_probe PRIVATE sla)
+add_executable(rearm tools/rearm.cpp lift/lifter.cpp emit/emitter.cpp)
+target_link_libraries(rearm PRIVATE rearm_elf sla)
+add_library(rearm_ir ir/verify.cpp)
+target_link_libraries(rearm_ir PUBLIC rearm_elf sla)
+target_link_libraries(rearm PRIVATE rearm_ir)
+add_executable(ir_tests ../tests/ir/verify_test.cpp)
+target_link_libraries(ir_tests PRIVATE rearm_ir)
+add_test(NAME normalized_ir_verifier COMMAND ir_tests)
+set_tests_properties(normalized_ir_verifier PROPERTIES TIMEOUT 30
+  ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:${REARM_COMPILER_BIN}")
 endif()

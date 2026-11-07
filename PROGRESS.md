@@ -7,19 +7,47 @@ Branch: `codex/rearm-reconstruction`. Original M0: `b55568513f697465c6ad22339d1b
 
 ## Current checkpoint
 
-- R01 in progress: isolated checkout, portable compiler execution verified; pinned dependencies provisioning.
-- R02/R03 in progress: reusable C++ ELF32 loader and core REL relocation implementation;
-  30 deterministic tests executed successfully on Windows with LLVM MinGW 23.1.5.
-- Next: build the pinned SLEIGH library, integrate raw p-code lifting and static C++ emission,
-  execute source-built ARM fixtures as native code and WASM against Unicorn.
+- R01 in progress: portable Windows toolchain and pinned SLEIGH/Emscripten installed and executed;
+  Linux bootstrap and CI prepared but not yet executed.
+- R02/R03 in progress: 39 deterministic ELF loader/relocation tests pass, including optional
+  static symbols; real ARM and Thumb ELF fixtures load and translate.
+- Early end-to-end checkpoint PASSED on Windows: source-built ARM/Thumb at O0/O2, four
+  seeds each, translated native + Node WASM + Chromium WASM all match independent Unicorn.
+  This is 16 fixture cases and 48 full-state backend comparisons. Evidence:
+  `tests/evidence/early-e2e-windows.json` (public synthetic fixtures only).
+- SLEIGH lifting, initial instruction IR, static integer C++ emitter and bounded iterative
+  dispatch are working for the exercised subset. No production interpreter or decoder.
+- Next: IR verification, condition-flag and indirect/interworking fixtures, larger seeded
+  validation, Linux CI execution and measured performance expansion.
 - Full R02/R03 acceptance is not yet claimed; broader real-linker and fuzz coverage remains.
+
+## Expanded verified checkpoint
+
+- Four suites (baseline, condition flags, indirect/interworking, Thumb IT regression)
+  pass64 input/build cases across Windows-native, Node-WASM and Chromium-WASM:
+  **192 full-state comparisons** against Unicorn.
+- Native Linux SLEIGH/compiler builds and CTest pass under Ubuntu24.04 WSL/Clang18.
+  Linux-generated execution matches the same64 hashed reference cases:
+  **256 total backend comparisons** across both host platforms.
+- Integrated IR verifier:47 tests pass. ELF suite39, Python harness22,
+  downloader5 and unsupported-SVC rejection2 cases also pass.
+- Fixed the Thumb IT noflow context leak; the minimized regression remains in Git.
+- Next: fresh Linux bootstrap/CI, ET_DYN end-to-end relocations at multiple biases,
+  larger seeded validation, and dispatcher refinements.
 
 ## Environment and blockers
 
-- WSL enumeration returns access denied. Linux CI/bootstrap will be added but is unverified locally.
+- WSL was initially denied under restricted permissions. After the permission change,
+  Ubuntu24.04 WSL native builds/tests/execution pass. Fresh bootstrap and hosted CI
+  remain distinct unverified gates.
 - Python 3.12.10, Ninja 1.13.0 and LLVM MinGW 20261104 were installed in the enclosing workspace.
-- Emscripten 6.0.12 and SLEIGH v12.2 are being provisioned.
+- Emscripten 6.0.12 and SLEIGH v12.2 built/executed successfully.
 - Local execution requires this computer to remain awake and online; no always-on host verified.
 - No Roblox binaries are present or needed for current general-purpose compiler work.
+- Git CLI push cannot use the Windows credential store. The authenticated GitHub connector
+  publishes verified commits, then local history is synchronized to the remote checkpoint.
+- Published initial checkpoint: `4ce418b675d201d048c6a78fb85c625f59671740`.
+- Goal service last returned `usageLimited`; workers stopped. Do not claim it is active
+  or unattended-ready until the service confirms restored availability.
 
 Never mark a milestone passed without its actual acceptance evidence.

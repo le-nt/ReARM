@@ -1,0 +1,214 @@
+{
+  "passed": true,
+  "cases": 64,
+  "runs": [
+    {
+      "suite": "early_pipeline",
+      "variant": "arm-o0",
+      "cases": 4,
+      "passed": true,
+      "input_sha256": "f92e6e86a1200efa6b4c1631e5e84bb25a6421042d8f1d1879a8071c262910c4",
+      "compile_and_run_seconds": 2.947314170999988,
+      "translation": {
+        "instructions": 71,
+        "pcode_ops": 291,
+        "translation_seconds": 0.0739309
+      }
+    },
+    {
+      "suite": "early_pipeline",
+      "variant": "arm-o2",
+      "cases": 4,
+      "passed": true,
+      "input_sha256": "360a310c15887439f63662b9961780d0fdb3801feb6946e6a0756c15f68a0f45",
+      "compile_and_run_seconds": 1.3220710029999907,
+      "translation": {
+        "instructions": 29,
+        "pcode_ops": 190,
+        "translation_seconds": 0.0645356
+      }
+    },
+    {
+      "suite": "early_pipeline",
+      "variant": "thumb-o0",
+      "cases": 4,
+      "passed": true,
+      "input_sha256": "26b96437b3ca28f55a49f1d540efa1e23b3646f3151d8fea477c2d805d8f2140",
+      "compile_and_run_seconds": 1.615459536999964,
+      "translation": {
+        "instructions": 69,
+        "pcode_ops": 219,
+        "translation_seconds": 0.0618302
+      }
+    },
+    {
+      "suite": "early_pipeline",
+      "variant": "thumb-o2",
+      "cases": 4,
+      "passed": true,
+      "input_sha256": "10c4a08ad823029b7181d54c5ab89aca8007efb6502376a8f2fea577252e82ce",
+      "compile_and_run_seconds": 1.3489671730000055,
+      "translation": {
+        "instructions": 28,
+        "pcode_ops": 167,
+        "translation_seconds": 0.0570057
+      }
+    },
+    {
+      "suite": "condition_flags",
+      "variant": "arm-o0",
+      "cases": 4,
+      "passed": true,
+      "input_sha256": "6f27fe7fbd65ff3917bb8952151d39cfdd2fb323d550d5718cda9fdddac81701",
+      "compile_and_run_seconds": 2.6161773900000185,
+      "translation": {
+        "instructions": 87,
+        "pcode_ops": 418,
+        "translation_seconds": 0.0784305
+      }
+    },
+    {
+      "suite": "condition_flags",
+      "variant": "arm-o2",
+      "cases": 4,
+      "passed": true,
+      "input_sha256": "b9e3ddb6b068e4bc10c1950cc53938960b5ae39d034c3f2972ddbb0277357a0f",
+      "compile_and_run_seconds": 2.2389953689999516,
+      "translation": {
+        "instructions": 46,
+        "pcode_ops": 410,
+        "translation_seconds": 0.0666079
+      }
+    },
+    {
+      "suite": "condition_flags",
+      "variant": "thumb-o0",
+      "cases": 4,
+      "passed": true,
+      "input_sha256": "ee07a54c05d43972c7f05d1d0a8707435acdbbe8ebced2edcc70c6a3e14084f4",
+      "compile_and_run_seconds": 2.760838485000022,
+      "translation": {
+        "instructions": 91,
+        "pcode_ops": 360,
+        "translation_seconds": 0.0799764
+      }
+    },
+    {
+      "suite": "condition_flags",
+      "variant": "thumb-o2",
+      "cases": 4,
+      "passed": true,
+      "input_sha256": "faf0899e71cb00273247f540c90a3674c1922d6c80579c46791ae384f0e8d0dc",
+      "compile_and_run_seconds": 1.874474934000034,
+      "translation": {
+        "instructions": 51,
+        "pcode_ops": 302,
+        "translation_seconds": 0.0605328
+      }
+    },
+    {
+      "suite": "interworking",
+      "variant": "arm-o0",
+      "cases": 4,
+      "passed": true,
+      "input_sha256": "4d7156179672e2d71d43bc0fe15a53d1824af2c3442aec930f57feeaedef3e05",
+      "compile_and_run_seconds": 1.9183671050000157,
+      "translation": {
+        "instructions": 64,
+        "pcode_ops": 285,
+        "translation_seconds": 0.0717621
+      }
+    },
+    {
+      "suite": "interworking",
+      "variant": "arm-o2",
+      "cases": 4,
+      "passed": true,
+      "input_sha256": "777e400a6d15bf8a7231e354d7bb81d7f497e7b4fced3ab332db539d41022de8",
+      "compile_and_run_seconds": 1.4531625389999476,
+      "translation": {
+        "instructions": 35,
+        "pcode_ops": 205,
+        "translation_seconds": 0.0673657
+      }
+    },
+    {
+      "suite": "interworking",
+      "variant": "thumb-o0",
+      "cases": 4,
+      "passed": true,
+      "input_sha256": "bbe0d1137cae4009aad3f1a757d20e67dd02f2a24922508e318e7025c02d8b57",
+      "compile_and_run_seconds": 1.8865158759999758,
+      "translation": {
+        "instructions": 66,
+        "pcode_ops": 267,
+        "translation_seconds": 0.069175
+      }
+    },
+    {
+      "suite": "interworking",
+      "variant": "thumb-o2",
+      "cases": 4,
+      "passed": true,
+      "input_sha256": "c8a6e54cc1be6ef04e9d45dd278cc98db29202f4942f3c17c81351ffb71942ae",
+      "compile_and_run_seconds": 1.5607526300000245,
+      "translation": {
+        "instructions": 36,
+        "pcode_ops": 199,
+        "translation_seconds": 0.0670894
+      }
+    },
+    {
+      "suite": "thumb_it",
+      "variant": "arm-o0",
+      "cases": 4,
+      "passed": true,
+      "input_sha256": "a48f6e2647fe4fc7a30240d2a27d3c15f79bc0d3fc38c33037556be223ba4463",
+      "compile_and_run_seconds": 1.1813017249999689,
+      "translation": {
+        "instructions": 8,
+        "pcode_ops": 36,
+        "translation_seconds": 0.0627356
+      }
+    },
+    {
+      "suite": "thumb_it",
+      "variant": "arm-o2",
+      "cases": 4,
+      "passed": true,
+      "input_sha256": "a48f6e2647fe4fc7a30240d2a27d3c15f79bc0d3fc38c33037556be223ba4463",
+      "compile_and_run_seconds": 1.1986344089999648,
+      "translation": {
+        "instructions": 8,
+        "pcode_ops": 36,
+        "translation_seconds": 0.0589455
+      }
+    },
+    {
+      "suite": "thumb_it",
+      "variant": "thumb-o0",
+      "cases": 4,
+      "passed": true,
+      "input_sha256": "a48f6e2647fe4fc7a30240d2a27d3c15f79bc0d3fc38c33037556be223ba4463",
+      "compile_and_run_seconds": 1.152831348999996,
+      "translation": {
+        "instructions": 8,
+        "pcode_ops": 36,
+        "translation_seconds": 0.0577919
+      }
+    },
+    {
+      "suite": "thumb_it",
+      "variant": "thumb-o2",
+      "cases": 4,
+      "passed": true,
+      "input_sha256": "a48f6e2647fe4fc7a30240d2a27d3c15f79bc0d3fc38c33037556be223ba4463",
+      "compile_and_run_seconds": 1.1661881280000443,
+      "translation": {
+        "instructions": 8,
+        "pcode_ops": 36,
+        "translation_seconds": 0.0649259
+      }
+    }
+  ]
+}

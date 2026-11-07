@@ -1,0 +1,983 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-07",
+  "platform": "Windows x86_64",
+  "compiler": "Clang 23.1.5 LLVM MinGW 20261104",
+  "emscripten": "6.0.12",
+  "reference": "Unicorn 2.1.4",
+  "browser": "Chromium 141.0.7390.37 Playwright 1.56.0",
+  "comparison": "all 16 registers, CPSR mask 0xf0000020, 64 guest output bytes",
+  "cases": 64,
+  "backend_comparisons": 192,
+  "passed": true,
+  "suites": [
+    {
+      "suite": "early_pipeline",
+      "cases": 16,
+      "backend_comparisons": 48,
+      "passed": true,
+      "steps": [
+        {
+          "elapsed_seconds": 0.15279179999197368,
+          "peak_sampled_rss_bytes": 36696064,
+          "fixture": "arm-o0",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.053714199995738454,
+          "peak_sampled_rss_bytes": 7421952,
+          "fixture": "arm-o0",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 71,
+              "pcode_ops": 291,
+              "translation_seconds": 0.0423111
+            },
+            "instructions_per_second": 1321.8106200154327,
+            "pcode_ops_per_second": 5417.561836964661
+          }
+        },
+        {
+          "elapsed_seconds": 1.2244918999931542,
+          "peak_sampled_rss_bytes": 96100352,
+          "fixture": "arm-o0",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 3.5871254000085173,
+          "peak_sampled_rss_bytes": 138051584,
+          "fixture": "arm-o0",
+          "stage": "wasm_compile"
+        },
+        {
+          "elapsed_seconds": 0.18068590000621043,
+          "peak_sampled_rss_bytes": 57114624,
+          "fixture": "arm-o2",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.08452940000279341,
+          "peak_sampled_rss_bytes": 15945728,
+          "fixture": "arm-o2",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 29,
+              "pcode_ops": 190,
+              "translation_seconds": 0.0664572
+            },
+            "instructions_per_second": 343.0759002079945,
+            "pcode_ops_per_second": 2247.738656535136
+          }
+        },
+        {
+          "elapsed_seconds": 1.270229699992342,
+          "peak_sampled_rss_bytes": 91631616,
+          "fixture": "arm-o2",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 4.514004600001499,
+          "peak_sampled_rss_bytes": 136376320,
+          "fixture": "arm-o2",
+          "stage": "wasm_compile"
+        },
+        {
+          "elapsed_seconds": 0.166186700007529,
+          "peak_sampled_rss_bytes": 23109632,
+          "fixture": "thumb-o0",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.06741129999863915,
+          "peak_sampled_rss_bytes": 8470528,
+          "fixture": "thumb-o0",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 69,
+              "pcode_ops": 219,
+              "translation_seconds": 0.053392
+            },
+            "instructions_per_second": 1023.567265449456,
+            "pcode_ops_per_second": 3248.7134946874044
+          }
+        },
+        {
+          "elapsed_seconds": 1.2253203999862308,
+          "peak_sampled_rss_bytes": 95625216,
+          "fixture": "thumb-o0",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 3.8426130000007106,
+          "peak_sampled_rss_bytes": 138027008,
+          "fixture": "thumb-o0",
+          "stage": "wasm_compile"
+        },
+        {
+          "elapsed_seconds": 0.1672897000098601,
+          "peak_sampled_rss_bytes": 42303488,
+          "fixture": "thumb-o2",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.06867020000936463,
+          "peak_sampled_rss_bytes": 5640192,
+          "fixture": "thumb-o2",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 28,
+              "pcode_ops": 167,
+              "translation_seconds": 0.0421382
+            },
+            "instructions_per_second": 407.7460091303303,
+            "pcode_ops_per_second": 2431.913697313041
+          }
+        },
+        {
+          "elapsed_seconds": 1.0598629000014625,
+          "peak_sampled_rss_bytes": 93388800,
+          "fixture": "thumb-o2",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 3.5275268999976106,
+          "peak_sampled_rss_bytes": 134127616,
+          "fixture": "thumb-o2",
+          "stage": "wasm_compile"
+        }
+      ],
+      "artifacts": [
+        {
+          "name": "arm-o0.elf",
+          "size_bytes": 70176,
+          "sha256": "f92e6e86a1200efa6b4c1631e5e84bb25a6421042d8f1d1879a8071c262910c4"
+        },
+        {
+          "name": "arm-o0.cpp",
+          "size_bytes": 51499,
+          "sha256": "ffce6f61f1c5c6b54ff2318b78cb2b8bf776908b8d5578307d07b5d8be6e3e0b"
+        },
+        {
+          "name": "arm-o0.exe",
+          "size_bytes": 81920,
+          "sha256": "ee66141a17ed6c6018a18f6857791ccaace861ed965a2c388ee46888a927e912"
+        },
+        {
+          "name": "arm-o0.js",
+          "size_bytes": 59662,
+          "sha256": "d318e7ea494f38daa4f9878f6550d4c5b716297bf34eb408cce535e61093b392"
+        },
+        {
+          "name": "arm-o0.wasm",
+          "size_bytes": 145407,
+          "sha256": "477405003f0cc965ce021e30256111a0a5376507e82bc06632d05aab42c60eb1"
+        },
+        {
+          "name": "arm-o2.elf",
+          "size_bytes": 70176,
+          "sha256": "360a310c15887439f63662b9961780d0fdb3801feb6946e6a0756c15f68a0f45"
+        },
+        {
+          "name": "arm-o2.cpp",
+          "size_bytes": 31216,
+          "sha256": "1ee70c928f0701250005b61084451bc8aa9c806c2b26b802a5e769ea6c3372ad"
+        },
+        {
+          "name": "arm-o2.exe",
+          "size_bytes": 78848,
+          "sha256": "8ade961a46a70d210cd7ce57173c7cb36e6cb162e008d1fbda63e9c70df49562"
+        },
+        {
+          "name": "arm-o2.js",
+          "size_bytes": 59662,
+          "sha256": "173ae7dce25f37c9f3778403f8f4b646439411e2b76eac749117e3cea1bef8f6"
+        },
+        {
+          "name": "arm-o2.wasm",
+          "size_bytes": 142427,
+          "sha256": "24049f3d713f2744de9589806600e4cc4b2f9c275be1742fe691510825319e2b"
+        },
+        {
+          "name": "thumb-o0.elf",
+          "size_bytes": 70176,
+          "sha256": "26b96437b3ca28f55a49f1d540efa1e23b3646f3151d8fea477c2d805d8f2140"
+        },
+        {
+          "name": "thumb-o0.cpp",
+          "size_bytes": 42712,
+          "sha256": "49eb5e533068b514165570d549acae5c8bfeeaba73d38877330d9d15e69193a9"
+        },
+        {
+          "name": "thumb-o0.exe",
+          "size_bytes": 81408,
+          "sha256": "5769f3a24423972e9e6a407d2da8846d3744040346813146385de404a17002da"
+        },
+        {
+          "name": "thumb-o0.js",
+          "size_bytes": 59664,
+          "sha256": "fcb60f0e29bef0315d25fdb681d73b1d5271e1bc05e4c5d3597009f02f23a9e2"
+        },
+        {
+          "name": "thumb-o0.wasm",
+          "size_bytes": 145443,
+          "sha256": "87475c9a93e4cce899dd665602b1544754eee42683f0ff586c2a3618f0312ada"
+        },
+        {
+          "name": "thumb-o2.elf",
+          "size_bytes": 70176,
+          "sha256": "10c4a08ad823029b7181d54c5ab89aca8007efb6502376a8f2fea577252e82ce"
+        },
+        {
+          "name": "thumb-o2.cpp",
+          "size_bytes": 27771,
+          "sha256": "b53f441b54d4ffb6b7b6e8420835b623b0d06693e090e5913738f3a9b829848b"
+        },
+        {
+          "name": "thumb-o2.exe",
+          "size_bytes": 79360,
+          "sha256": "8304cf46ba315ca053641caa434f6ddece13e223e004072043e10499a0ccf6f8"
+        },
+        {
+          "name": "thumb-o2.js",
+          "size_bytes": 59664,
+          "sha256": "c84254f53c35ff7838de30efafd73da7f38efea9824dff839d75129b30d279a3"
+        },
+        {
+          "name": "thumb-o2.wasm",
+          "size_bytes": 142653,
+          "sha256": "69543975398a90964ce8da66a1c127f6fd62c90fdf5907f58cdbe1559b3417f2"
+        }
+      ]
+    },
+    {
+      "suite": "condition_flags",
+      "cases": 16,
+      "backend_comparisons": 48,
+      "passed": true,
+      "steps": [
+        {
+          "elapsed_seconds": 0.1597438000026159,
+          "peak_sampled_rss_bytes": 21422080,
+          "fixture": "arm-o0",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.07479040000180248,
+          "peak_sampled_rss_bytes": 8040448,
+          "fixture": "arm-o0",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 87,
+              "pcode_ops": 418,
+              "translation_seconds": 0.0509017
+            },
+            "instructions_per_second": 1163.250898483004,
+            "pcode_ops_per_second": 5588.952592711445
+          }
+        },
+        {
+          "elapsed_seconds": 1.8590230999980122,
+          "peak_sampled_rss_bytes": 95883264,
+          "fixture": "arm-o0",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 3.936360000006971,
+          "peak_sampled_rss_bytes": 139444224,
+          "fixture": "arm-o0",
+          "stage": "wasm_compile"
+        },
+        {
+          "elapsed_seconds": 0.16901239998696838,
+          "peak_sampled_rss_bytes": 21426176,
+          "fixture": "arm-o2",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.06722609999997076,
+          "peak_sampled_rss_bytes": 15945728,
+          "fixture": "arm-o2",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 46,
+              "pcode_ops": 410,
+              "translation_seconds": 0.0527541
+            },
+            "instructions_per_second": 684.2580485855941,
+            "pcode_ops_per_second": 6098.821737393339
+          }
+        },
+        {
+          "elapsed_seconds": 1.2735933999938425,
+          "peak_sampled_rss_bytes": 95367168,
+          "fixture": "arm-o2",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 3.816464799994719,
+          "peak_sampled_rss_bytes": 135847936,
+          "fixture": "arm-o2",
+          "stage": "wasm_compile"
+        },
+        {
+          "elapsed_seconds": 0.1652880999899935,
+          "peak_sampled_rss_bytes": 23097344,
+          "fixture": "thumb-o0",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.05707059999986086,
+          "peak_sampled_rss_bytes": 9314304,
+          "fixture": "thumb-o0",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 91,
+              "pcode_ops": 360,
+              "translation_seconds": 0.0456679
+            },
+            "instructions_per_second": 1594.5162658220145,
+            "pcode_ops_per_second": 6307.976436218958
+          }
+        },
+        {
+          "elapsed_seconds": 1.869118199989316,
+          "peak_sampled_rss_bytes": 92454912,
+          "fixture": "thumb-o0",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 4.869099200004712,
+          "peak_sampled_rss_bytes": 136740864,
+          "fixture": "thumb-o0",
+          "stage": "wasm_compile"
+        },
+        {
+          "elapsed_seconds": 0.1721294000017224,
+          "peak_sampled_rss_bytes": 37011456,
+          "fixture": "thumb-o2",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.06581119999464136,
+          "peak_sampled_rss_bytes": 6770688,
+          "fixture": "thumb-o2",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 51,
+              "pcode_ops": 302,
+              "translation_seconds": 0.0421865
+            },
+            "instructions_per_second": 774.9440825293058,
+            "pcode_ops_per_second": 4588.884567134321
+          }
+        },
+        {
+          "elapsed_seconds": 1.3930880000116304,
+          "peak_sampled_rss_bytes": 91955200,
+          "fixture": "thumb-o2",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 4.23620289999235,
+          "peak_sampled_rss_bytes": 136249344,
+          "fixture": "thumb-o2",
+          "stage": "wasm_compile"
+        }
+      ],
+      "artifacts": [
+        {
+          "name": "arm-o0.elf",
+          "size_bytes": 70160,
+          "sha256": "6f27fe7fbd65ff3917bb8952151d39cfdd2fb323d550d5718cda9fdddac81701"
+        },
+        {
+          "name": "arm-o0.cpp",
+          "size_bytes": 72622,
+          "sha256": "b05e681d091a3d54b6baf21c8da12754b68199a9f3f079b84eadece7d34f5653"
+        },
+        {
+          "name": "arm-o0.exe",
+          "size_bytes": 83456,
+          "sha256": "7c87302dcc4edb9d52d907682dbf22d3f94d9bece414e958c957258cf3ee30b5"
+        },
+        {
+          "name": "arm-o0.js",
+          "size_bytes": 59662,
+          "sha256": "d318e7ea494f38daa4f9878f6550d4c5b716297bf34eb408cce535e61093b392"
+        },
+        {
+          "name": "arm-o0.wasm",
+          "size_bytes": 146805,
+          "sha256": "dcd1304db55fd7ed7d9d016fc5af06478952e1b4b6c55ee6ad43b0335c21094b"
+        },
+        {
+          "name": "arm-o2.elf",
+          "size_bytes": 70160,
+          "sha256": "b9e3ddb6b068e4bc10c1950cc53938960b5ae39d034c3f2972ddbb0277357a0f"
+        },
+        {
+          "name": "arm-o2.cpp",
+          "size_bytes": 59809,
+          "sha256": "4fd202850c4e64cf66b2cb3a4fc598058bc87f4cfc8cd86d4d9064db136d8d09"
+        },
+        {
+          "name": "arm-o2.exe",
+          "size_bytes": 80896,
+          "sha256": "283ceb89ed85c1950c07a8ab0c0c7eede29e582513a9ad6a37cd6c4606b45524"
+        },
+        {
+          "name": "arm-o2.js",
+          "size_bytes": 59662,
+          "sha256": "173ae7dce25f37c9f3778403f8f4b646439411e2b76eac749117e3cea1bef8f6"
+        },
+        {
+          "name": "arm-o2.wasm",
+          "size_bytes": 143939,
+          "sha256": "45580ed9209c0a9568e6e762f37ff76c841c496911ce8ac8bdafe5847c70b81b"
+        },
+        {
+          "name": "thumb-o0.elf",
+          "size_bytes": 70160,
+          "sha256": "ee07a54c05d43972c7f05d1d0a8707435acdbbe8ebced2edcc70c6a3e14084f4"
+        },
+        {
+          "name": "thumb-o0.cpp",
+          "size_bytes": 66015,
+          "sha256": "712ce32201df3d4177560f98c555b63ba3b3d787ccf963ddd4c1bc2155e493eb"
+        },
+        {
+          "name": "thumb-o0.exe",
+          "size_bytes": 83456,
+          "sha256": "ec02f07786360758fa4f5e1a60d03981e3ec7a82b9865afa85a165faeab160d6"
+        },
+        {
+          "name": "thumb-o0.js",
+          "size_bytes": 59664,
+          "sha256": "fcb60f0e29bef0315d25fdb681d73b1d5271e1bc05e4c5d3597009f02f23a9e2"
+        },
+        {
+          "name": "thumb-o0.wasm",
+          "size_bytes": 147227,
+          "sha256": "935f87aeb6aa69a426346c38a8da27acf9357b4d3579d3da9a732d72ee78b63a"
+        },
+        {
+          "name": "thumb-o2.elf",
+          "size_bytes": 70160,
+          "sha256": "faf0899e71cb00273247f540c90a3674c1922d6c80579c46791ae384f0e8d0dc"
+        },
+        {
+          "name": "thumb-o2.cpp",
+          "size_bytes": 46253,
+          "sha256": "37fc2a5b1bdea3450a8dd65510d077aa0a39563fb673fda96cf1d862592fb98e"
+        },
+        {
+          "name": "thumb-o2.exe",
+          "size_bytes": 80384,
+          "sha256": "1f13a12d962e7655d3ced6109a7e62bec04e0910a9a18baef8e39bb7ae7ed1c8"
+        },
+        {
+          "name": "thumb-o2.js",
+          "size_bytes": 59664,
+          "sha256": "c84254f53c35ff7838de30efafd73da7f38efea9824dff839d75129b30d279a3"
+        },
+        {
+          "name": "thumb-o2.wasm",
+          "size_bytes": 144554,
+          "sha256": "df89fea2ae30d5e56a11be8f741ed222f891ac6826e07756d503e5a792d38039"
+        }
+      ]
+    },
+    {
+      "suite": "interworking",
+      "cases": 16,
+      "backend_comparisons": 48,
+      "passed": true,
+      "steps": [
+        {
+          "elapsed_seconds": 0.15686220000497997,
+          "peak_sampled_rss_bytes": 23134208,
+          "fixture": "arm-o0",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.07459750000271015,
+          "peak_sampled_rss_bytes": 6205440,
+          "fixture": "arm-o0",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 64,
+              "pcode_ops": 285,
+              "translation_seconds": 0.0489653
+            },
+            "instructions_per_second": 857.9375984138189,
+            "pcode_ops_per_second": 3820.503367936538
+          }
+        },
+        {
+          "elapsed_seconds": 1.4894386000087252,
+          "peak_sampled_rss_bytes": 96268288,
+          "fixture": "arm-o0",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 4.02421809999214,
+          "peak_sampled_rss_bytes": 136769536,
+          "fixture": "arm-o0",
+          "stage": "wasm_compile"
+        },
+        {
+          "elapsed_seconds": 0.16702160000568256,
+          "peak_sampled_rss_bytes": 57925632,
+          "fixture": "arm-o2",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.059096900004078634,
+          "peak_sampled_rss_bytes": 7819264,
+          "fixture": "arm-o2",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 35,
+              "pcode_ops": 205,
+              "translation_seconds": 0.0473588
+            },
+            "instructions_per_second": 592.2476474668628,
+            "pcode_ops_per_second": 3468.8790780201957
+          }
+        },
+        {
+          "elapsed_seconds": 1.0486583000019891,
+          "peak_sampled_rss_bytes": 92749824,
+          "fixture": "arm-o2",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 3.781277100002626,
+          "peak_sampled_rss_bytes": 137097216,
+          "fixture": "arm-o2",
+          "stage": "wasm_compile"
+        },
+        {
+          "elapsed_seconds": 0.18142600001010578,
+          "peak_sampled_rss_bytes": 21434368,
+          "fixture": "thumb-o0",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.07679130000178702,
+          "peak_sampled_rss_bytes": 12046336,
+          "fixture": "thumb-o0",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 66,
+              "pcode_ops": 267,
+              "translation_seconds": 0.0628202
+            },
+            "instructions_per_second": 859.4723620835186,
+            "pcode_ops_per_second": 3476.9563738833253
+          }
+        },
+        {
+          "elapsed_seconds": 1.8140551000105916,
+          "peak_sampled_rss_bytes": 93540352,
+          "fixture": "thumb-o0",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 4.974476800009143,
+          "peak_sampled_rss_bytes": 136228864,
+          "fixture": "thumb-o0",
+          "stage": "wasm_compile"
+        },
+        {
+          "elapsed_seconds": 0.18052759999409318,
+          "peak_sampled_rss_bytes": 57921536,
+          "fixture": "thumb-o2",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.06426980000105686,
+          "peak_sampled_rss_bytes": 12652544,
+          "fixture": "thumb-o2",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 36,
+              "pcode_ops": 199,
+              "translation_seconds": 0.0533677
+            },
+            "instructions_per_second": 560.1386654292997,
+            "pcode_ops_per_second": 3096.322067234185
+          }
+        },
+        {
+          "elapsed_seconds": 1.0585754000057932,
+          "peak_sampled_rss_bytes": 94150656,
+          "fixture": "thumb-o2",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 3.6699273999984143,
+          "peak_sampled_rss_bytes": 135462912,
+          "fixture": "thumb-o2",
+          "stage": "wasm_compile"
+        }
+      ],
+      "artifacts": [
+        {
+          "name": "arm-o0.elf",
+          "size_bytes": 70320,
+          "sha256": "4d7156179672e2d71d43bc0fe15a53d1824af2c3442aec930f57feeaedef3e05"
+        },
+        {
+          "name": "arm-o0.cpp",
+          "size_bytes": 50272,
+          "sha256": "5bf24a1c3ddd5779c64652ce4be4c28139d9e331c95c51d6196914165a49a693"
+        },
+        {
+          "name": "arm-o0.exe",
+          "size_bytes": 81408,
+          "sha256": "22deb88a3e502b69f7f90464242bb0fde0391a60cf1a37a7865c2110ccd9744d"
+        },
+        {
+          "name": "arm-o0.js",
+          "size_bytes": 59662,
+          "sha256": "d318e7ea494f38daa4f9878f6550d4c5b716297bf34eb408cce535e61093b392"
+        },
+        {
+          "name": "arm-o0.wasm",
+          "size_bytes": 144604,
+          "sha256": "00eec7bbc308928047192fa4137cc09aa2c129c051ce8b7734fb1ca90215b9b2"
+        },
+        {
+          "name": "arm-o2.elf",
+          "size_bytes": 70320,
+          "sha256": "777e400a6d15bf8a7231e354d7bb81d7f497e7b4fced3ab332db539d41022de8"
+        },
+        {
+          "name": "arm-o2.cpp",
+          "size_bytes": 34710,
+          "sha256": "7d63fde3caccc8ce91d89381d8fd164541e593b3512d35fa2551c52d515562da"
+        },
+        {
+          "name": "arm-o2.exe",
+          "size_bytes": 79360,
+          "sha256": "8c0d124026af010e012435ad7ef81218b1dc6c2792da75e6aa6884b1cbbf9498"
+        },
+        {
+          "name": "arm-o2.js",
+          "size_bytes": 59662,
+          "sha256": "173ae7dce25f37c9f3778403f8f4b646439411e2b76eac749117e3cea1bef8f6"
+        },
+        {
+          "name": "arm-o2.wasm",
+          "size_bytes": 142849,
+          "sha256": "7a38736f2b5e87817b4f44670a1f2a37f803efcfebfcaadaa791afcab33ee378"
+        },
+        {
+          "name": "thumb-o0.elf",
+          "size_bytes": 70300,
+          "sha256": "bbe0d1137cae4009aad3f1a757d20e67dd02f2a24922508e318e7025c02d8b57"
+        },
+        {
+          "name": "thumb-o0.cpp",
+          "size_bytes": 48475,
+          "sha256": "0598993d5771db426462afdbf4037b4ced267202defbf9a144c0fe66d4b410dc"
+        },
+        {
+          "name": "thumb-o0.exe",
+          "size_bytes": 80896,
+          "sha256": "4e6d063730b18d0b3851c417ea70a835202f46ee718706639b309b5e076d97cf"
+        },
+        {
+          "name": "thumb-o0.js",
+          "size_bytes": 59664,
+          "sha256": "fcb60f0e29bef0315d25fdb681d73b1d5271e1bc05e4c5d3597009f02f23a9e2"
+        },
+        {
+          "name": "thumb-o0.wasm",
+          "size_bytes": 144642,
+          "sha256": "367934fe9a6acef0b53a0097c6f481f0be5043213cb413b06afa56180ab347e9"
+        },
+        {
+          "name": "thumb-o2.elf",
+          "size_bytes": 70300,
+          "sha256": "c8a6e54cc1be6ef04e9d45dd278cc98db29202f4942f3c17c81351ffb71942ae"
+        },
+        {
+          "name": "thumb-o2.cpp",
+          "size_bytes": 34202,
+          "sha256": "20d182089b308dfd6e466d8dca58975207c3e578b2b8f6f435b8a8f2b14d6af7"
+        },
+        {
+          "name": "thumb-o2.exe",
+          "size_bytes": 79360,
+          "sha256": "35d169adeb09f46677f73fb2a6be2f4799c4eb0570155628095b5ce81ec83b4e"
+        },
+        {
+          "name": "thumb-o2.js",
+          "size_bytes": 59664,
+          "sha256": "c84254f53c35ff7838de30efafd73da7f38efea9824dff839d75129b30d279a3"
+        },
+        {
+          "name": "thumb-o2.wasm",
+          "size_bytes": 142771,
+          "sha256": "60f0d3967991052a9534580386615983bf72ee242ba4930e97fd252509c2d18c"
+        }
+      ]
+    },
+    {
+      "suite": "thumb_it",
+      "cases": 16,
+      "backend_comparisons": 48,
+      "passed": true,
+      "steps": [
+        {
+          "elapsed_seconds": 0.2244726999924751,
+          "peak_sampled_rss_bytes": 38572032,
+          "fixture": "arm-o0",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.08231840000371449,
+          "peak_sampled_rss_bytes": 13246464,
+          "fixture": "arm-o0",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 8,
+              "pcode_ops": 36,
+              "translation_seconds": 0.0654103
+            },
+            "instructions_per_second": 97.18361872484175,
+            "pcode_ops_per_second": 437.32628426178786
+          }
+        },
+        {
+          "elapsed_seconds": 1.16734759999963,
+          "peak_sampled_rss_bytes": 91054080,
+          "fixture": "arm-o0",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 4.194874000007985,
+          "peak_sampled_rss_bytes": 135966720,
+          "fixture": "arm-o0",
+          "stage": "wasm_compile"
+        },
+        {
+          "elapsed_seconds": 0.19746870000381023,
+          "peak_sampled_rss_bytes": 35639296,
+          "fixture": "arm-o2",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.06288019999919925,
+          "peak_sampled_rss_bytes": 8564736,
+          "fixture": "arm-o2",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 8,
+              "pcode_ops": 36,
+              "translation_seconds": 0.0397923
+            },
+            "instructions_per_second": 127.22605844291012,
+            "pcode_ops_per_second": 572.5172629930955
+          }
+        },
+        {
+          "elapsed_seconds": 0.8938815000001341,
+          "peak_sampled_rss_bytes": 93331456,
+          "fixture": "arm-o2",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 3.254587799994624,
+          "peak_sampled_rss_bytes": 134500352,
+          "fixture": "arm-o2",
+          "stage": "wasm_compile"
+        },
+        {
+          "elapsed_seconds": 0.15378819999750704,
+          "peak_sampled_rss_bytes": 38453248,
+          "fixture": "thumb-o0",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.0704126000055112,
+          "peak_sampled_rss_bytes": 7958528,
+          "fixture": "thumb-o0",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 8,
+              "pcode_ops": 36,
+              "translation_seconds": 0.0505585
+            },
+            "instructions_per_second": 113.61602894047145,
+            "pcode_ops_per_second": 511.2721302321215
+          }
+        },
+        {
+          "elapsed_seconds": 0.83906990000105,
+          "peak_sampled_rss_bytes": 89919488,
+          "fixture": "thumb-o0",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 3.2175549999956274,
+          "peak_sampled_rss_bytes": 132968448,
+          "fixture": "thumb-o0",
+          "stage": "wasm_compile"
+        },
+        {
+          "elapsed_seconds": 0.16191860000253655,
+          "peak_sampled_rss_bytes": 37380096,
+          "fixture": "thumb-o2",
+          "stage": "arm_compile"
+        },
+        {
+          "elapsed_seconds": 0.07209709999733604,
+          "peak_sampled_rss_bytes": 18137088,
+          "fixture": "thumb-o2",
+          "stage": "translate",
+          "translation": {
+            "summary": {
+              "instructions": 8,
+              "pcode_ops": 36,
+              "translation_seconds": 0.0608418
+            },
+            "instructions_per_second": 110.96146724758134,
+            "pcode_ops_per_second": 499.32660261411604
+          }
+        },
+        {
+          "elapsed_seconds": 0.8319038000045111,
+          "peak_sampled_rss_bytes": 94081024,
+          "fixture": "thumb-o2",
+          "stage": "native_compile"
+        },
+        {
+          "elapsed_seconds": 3.246392500004731,
+          "peak_sampled_rss_bytes": 134373376,
+          "fixture": "thumb-o2",
+          "stage": "wasm_compile"
+        }
+      ],
+      "artifacts": [
+        {
+          "name": "arm-o0.elf",
+          "size_bytes": 70096,
+          "sha256": "a48f6e2647fe4fc7a30240d2a27d3c15f79bc0d3fc38c33037556be223ba4463"
+        },
+        {
+          "name": "arm-o0.cpp",
+          "size_bytes": 10305,
+          "sha256": "8f6693d5c46bc3f6e2e279c4c236576bec74db5457f8c92b4cff546f40da4220"
+        },
+        {
+          "name": "arm-o0.exe",
+          "size_bytes": 74752,
+          "sha256": "564896e740c9f184cce36966b223a8f2ffdfd7a6ca259dcc11a8bfdbca67770c"
+        },
+        {
+          "name": "arm-o0.js",
+          "size_bytes": 59662,
+          "sha256": "d318e7ea494f38daa4f9878f6550d4c5b716297bf34eb408cce535e61093b392"
+        },
+        {
+          "name": "arm-o0.wasm",
+          "size_bytes": 139527,
+          "sha256": "f42f31a50685944cfdadf7f5365b6ea9d51c1554c82438c23d7b59e102690a80"
+        },
+        {
+          "name": "arm-o2.elf",
+          "size_bytes": 70096,
+          "sha256": "a48f6e2647fe4fc7a30240d2a27d3c15f79bc0d3fc38c33037556be223ba4463"
+        },
+        {
+          "name": "arm-o2.cpp",
+          "size_bytes": 10305,
+          "sha256": "8f6693d5c46bc3f6e2e279c4c236576bec74db5457f8c92b4cff546f40da4220"
+        },
+        {
+          "name": "arm-o2.exe",
+          "size_bytes": 74752,
+          "sha256": "b5204041f047b4758d9946863ea3db0530af52fbc2898579b5c7a0a36da857d2"
+        },
+        {
+          "name": "arm-o2.js",
+          "size_bytes": 59662,
+          "sha256": "173ae7dce25f37c9f3778403f8f4b646439411e2b76eac749117e3cea1bef8f6"
+        },
+        {
+          "name": "arm-o2.wasm",
+          "size_bytes": 139527,
+          "sha256": "f42f31a50685944cfdadf7f5365b6ea9d51c1554c82438c23d7b59e102690a80"
+        },
+        {
+          "name": "thumb-o0.elf",
+          "size_bytes": 70096,
+          "sha256": "a48f6e2647fe4fc7a30240d2a27d3c15f79bc0d3fc38c33037556be223ba4463"
+        },
+        {
+          "name": "thumb-o0.cpp",
+          "size_bytes": 10305,
+          "sha256": "8f6693d5c46bc3f6e2e279c4c236576bec74db5457f8c92b4cff546f40da4220"
+        },
+        {
+          "name": "thumb-o0.exe",
+          "size_bytes": 74752,
+          "sha256": "ce9bc5bfe986b4ca4393b4f0c0fb5b5af300686de7dc0decff2e08a4e3eb5148"
+        },
+        {
+          "name": "thumb-o0.js",
+          "size_bytes": 59664,
+          "sha256": "fcb60f0e29bef0315d25fdb681d73b1d5271e1bc05e4c5d3597009f02f23a9e2"
+        },
+        {
+          "name": "thumb-o0.wasm",
+          "size_bytes": 139527,
+          "sha256": "f42f31a50685944cfdadf7f5365b6ea9d51c1554c82438c23d7b59e102690a80"
+        },
+        {
+          "name": "thumb-o2.elf",
+          "size_bytes": 70096,
+          "sha256": "a48f6e2647fe4fc7a30240d2a27d3c15f79bc0d3fc38c33037556be223ba4463"
+        },
+        {
+          "name": "thumb-o2.cpp",
+          "size_bytes": 10305,
+          "sha256": "8f6693d5c46bc3f6e2e279c4c236576bec74db5457f8c92b4cff546f40da4220"
+        },
+        {
+          "name": "thumb-o2.exe",
+          "size_bytes": 74752,
+          "sha256": "e818818c0563495387b81fa85de9bee0729fe6944a3dea34036ca475fc7a06ff"
+        },
+        {
+          "name": "thumb-o2.js",
+          "size_bytes": 59664,
+          "sha256": "c84254f53c35ff7838de30efafd73da7f38efea9824dff839d75129b30d279a3"
+        },
+        {
+          "name": "thumb-o2.wasm",
+          "size_bytes": 139527,
+          "sha256": "f42f31a50685944cfdadf7f5365b6ea9d51c1554c82438c23d7b59e102690a80"
+        }
+      ]
+    }
+  ]
+}
