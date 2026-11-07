@@ -17,3 +17,14 @@ larl/app/build/
 *.obb
 *.apk
 games/*/inputs/
+
+# Commit-pinned dependencies are provisioned by tools/bootstrap.sh.
+third_party/emsdk/
+third_party/sleigh/
+third_party/ghidra*/
+__pycache__/
+*.pyc
+*.so
+*.dll
+*.exe
+generated/

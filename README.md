@@ -1,4 +1,16 @@
-# microdroid
+# ReARM
+
+Independent reconstruction from the original Microdroid M0 skeleton. Development is on
+`codex/rearm-reconstruction`; the imported M0 commit remains preserved.
+
+The early static recompilation pipeline now executes public ARM/Thumb C fixtures as
+native code and WASM (Node and Chromium), with complete observed-state comparisons
+against Unicorn. See [TEST_RESULTS.md](TEST_RESULTS.md) for executed evidence and limits,
+[BUILDING.md](BUILDING.md) for setup, and [PROGRESS.md](PROGRESS.md) for the next task.
+Android/Roblox compatibility is not implemented yet. The approved R01–R32 roadmap is
+in [PLAN.md](PLAN.md); initial E2E work is pulled forward without renumbering it.
+
+## Original M0 README (historical reference)
 
 Static recompiler that turns Android ARM32 shared libraries (`.so`) into Emscripten/WebAssembly,
 plus a runtime of bridges (generic Android platform shims + per-game JNI bridges) so the game runs

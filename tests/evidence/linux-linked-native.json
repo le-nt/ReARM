@@ -1,0 +1,84 @@
+{
+  "passed": true,
+  "cases": 52,
+  "runs": [
+    {
+      "suite": "e2e-shared-0x10000000",
+      "variant": "arm-o0-shared-b10000000",
+      "passed": true,
+      "cases": 4
+    },
+    {
+      "suite": "e2e-shared-0x10000000",
+      "variant": "arm-o2-shared-b10000000",
+      "passed": true,
+      "cases": 4
+    },
+    {
+      "suite": "e2e-shared-0x10000000",
+      "variant": "thumb-o0-shared-b10000000",
+      "passed": true,
+      "cases": 4
+    },
+    {
+      "suite": "e2e-shared-0x10000000",
+      "variant": "thumb-o2-shared-b10000000",
+      "passed": true,
+      "cases": 4
+    },
+    {
+      "suite": "e2e-shared-0x20000000",
+      "variant": "arm-o0-shared-b20000000",
+      "passed": true,
+      "cases": 4
+    },
+    {
+      "suite": "e2e-shared-0x20000000",
+      "variant": "arm-o2-shared-b20000000",
+      "passed": true,
+      "cases": 4
+    },
+    {
+      "suite": "e2e-shared-0x20000000",
+      "variant": "thumb-o0-shared-b20000000",
+      "passed": true,
+      "cases": 4
+    },
+    {
+      "suite": "e2e-shared-0x20000000",
+      "variant": "thumb-o2-shared-b20000000",
+      "passed": true,
+      "cases": 4
+    },
+    {
+      "suite": "e2e-bss",
+      "variant": "arm-o0",
+      "passed": true,
+      "cases": 4
+    },
+    {
+      "suite": "e2e-bss",
+      "variant": "arm-o2",
+      "passed": true,
+      "cases": 4
+    },
+    {
+      "suite": "e2e-bss",
+      "variant": "thumb-o0",
+      "passed": true,
+      "cases": 4
+    },
+    {
+      "suite": "e2e-bss",
+      "variant": "thumb-o2",
+      "passed": true,
+      "cases": 4
+    },
+    {
+      "suite": "e2e-linked",
+      "variant": "linked",
+      "passed": true,
+      "cases": 4
+    }
+  ]
+}

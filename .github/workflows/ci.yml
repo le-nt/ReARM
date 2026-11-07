@@ -1,0 +1,97 @@
+name: Public compiler validation
+
+on:
+  push:
+    branches: [main, codex/rearm-reconstruction]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: public-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  linux-e2e:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      CC: clang-18
+      CXX: clang++-18
+      REARM_JOBS: "4"
+      REARM_INSTALL_BROWSER: "0"
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Install baseline host packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-18 lld-18 cmake ninja-build zlib1g-dev python3-venv nodejs
+      - name: Bootstrap locked dependencies and build
+        run: bash tools/bootstrap.sh
+      - name: Native loader and compiler tests
+        run: |
+          ctest --test-dir build/recomp --output-on-failure --no-tests=error
+          build/venv/bin/python -m unittest discover -s tests/reference -p 'test_*.py' -v
+          build/venv/bin/python -m unittest discover -s tests/inventory -p 'test_*.py' -v
+          build/venv/bin/python -m unittest discover -s tools -p 'test_check_pthreads.py' -v
+          node --test tools/download.test.mjs
+          build/venv/bin/python tests/reference/check_unsupported.py \
+            --rearm build/recomp/rearm --clang clang-18 \
+            --sla third_party/sla/ARM/ARM7_le.sla
+      - name: Install pinned Chromium and system libraries
+        run: build/venv/bin/python -m playwright install --with-deps chromium
+      - name: ARM ELF to native and WASM differential validation
+        run: |
+          for fixture in early_pipeline condition_flags interworking thumb_it; do
+            extension=c
+            if [ "$fixture" = thumb_it ]; then extension=S; fi
+            build/venv/bin/python tools/validate_e2e.py \
+              --rearm build/recomp/rearm \
+              --sla third_party/sla/ARM/ARM7_le.sla \
+              --clang clang-18 --cxx clang++-18 \
+              --emxx third_party/emsdk/upstream/emscripten/em++ \
+              --fixture "tests/fixtures/$fixture.$extension" \
+              --out "build/e2e-$fixture" --node node --browser
+          done
+      - name: Large BSS and PIC relocation validation
+        run: |
+          build/venv/bin/python tools/validate_e2e.py \
+            --rearm build/recomp/rearm --sla third_party/sla/ARM/ARM7_le.sla \
+            --clang clang-18 --cxx clang++-18 \
+            --emxx third_party/emsdk/upstream/emscripten/em++ \
+            --fixture tests/emitter/bss.c --out build/e2e-bss --browser
+          build/venv/bin/python -c "import json; r=json.load(open('build/e2e-bss/metrics.json')); assert r['passed']; assert max(a['size_bytes'] for a in r['artifacts'] if a['path'].endswith('.cpp')) < 131072"
+          for bias in 0x10000000 0x20000000; do
+            build/venv/bin/python tools/validate_e2e.py \
+              --rearm build/recomp/rearm --sla third_party/sla/ARM/ARM7_le.sla \
+              --clang clang-18 --cxx clang++-18 \
+              --emxx third_party/emsdk/upstream/emscripten/em++ \
+              --fixture tests/fixtures/shared_relocations.c --shared --load-bias "$bias" \
+              --out "build/e2e-shared-$bias" --browser
+          done
+      - name: Linked libraries and constructor execution
+        run: |
+          build/venv/bin/python tools/validate_link.py \
+            --rearm build/recomp/rearm --sla third_party/sla/ARM/ARM7_le.sla \
+            --input build/recomp/link-fixtures/libconsumer.so --load-bias 0x10000000 \
+            --dependency build/recomp/link-fixtures/libprovider.so@0x20000000 \
+            --cxx clang++-18 --emxx third_party/emsdk/upstream/emscripten/em++ \
+            --out build/e2e-linked --browser
+      - name: Preserved M0 pthread smoke
+        run: |
+          build/venv/bin/python tools/check_pthreads.py \
+            --emcc third_party/emsdk/upstream/emscripten/emcc --node node --browser
+      - name: Retain public-fixture evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: public-validation-evidence
+          path: |
+            build/evidence/
+            build/e2e-*/*.json
+            build/negative/*.json
+            build/m0-pthreads/*.json
+            build/recomp/Testing/Temporary/LastTest.log
+          if-no-files-found: warn

@@ -5,6 +5,41 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+enable_testing()
+add_library(rearm_elf elf/elf_image.cpp)
+target_include_directories(rearm_elf PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+add_library(rearm_link link/linker.cpp)
+target_link_libraries(rearm_link PUBLIC rearm_elf)
+add_executable(elf_tests ../tests/elf/elf_image_test.cpp)
+target_link_libraries(elf_tests PRIVATE rearm_elf)
+add_test(NAME elf_loader_relocations COMMAND elf_tests)
+get_filename_component(REARM_COMPILER_BIN "${CMAKE_CXX_COMPILER}" DIRECTORY)
+find_package(Threads REQUIRED)
+add_library(rearm_jni32 ../runtime/jni32.cpp)
+target_include_directories(rearm_jni32 PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")
+target_link_libraries(rearm_jni32 PUBLIC Threads::Threads)
+add_executable(jni32_tests ../tests/runtime/jni32_test.cpp)
+target_link_libraries(jni32_tests PRIVATE rearm_jni32)
+add_test(NAME jni32_host_contract COMMAND jni32_tests)
+set_tests_properties(jni32_host_contract PROPERTIES TIMEOUT 30
+  ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:${REARM_COMPILER_BIN}")
+set_tests_properties(elf_loader_relocations PROPERTIES TIMEOUT 30
+  ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:${REARM_COMPILER_BIN}")
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+set(REARM_LINK_FIXTURE_DIR "${CMAKE_BINARY_DIR}/link-fixtures")
+add_executable(link_tests ../tests/link/linker_test.cpp)
+target_link_libraries(link_tests PRIVATE rearm_link)
+add_test(NAME build_link_fixtures COMMAND "${Python3_EXECUTABLE}"
+  "${CMAKE_CURRENT_SOURCE_DIR}/../tests/link/build_fixtures.py"
+  --clang "${CMAKE_C_COMPILER}" --out "${REARM_LINK_FIXTURE_DIR}")
+set_tests_properties(build_link_fixtures PROPERTIES FIXTURES_SETUP arm_link_fixtures TIMEOUT 120
+  ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:${REARM_COMPILER_BIN}")
+add_test(NAME elf_multi_dso_linker COMMAND link_tests "${REARM_LINK_FIXTURE_DIR}")
+set_tests_properties(elf_multi_dso_linker PROPERTIES FIXTURES_REQUIRED arm_link_fixtures TIMEOUT 30
+  ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:${REARM_COMPILER_BIN}")
+option(REARM_BUILD_SLEIGH_TOOLS "Build tools requiring the pinned SLEIGH dependency" ON)
+if(REARM_BUILD_SLEIGH_TOOLS)
+
 # libsla is built out of tree from third_party/sleigh (see third_party/VERSIONS); its install
 # rules require every processor spec, so link the static archive and headers directly.
 set(MICRODROID_SLEIGH_BUILD "${CMAKE_CURRENT_SOURCE_DIR}/../third_party/sleigh/build"
@@ -20,3 +55,14 @@ set_target_properties(sla PROPERTIES
 
 add_executable(sla_probe tools/sla_probe.cpp)
 target_link_libraries(sla_probe PRIVATE sla)
+add_executable(rearm tools/rearm.cpp lift/lifter.cpp emit/emitter.cpp)
+target_link_libraries(rearm PRIVATE rearm_link sla)
+add_library(rearm_ir ir/verify.cpp)
+target_link_libraries(rearm_ir PUBLIC rearm_elf sla)
+target_link_libraries(rearm PRIVATE rearm_ir)
+add_executable(ir_tests ../tests/ir/verify_test.cpp)
+target_link_libraries(ir_tests PRIVATE rearm_ir)
+add_test(NAME normalized_ir_verifier COMMAND ir_tests)
+set_tests_properties(normalized_ir_verifier PROPERTIES TIMEOUT 30
+  ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:${REARM_COMPILER_BIN}")
+endif()
