@@ -22,9 +22,12 @@ std::uint32_t arity(jni32::Function f) {
  case FindClass:case Throw:case PushLocalFrame:case PopLocalFrame:case NewGlobalRef:
  case DeleteGlobalRef:case DeleteLocalRef:case NewLocalRef:case EnsureLocalCapacity:
  case GetObjectClass:case UnregisterNatives:case GetJavaVM:case GetObjectRefType:return 2;
+ case NewStringUTF:case GetStringLength:case GetStringUTFLength:return 2;
  case ThrowNew:case IsSameObject:case AttachCurrentThread:case GetEnv:
  case AttachCurrentThreadAsDaemon:return 3;
+ case NewString:return 3;
  case GetMethodID:case GetStaticMethodID:case RegisterNatives:return 4;
+ case GetStringRegion:case GetStringUTFRegion:return 5;
  default:throw jni32::UnsupportedFunction("AAPCS32 unsupported JNI callback ID "+std::to_string(static_cast<std::uint32_t>(f)));
  }
 }

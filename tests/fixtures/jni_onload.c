@@ -49,6 +49,23 @@ __attribute__((visibility("default"))) i32 JNI_OnLoad(Interface* vm,void* reserv
  clear(env);
  fixture_output[6]=exception(env);
  fixture_output[7]=reserved==0;
+#ifdef STRING_APIS
+ u32 (*new_utf)(Interface*,const char*)=(void*)(*env)[167];
+ u32 (*new_utf16)(Interface*,const unsigned short*,i32)=(void*)(*env)[163];
+ i32 (*units)(Interface*,u32)=(void*)(*env)[164];
+ i32 (*utf_bytes)(Interface*,u32)=(void*)(*env)[168];
+ void (*region)(Interface*,u32,i32,i32,unsigned short*)=(void*)(*env)[220];
+ void (*utf_region)(Interface*,u32,i32,i32,char*)=(void*)(*env)[221];
+ u32 text=new_utf(env,"A\xc0\x80\xed\xa0\xbd\xed\xb8\x80");
+ fixture_output[8]=(u32)units(env,text);fixture_output[9]=(u32)utf_bytes(env,text);
+ unsigned short copied[4]={0xffff,0xffff,0xffff,0xffff};region(env,text,0,4,copied);
+ fixture_output[10]=copied[1];fixture_output[11]=((u32)copied[2]<<16)|copied[3];
+ u32 second_text=new_utf16(env,copied,4);char encoded[16];for(u32 n=0;n<16;++n)encoded[n]=(char)0xa5;
+ utf_region(env,second_text,0,4,encoded);u32 hash=0;for(u32 n=0;n<9;++n)hash=hash*33u+(unsigned char)encoded[n];
+ fixture_output[12]=hash;fixture_output[13]=(unsigned char)encoded[9];
+ region(env,text,-1,1,copied);fixture_output[14]=exception(env);clear(env);
+ fixture_output[15]=(u32)units(env,new_utf16(env,0,0));
+#endif
 #ifdef REGISTER_NATIVE
  u32 klass=find(env,"fixture/Bridge");
  if(!klass)return -1;

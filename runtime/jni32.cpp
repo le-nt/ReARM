@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 #include "jni32.hpp"
+#include "modified_utf8.hpp"
 
 #include <algorithm>
 #include <array>
@@ -36,6 +37,8 @@ const char* functionName(Function function) {
     JNI_NAME(GetJavaVM); JNI_NAME(ExceptionCheck); JNI_NAME(GetObjectRefType);
     JNI_NAME(AttachCurrentThread); JNI_NAME(DetachCurrentThread); JNI_NAME(GetEnv);
     JNI_NAME(AttachCurrentThreadAsDaemon);
+    JNI_NAME(NewString); JNI_NAME(GetStringLength); JNI_NAME(NewStringUTF);
+    JNI_NAME(GetStringUTFLength); JNI_NAME(GetStringRegion); JNI_NAME(GetStringUTFRegion);
 #undef JNI_NAME
     default: return nullptr;
   }
@@ -101,8 +104,14 @@ std::string GuestMemory::readCString(Address address, std::uint32_t limit) const
 }
 
 struct Host::Impl {
-  enum class Kind { Class, Instance, Throwable };
-  struct Object { Kind kind; std::string class_name; std::string message; };
+  enum class Kind { Class, Instance, Throwable, String };
+  struct StringBudget {std::uint64_t used{};};
+  struct StringStorage {
+    std::u16string text;std::shared_ptr<StringBudget> budget;
+    StringStorage(std::u16string value,std::shared_ptr<StringBudget> owner):text(std::move(value)),budget(std::move(owner)){budget->used+=text.size()*2;}
+    ~StringStorage(){budget->used-=text.size()*2;}
+  };
+  struct Object { Kind kind; std::string class_name; std::string message; std::shared_ptr<StringStorage> string{}; };
   struct Method { std::uint32_t id{}; bool is_static{}; bool is_native{}; std::optional<Address> entry; };
   using MethodKey = std::pair<std::string, std::string>;
   struct Class { std::shared_ptr<Object> object; bool throwable{}; std::map<MethodKey, Method> methods; };
@@ -128,6 +137,7 @@ struct Host::Impl {
   Handle next_handle = 0x10000000;
   std::uint32_t next_method = 0x20000000;
   std::uint32_t global_count{};
+  std::shared_ptr<StringBudget> string_budget=std::make_shared<StringBudget>();
   mutable std::mutex mutex;
 
   Impl(GuestMemory& memory_, Address base, Limits limits_) : memory(memory_), trampoline_base(base), limits(limits_) {
@@ -135,6 +145,10 @@ struct Host::Impl {
       throw Error("JNI trampoline arena must be 4-byte aligned and fit in guest address space");
     if (!limits.max_frames || !limits.max_local_refs || !limits.max_global_refs || !limits.max_native_methods || !limits.max_string_bytes)
       throw Error("JNI limits must be positive");
+    if(!limits.max_string_units||limits.max_string_units>1048576)throw Error("JNI string unit limit must be 1..1048576");
+    if(!limits.max_string_storage_bytes)throw Error("JNI string storage budget must be positive");
+    auto string_class=std::make_shared<Object>(Object{Kind::Class,"java/lang/String",{}});
+    classes.emplace("java/lang/String",Class{std::move(string_class),false,{}});
     env_table = allocate(kEnvTableWords * 4);
     vm_table = allocate(kVmTableWords * 4);
     vm = allocate(4);
@@ -281,6 +295,42 @@ struct Host::Impl {
     if (state.pending && !allowedPending(function)) throw Error(std::string("JNI call with pending exception: ") + name);
     switch (function) {
       case Function::GetVersion: arity(args, 1); return JNI_VERSION_1_6;
+      case Function::NewString:
+      case Function::NewStringUTF: {
+        arity(args,function==Function::NewString?3:2);
+        std::u16string text;
+        if(function==Function::NewStringUTF)text=decodeModifiedUtf8(memory.readCString(args[1],limits.max_string_bytes),limits.max_string_units);
+        else{
+          const auto length=std::bit_cast<std::int32_t>(args[2]);
+          if(length<0||args[2]>limits.max_string_units)throw Error("NewString length exceeds nonnegative guest string limit");
+          checkedRange(args[1],std::size_t(args[2])*2);
+          std::vector<std::uint8_t> bytes(std::size_t(args[2])*2);if(!bytes.empty())memory.read(args[1],bytes);
+          for(std::size_t n=0;n<bytes.size();n+=2)text.push_back(char16_t(std::uint16_t(bytes[n])|(std::uint16_t(bytes[n+1])<<8)));
+        }
+        if(text.size()*2>limits.max_string_storage_bytes-string_budget->used){exception(id,"java/lang/OutOfMemoryError","JNI live string byte budget exceeded");return 0;}
+        auto storage=std::make_shared<StringStorage>(std::move(text),string_budget);
+        return newReference(id,std::make_shared<Object>(Object{Kind::String,"java/lang/String",{},std::move(storage)}));
+      }
+      case Function::GetStringLength:
+      case Function::GetStringUTFLength:
+      case Function::GetStringRegion:
+      case Function::GetStringUTFRegion: {
+        const bool region=function==Function::GetStringRegion||function==Function::GetStringUTFRegion;
+        arity(args,region?5:2);auto value=object(id,args[1]);
+        if(!value||value->kind!=Kind::String)throw Error("JNI string operation requires a valid jstring");
+        const auto& text=value->string->text;
+        if(function==Function::GetStringLength)return std::uint32_t(text.size());
+        if(function==Function::GetStringUTFLength)return std::uint32_t(encodeModifiedUtf8(text,limits.max_string_units).size());
+        const auto start=std::bit_cast<std::int32_t>(args[2]),length=std::bit_cast<std::int32_t>(args[3]);
+        if(start<0||length<0||std::uint64_t(args[2])+args[3]>text.size()){
+          exception(id,"java/lang/StringIndexOutOfBoundsException","JNI string region out of range");return 0;
+        }
+        const auto part=std::u16string_view(text).substr(args[2],args[3]);
+        std::vector<std::uint8_t> bytes;
+        if(function==Function::GetStringUTFRegion){auto encoded=encodeModifiedUtf8(part,limits.max_string_units);bytes.assign(encoded.begin(),encoded.end());}
+        else for(auto unit:part){bytes.push_back(std::uint8_t(unit));bytes.push_back(std::uint8_t(unit>>8));}
+        checkedRange(args[4],bytes.size());if(!bytes.empty())memory.write(args[4],bytes);return 0;
+      }
       case Function::FindClass: {
         arity(args, 2);
         const auto class_name = memory.readCString(args[1], limits.max_string_bytes);

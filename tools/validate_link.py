@@ -36,6 +36,7 @@ def main() -> int:
     parser.add_argument("--jni-onload", action="store_true", help="finite public JNI fixture validation profile")
     parser.add_argument("--jni-registered", action="store_true", help="public registered static native callback fixture")
     parser.add_argument("--jni-stack", action="store_true", help="six-jint registered native fixture with stack arguments")
+    parser.add_argument("--jni-strings", action="store_true", help="public UTF16/modified UTF8 string fixture")
     parser.add_argument("--runtime", choices=("libc-memory", "libc-basic"))
     parser.add_argument("--codegen", choices=("monolithic", "functions"), default="monolithic")
     parser.add_argument("--cases", type=int, default=4)
@@ -44,6 +45,8 @@ def main() -> int:
     args = parser.parse_args()
     if args.jni_stack and not args.jni_registered:
         raise validation.FixtureError("--jni-stack requires --jni-registered")
+    if args.jni_strings and (not args.jni_onload or args.jni_registered):
+        raise validation.FixtureError("--jni-strings requires --jni-onload without registration test profile")
     extra_args = [7, 0xFFFFFFFF, 0x80000000, 13, 29] if args.jni_stack else []
     signature = "(" + "I" * (1 + len(extra_args)) + ")I"
     if args.jni_registered and not args.jni_onload:
@@ -114,7 +117,7 @@ def main() -> int:
             command += ["--jni-class", "fixture/Bridge", "--jni-native", f"fixture/Bridge|transform|{signature}|static",
                         "--jni-invoke", f"fixture/Bridge|transform|{signature}"]
         stage("translate", command, (generated,))
-        runtime = (["-I", str(root), str(root / "runtime/jni32.cpp"), str(root / "runtime/aapcs32.cpp")] if args.jni_onload or args.runtime else [])
+        runtime = (["-I", str(root), str(root / "runtime/jni32.cpp"), str(root / "runtime/modified_utf8.cpp"), str(root / "runtime/aapcs32.cpp")] if args.jni_onload or args.runtime else [])
         if args.runtime:
             runtime += [str(root / "runtime/libc_memory32.cpp"), str(root / "runtime/libc_imports32.cpp")]
         if args.runtime=="libc-basic":
@@ -133,10 +136,12 @@ def main() -> int:
                 spec = importlib.util.spec_from_file_location("jni_reference", Path(__file__).with_name("jni_reference.py"))
                 service = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(service)
-                host = service.ReferenceJni(args.jni_registered, extra_args)
+                host = service.ReferenceJni(args.jni_registered, extra_args,args.jni_strings)
             expected = validation.reference_state(fixture, args.entry, observed, args.max_instructions, seed, args.initialize == "yes", host)
             if args.jni_onload:
                 trace = [1030, 4, 219, 6, 228, 17, 228]
+                if args.jni_strings:
+                    trace += [167,164,168,220,163,221,220,228,17,163,164]
                 trace += [6, 113, 215, 4, 4] if args.jni_registered else [4]
                 if host.trace != trace:
                     raise validation.FixtureError(f"unexpected JNI reference trace: {host.trace}")

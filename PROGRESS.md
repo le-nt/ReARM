@@ -226,3 +226,23 @@ Never mark a milestone passed without its actual acceptance evidence.
   translation still need performance gates. Do not mark R31 or musttail complete.
 - Next: actual JNI NewString/NewStringUTF, length and region functions, using the
   tested modified UTF-8 codec, explicit guest buffers and real guest stack args.
+
+## Guest JNI string region slice
+
+- Added NewString/NewStringUTF, UTF16 and modified-UTF8 length queries, and both
+  region-copy functions. ABI slots are independently measured from OpenJDK17.
+  Region calls marshal a real fifth argument from the guest stack.
+- java/lang/String is intrinsic. Payloads preserve embedded NUL and surrogate
+  units; regions write only requested content, without an added terminator.
+  Invalid ranges raise pending StringIndexOutOfBoundsException without writing.
+- Shared string storage follows reference lifetimes and a16MiB default live-byte
+  budget; deleting refs/native frames releases storage when the last owner drops.
+- JNI host suite now51 tests; all12 CTest suites pass on Windows and Linux.
+  39 Python harness tests and strict JNI host build pass.
+- Public ARM/Thumb O0/O2 string fixtures match independent ARM reference on native,
+  Node-WASM and Chromium-WASM (12 comparisons) plus Linux-native4 comparisons.
+  Python standard Unicode codecs independently supply the reference conversion;
+  no guest result is precomputed. Evidence: tests/evidence/jni-strings-*.json.
+- GetStringChars/GetStringUTFChars and corresponding release functions remain
+  explicit unsupported callbacks. Next: bounded copied-buffer leases, proper
+  release validation/reuse and guest lifecycle tests before widening JNI support.

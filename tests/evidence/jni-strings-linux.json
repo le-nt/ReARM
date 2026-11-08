@@ -1,0 +1,896 @@
+{
+  "schema_version": 1,
+  "passed": true,
+  "scope": "Public synthetic JNI UTF16/modified-UTF8 strings and 5-word region ABI; optional instruction functions",
+  "source_sha256_lf_normalized": {
+    "runtime/jni32.cpp": "bd9507345c28928dbc796860ed36571599d4b9ad7ddad19f17c971af797c9f40",
+    "runtime/jni32.hpp": "c4d5bbf80922f9260184e1ab2554b6ff0ab6de74cbce99087f04c4e0c4c6c821",
+    "runtime/modified_utf8.cpp": "e80ad3fbb76e13e5df01c12e842031305f99f768ab3daaf34481e5a80635609c",
+    "runtime/modified_utf8.hpp": "995af61c5481b46efc328a47491eb570b0edda90fc32cdd96d9a53c2ebce493c",
+    "runtime/aapcs32.cpp": "21c55dcc404cd43b825f381794c2458b361a616c571076a795a93f2d516e1522",
+    "tools/jni_reference.py": "b4cf91003eee40a986d99ae63413f80eaf9a16694ee42283f39295cb4ebfb5f4",
+    "tools/validate_link.py": "62632d538ec54dfdd319d93981a7b2dd2d2c7a2545411593370583b3f933e6bf",
+    "tools/validate_jni.py": "28d7edf302befc6465d043818618ef898977ab65e50f0daa9a4bb1db788b82ad",
+    "tests/fixtures/jni_onload.c": "171568ce18510593b35611c8c77340ff0b16176d02e887f3401f13adfee45162",
+    "dependencies.lock.json": "ae7ea54435f60e2025f42ef45f2310e91b29d4720f8d4bc320141132f671921f"
+  },
+  "fixture_source_sha256_raw": "171568ce18510593b35611c8c77340ff0b16176d02e887f3401f13adfee45162",
+  "suites": [
+    {
+      "mode": "arm",
+      "optimization": "O0",
+      "elf_sha256": "8bd09e9d193183a40558e49b8f740614029136bb07d56c0155d09bed997a8d61",
+      "build": {
+        "command": [
+          "clang-18",
+          "--target=armv7a-none-eabi",
+          "-marm",
+          "-O0",
+          "-mfloat-abi=soft",
+          "-fPIC",
+          "-nostdlib",
+          "-fuse-ld=lld",
+          "-Wl,-shared,-soname,libjni.so",
+          "-DSTRING_APIS",
+          "<repo>/tests/fixtures/jni_onload.c",
+          "-o",
+          "<repo>/build/linux-jni-strings/arm-O0/libjni.so"
+        ],
+        "elapsed_seconds": 0.5722580730000004,
+        "peak_sampled_rss_bytes": 149549056,
+        "rss_sampling_seconds": 0.02,
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "cases": [
+        {
+          "seed": 0,
+          "reference": {
+            "registers": [
+              65542,
+              4292870160,
+              4292870800,
+              4292870796,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              4292871024,
+              2146435072,
+              268502540,
+              4294901760
+            ],
+            "cpsr": 536870928,
+            "memory": [
+              {
+                "address": 268633744,
+                "bytes": "000000000600010000000000010000000000000001000000000000000100000004000000090000000000000000de3dd83054a876a50000000100000000000000"
+              }
+            ],
+            "reference": {
+              "engine": "unicorn",
+              "version": "2.1.4",
+              "instructions": 598,
+              "elapsed_seconds": 0.01192929000001186,
+              "load_bias": 268435456,
+              "relocations": [
+                {
+                  "address": 268568204,
+                  "type": 21,
+                  "symbol": 268633744,
+                  "name": "fixture_output",
+                  "symbol_index": 2
+                }
+              ],
+              "initializers": [],
+              "initialization_enabled": true,
+              "modules": [
+                {
+                  "name": "libjni.so",
+                  "soname": "libjni.so",
+                  "sha256": "8bd09e9d193183a40558e49b8f740614029136bb07d56c0155d09bed997a8d61",
+                  "load_bias": 268435456,
+                  "needed": []
+                }
+              ],
+              "jni_slots": [
+                1030,
+                4,
+                219,
+                6,
+                228,
+                17,
+                228,
+                167,
+                164,
+                168,
+                220,
+                163,
+                221,
+                220,
+                228,
+                17,
+                163,
+                164,
+                4
+              ]
+            }
+          },
+          "backends": {
+            "native": {
+              "actual": {
+                "registers": [
+                  65542,
+                  4292870160,
+                  4292870800,
+                  4292870796,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  4292871024,
+                  2146435072,
+                  268502540,
+                  4294901760
+                ],
+                "cpsr": 536870928,
+                "memory": [
+                  {
+                    "address": 268633744,
+                    "bytes": "000000000600010000000000010000000000000001000000000000000100000004000000090000000000000000de3dd83054a876a50000000100000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            }
+          }
+        }
+      ],
+      "artifacts": [
+        {
+          "name": "linked.cpp",
+          "size_bytes": 210223,
+          "sha256": "4ac666f24c9eb2d526574e5b05b52e34ef9a586936922aaf1395a6ce756f3614"
+        },
+        {
+          "name": "linked",
+          "size_bytes": 163888,
+          "sha256": "6e3d0590cb7cf989c7c98aeb47d05deb0a691ab18cf1d63e8e0fc3e2a9b99051"
+        }
+      ],
+      "compile_steps": [
+        {
+          "stage": "translate",
+          "command": [
+            "build/linux/rearm",
+            "--input",
+            "<repo>/build/linux-jni-strings/arm-O0/libjni.so",
+            "--load-bias",
+            "0x10000000",
+            "--entry",
+            "JNI_OnLoad",
+            "--observe",
+            "fixture_output:64",
+            "--output",
+            "<repo>/build/linux-jni-strings/arm-O0/execution/linked.cpp",
+            "--sla",
+            "third_party/sla/ARM/ARM7_le.sla",
+            "--initialize",
+            "yes",
+            "--max-instructions",
+            "1000000",
+            "--codegen",
+            "functions",
+            "--jni",
+            "onload"
+          ],
+          "elapsed_seconds": 0.10934134799998674,
+          "peak_sampled_rss_bytes": 19529728,
+          "translation": {
+            "summary": {
+              "instructions": 254,
+              "pcode_ops": 884,
+              "translation_seconds": 0.0953665
+            },
+            "instructions_per_second": 2323.0004444433116,
+            "pcode_ops_per_second": 8084.773200346014
+          }
+        },
+        {
+          "stage": "native_compile",
+          "command": [
+            "clang++-18",
+            "<repo>/build/linux-jni-strings/arm-O0/execution/linked.cpp",
+            "-I",
+            "<repo>",
+            "<repo>/runtime/jni32.cpp",
+            "<repo>/runtime/modified_utf8.cpp",
+            "<repo>/runtime/aapcs32.cpp",
+            "-std=c++20",
+            "-O2",
+            "-o",
+            "<repo>/build/linux-jni-strings/arm-O0/execution/linked"
+          ],
+          "elapsed_seconds": 9.03416086499999,
+          "peak_sampled_rss_bytes": 234287104
+        },
+        {
+          "stage": "native",
+          "command": [
+            "<repo>/build/linux-jni-strings/arm-O0/execution/linked",
+            "0"
+          ],
+          "elapsed_seconds": 0.008264917000019523,
+          "peak_sampled_rss_bytes": 1736704
+        }
+      ]
+    },
+    {
+      "mode": "arm",
+      "optimization": "O2",
+      "elf_sha256": "eeb023cbfb7e6927276c30e33e19cd1a6abaab54e34bf822cf843b5f2fa62113",
+      "build": {
+        "command": [
+          "clang-18",
+          "--target=armv7a-none-eabi",
+          "-marm",
+          "-O2",
+          "-mfloat-abi=soft",
+          "-fPIC",
+          "-nostdlib",
+          "-fuse-ld=lld",
+          "-Wl,-shared,-soname,libjni.so",
+          "-DSTRING_APIS",
+          "<repo>/tests/fixtures/jni_onload.c",
+          "-o",
+          "<repo>/build/linux-jni-strings/arm-O2/libjni.so"
+        ],
+        "elapsed_seconds": 0.6211843980000253,
+        "peak_sampled_rss_bytes": 152776704,
+        "rss_sampling_seconds": 0.02,
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "cases": [
+        {
+          "seed": 0,
+          "reference": {
+            "registers": [
+              65542,
+              4292870160,
+              4292870800,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              2146435072,
+              268502196,
+              4294901760
+            ],
+            "cpsr": 536870928,
+            "memory": [
+              {
+                "address": 268633392,
+                "bytes": "000000000600010000000000010000000000000001000000000000000100000004000000090000000000000000de3dd83054a876a50000000100000000000000"
+              }
+            ],
+            "reference": {
+              "engine": "unicorn",
+              "version": "2.1.4",
+              "instructions": 186,
+              "elapsed_seconds": 0.0045449779999557904,
+              "load_bias": 268435456,
+              "relocations": [
+                {
+                  "address": 268567852,
+                  "type": 21,
+                  "symbol": 268633392,
+                  "name": "fixture_output",
+                  "symbol_index": 2
+                }
+              ],
+              "initializers": [],
+              "initialization_enabled": true,
+              "modules": [
+                {
+                  "name": "libjni.so",
+                  "soname": "libjni.so",
+                  "sha256": "eeb023cbfb7e6927276c30e33e19cd1a6abaab54e34bf822cf843b5f2fa62113",
+                  "load_bias": 268435456,
+                  "needed": []
+                }
+              ],
+              "jni_slots": [
+                1030,
+                4,
+                219,
+                6,
+                228,
+                17,
+                228,
+                167,
+                164,
+                168,
+                220,
+                163,
+                221,
+                220,
+                228,
+                17,
+                163,
+                164,
+                4
+              ]
+            }
+          },
+          "backends": {
+            "native": {
+              "actual": {
+                "registers": [
+                  65542,
+                  4292870160,
+                  4292870800,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  2146435072,
+                  268502196,
+                  4294901760
+                ],
+                "cpsr": 536870928,
+                "memory": [
+                  {
+                    "address": 268633392,
+                    "bytes": "000000000600010000000000010000000000000001000000000000000100000004000000090000000000000000de3dd83054a876a50000000100000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            }
+          }
+        }
+      ],
+      "artifacts": [
+        {
+          "name": "linked.cpp",
+          "size_bytes": 169858,
+          "sha256": "d6612f8e467f6c2811fd2da991dbcd8b092fc72e6bd17681e15eee4162ca921e"
+        },
+        {
+          "name": "linked",
+          "size_bytes": 155120,
+          "sha256": "151dab2554c76a3da98e7f19d77bac78925baca9bbd3aa7cc779a5d7eecb6483"
+        }
+      ],
+      "compile_steps": [
+        {
+          "stage": "translate",
+          "command": [
+            "build/linux/rearm",
+            "--input",
+            "<repo>/build/linux-jni-strings/arm-O2/libjni.so",
+            "--load-bias",
+            "0x10000000",
+            "--entry",
+            "JNI_OnLoad",
+            "--observe",
+            "fixture_output:64",
+            "--output",
+            "<repo>/build/linux-jni-strings/arm-O2/execution/linked.cpp",
+            "--sla",
+            "third_party/sla/ARM/ARM7_le.sla",
+            "--initialize",
+            "yes",
+            "--max-instructions",
+            "1000000",
+            "--codegen",
+            "functions",
+            "--jni",
+            "onload"
+          ],
+          "elapsed_seconds": 0.0975595610000255,
+          "peak_sampled_rss_bytes": 19488768,
+          "translation": {
+            "summary": {
+              "instructions": 170,
+              "pcode_ops": 823,
+              "translation_seconds": 0.0862814
+            },
+            "instructions_per_second": 1742.5252661802729,
+            "pcode_ops_per_second": 8435.872318037438
+          }
+        },
+        {
+          "stage": "native_compile",
+          "command": [
+            "clang++-18",
+            "<repo>/build/linux-jni-strings/arm-O2/execution/linked.cpp",
+            "-I",
+            "<repo>",
+            "<repo>/runtime/jni32.cpp",
+            "<repo>/runtime/modified_utf8.cpp",
+            "<repo>/runtime/aapcs32.cpp",
+            "-std=c++20",
+            "-O2",
+            "-o",
+            "<repo>/build/linux-jni-strings/arm-O2/execution/linked"
+          ],
+          "elapsed_seconds": 7.924299131999987,
+          "peak_sampled_rss_bytes": 234270720
+        },
+        {
+          "stage": "native",
+          "command": [
+            "<repo>/build/linux-jni-strings/arm-O2/execution/linked",
+            "0"
+          ],
+          "elapsed_seconds": 0.007651519000035023,
+          "peak_sampled_rss_bytes": 745472
+        }
+      ]
+    },
+    {
+      "mode": "thumb",
+      "optimization": "O0",
+      "elf_sha256": "8a0e7b4c80a5b89e043e9c5318bf56cad74b1ee9da546bbeb05cb91652612a4a",
+      "build": {
+        "command": [
+          "clang-18",
+          "--target=armv7a-none-eabi",
+          "-mthumb",
+          "-O0",
+          "-mfloat-abi=soft",
+          "-fPIC",
+          "-nostdlib",
+          "-fuse-ld=lld",
+          "-Wl,-shared,-soname,libjni.so",
+          "-DSTRING_APIS",
+          "<repo>/tests/fixtures/jni_onload.c",
+          "-o",
+          "<repo>/build/linux-jni-strings/thumb-O0/libjni.so"
+        ],
+        "elapsed_seconds": 0.2242399820000287,
+        "peak_sampled_rss_bytes": 143261696,
+        "rss_sampling_seconds": 0.02,
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "cases": [
+        {
+          "seed": 0,
+          "reference": {
+            "registers": [
+              65542,
+              4292870160,
+              4292870800,
+              4292870796,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              4292871024,
+              2146435072,
+              268502093,
+              4294901760
+            ],
+            "cpsr": 1610612752,
+            "memory": [
+              {
+                "address": 268633288,
+                "bytes": "000000000600010000000000010000000000000001000000000000000100000004000000090000000000000000de3dd83054a876a50000000100000000000000"
+              }
+            ],
+            "reference": {
+              "engine": "unicorn",
+              "version": "2.1.4",
+              "instructions": 600,
+              "elapsed_seconds": 0.011487017000035848,
+              "load_bias": 268435456,
+              "relocations": [
+                {
+                  "address": 268567748,
+                  "type": 21,
+                  "symbol": 268633288,
+                  "name": "fixture_output",
+                  "symbol_index": 2
+                }
+              ],
+              "initializers": [],
+              "initialization_enabled": true,
+              "modules": [
+                {
+                  "name": "libjni.so",
+                  "soname": "libjni.so",
+                  "sha256": "8a0e7b4c80a5b89e043e9c5318bf56cad74b1ee9da546bbeb05cb91652612a4a",
+                  "load_bias": 268435456,
+                  "needed": []
+                }
+              ],
+              "jni_slots": [
+                1030,
+                4,
+                219,
+                6,
+                228,
+                17,
+                228,
+                167,
+                164,
+                168,
+                220,
+                163,
+                221,
+                220,
+                228,
+                17,
+                163,
+                164,
+                4
+              ]
+            }
+          },
+          "backends": {
+            "native": {
+              "actual": {
+                "registers": [
+                  65542,
+                  4292870160,
+                  4292870800,
+                  4292870796,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  4292871024,
+                  2146435072,
+                  268502093,
+                  4294901760
+                ],
+                "cpsr": 1610612752,
+                "memory": [
+                  {
+                    "address": 268633288,
+                    "bytes": "000000000600010000000000010000000000000001000000000000000100000004000000090000000000000000de3dd83054a876a50000000100000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            }
+          }
+        }
+      ],
+      "artifacts": [
+        {
+          "name": "linked.cpp",
+          "size_bytes": 186343,
+          "sha256": "04a07080325f7b60b22de4424022243b81f01f4aa0fed337a549a7db26ce489c"
+        },
+        {
+          "name": "linked",
+          "size_bytes": 168112,
+          "sha256": "87b6ac2ba609a03d8763cea43677e52ecf9605bd6e7e64549c60edd42d86df37"
+        }
+      ],
+      "compile_steps": [
+        {
+          "stage": "translate",
+          "command": [
+            "build/linux/rearm",
+            "--input",
+            "<repo>/build/linux-jni-strings/thumb-O0/libjni.so",
+            "--load-bias",
+            "0x10000000",
+            "--entry",
+            "JNI_OnLoad",
+            "--observe",
+            "fixture_output:64",
+            "--output",
+            "<repo>/build/linux-jni-strings/thumb-O0/execution/linked.cpp",
+            "--sla",
+            "third_party/sla/ARM/ARM7_le.sla",
+            "--initialize",
+            "yes",
+            "--max-instructions",
+            "1000000",
+            "--codegen",
+            "functions",
+            "--jni",
+            "onload"
+          ],
+          "elapsed_seconds": 0.09689301099996328,
+          "peak_sampled_rss_bytes": 19496960,
+          "translation": {
+            "summary": {
+              "instructions": 256,
+              "pcode_ops": 701,
+              "translation_seconds": 0.0866037
+            },
+            "instructions_per_second": 2642.089427895857,
+            "pcode_ops_per_second": 7234.783941230453
+          }
+        },
+        {
+          "stage": "native_compile",
+          "command": [
+            "clang++-18",
+            "<repo>/build/linux-jni-strings/thumb-O0/execution/linked.cpp",
+            "-I",
+            "<repo>",
+            "<repo>/runtime/jni32.cpp",
+            "<repo>/runtime/modified_utf8.cpp",
+            "<repo>/runtime/aapcs32.cpp",
+            "-std=c++20",
+            "-O2",
+            "-o",
+            "<repo>/build/linux-jni-strings/thumb-O0/execution/linked"
+          ],
+          "elapsed_seconds": 8.773178545999997,
+          "peak_sampled_rss_bytes": 234512384
+        },
+        {
+          "stage": "native",
+          "command": [
+            "<repo>/build/linux-jni-strings/thumb-O0/execution/linked",
+            "0"
+          ],
+          "elapsed_seconds": 0.021277186000020265,
+          "peak_sampled_rss_bytes": 606208
+        }
+      ]
+    },
+    {
+      "mode": "thumb",
+      "optimization": "O2",
+      "elf_sha256": "14da0438c86540891ba5af35d8ed8853e4d20276eea069d931ceb433e373a435",
+      "build": {
+        "command": [
+          "clang-18",
+          "--target=armv7a-none-eabi",
+          "-mthumb",
+          "-O2",
+          "-mfloat-abi=soft",
+          "-fPIC",
+          "-nostdlib",
+          "-fuse-ld=lld",
+          "-Wl,-shared,-soname,libjni.so",
+          "-DSTRING_APIS",
+          "<repo>/tests/fixtures/jni_onload.c",
+          "-o",
+          "<repo>/build/linux-jni-strings/thumb-O2/libjni.so"
+        ],
+        "elapsed_seconds": 0.316686236999999,
+        "peak_sampled_rss_bytes": 166916096,
+        "rss_sampling_seconds": 0.02,
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "cases": [
+        {
+          "seed": 0,
+          "reference": {
+            "registers": [
+              65542,
+              4292870160,
+              4292870800,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              2146435072,
+              268501951,
+              4294901760
+            ],
+            "cpsr": 1073741840,
+            "memory": [
+              {
+                "address": 268633140,
+                "bytes": "000000000600010000000000010000000000000001000000000000000100000004000000090000000000000000de3dd83054a876a50000000100000000000000"
+              }
+            ],
+            "reference": {
+              "engine": "unicorn",
+              "version": "2.1.4",
+              "instructions": 187,
+              "elapsed_seconds": 0.0040090589999977055,
+              "load_bias": 268435456,
+              "relocations": [
+                {
+                  "address": 268567600,
+                  "type": 21,
+                  "symbol": 268633140,
+                  "name": "fixture_output",
+                  "symbol_index": 2
+                }
+              ],
+              "initializers": [],
+              "initialization_enabled": true,
+              "modules": [
+                {
+                  "name": "libjni.so",
+                  "soname": "libjni.so",
+                  "sha256": "14da0438c86540891ba5af35d8ed8853e4d20276eea069d931ceb433e373a435",
+                  "load_bias": 268435456,
+                  "needed": []
+                }
+              ],
+              "jni_slots": [
+                1030,
+                4,
+                219,
+                6,
+                228,
+                17,
+                228,
+                167,
+                164,
+                168,
+                220,
+                163,
+                221,
+                220,
+                228,
+                17,
+                163,
+                164,
+                4
+              ]
+            }
+          },
+          "backends": {
+            "native": {
+              "actual": {
+                "registers": [
+                  65542,
+                  4292870160,
+                  4292870800,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  2146435072,
+                  268501951,
+                  4294901760
+                ],
+                "cpsr": 1073741840,
+                "memory": [
+                  {
+                    "address": 268633140,
+                    "bytes": "000000000600010000000000010000000000000001000000000000000100000004000000090000000000000000de3dd83054a876a50000000100000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            }
+          }
+        }
+      ],
+      "artifacts": [
+        {
+          "name": "linked.cpp",
+          "size_bytes": 146771,
+          "sha256": "2e711e1f40c1f3449fb883916095a641ce655abb38631c6b5743e170edb001a1"
+        },
+        {
+          "name": "linked",
+          "size_bytes": 154992,
+          "sha256": "0a20c14264bb49ea7a2306964540f010cfef481ddacfc2838a17c213f6c6ef81"
+        }
+      ],
+      "compile_steps": [
+        {
+          "stage": "translate",
+          "command": [
+            "build/linux/rearm",
+            "--input",
+            "<repo>/build/linux-jni-strings/thumb-O2/libjni.so",
+            "--load-bias",
+            "0x10000000",
+            "--entry",
+            "JNI_OnLoad",
+            "--observe",
+            "fixture_output:64",
+            "--output",
+            "<repo>/build/linux-jni-strings/thumb-O2/execution/linked.cpp",
+            "--sla",
+            "third_party/sla/ARM/ARM7_le.sla",
+            "--initialize",
+            "yes",
+            "--max-instructions",
+            "1000000",
+            "--codegen",
+            "functions",
+            "--jni",
+            "onload"
+          ],
+          "elapsed_seconds": 0.11426636199996665,
+          "peak_sampled_rss_bytes": 19513344,
+          "translation": {
+            "summary": {
+              "instructions": 168,
+              "pcode_ops": 619,
+              "translation_seconds": 0.103605
+            },
+            "instructions_per_second": 1470.2489609326062,
+            "pcode_ops_per_second": 5417.167302483829
+          }
+        },
+        {
+          "stage": "native_compile",
+          "command": [
+            "clang++-18",
+            "<repo>/build/linux-jni-strings/thumb-O2/execution/linked.cpp",
+            "-I",
+            "<repo>",
+            "<repo>/runtime/jni32.cpp",
+            "<repo>/runtime/modified_utf8.cpp",
+            "<repo>/runtime/aapcs32.cpp",
+            "-std=c++20",
+            "-O2",
+            "-o",
+            "<repo>/build/linux-jni-strings/thumb-O2/execution/linked"
+          ],
+          "elapsed_seconds": 7.57873646500002,
+          "peak_sampled_rss_bytes": 233906176
+        },
+        {
+          "stage": "native",
+          "command": [
+            "<repo>/build/linux-jni-strings/thumb-O2/execution/linked",
+            "0"
+          ],
+          "elapsed_seconds": 0.008249318000025596,
+          "peak_sampled_rss_bytes": 253952
+        }
+      ]
+    }
+  ]
+}

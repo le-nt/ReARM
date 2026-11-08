@@ -186,6 +186,20 @@ runtime performance and code size for compilation time. This is not musttail,
 an interpreter, or acceptance of the R31 optimization milestone. Validation tools
 `validate_e2e.py`, `validate_link.py` and `validate_libc.py` forward this option.
 
+`validate_jni.py --strings --codegen functions` validates guest NewString,
+NewStringUTF, GetStringLength/GetStringUTFLength and UTF16/modified-UTF8 region
+copies, including a fifth AAPCS argument on the guest stack. java/lang/String is
+an intrinsic host class; omit a duplicate --jni-class declaration for it. Strings
+use bounded UTF16 storage (4096 units/string and16MiB live payload by default),
+shared local/global reference ownership, and exact region writes without adding
+a terminator. Invalid regions raise a pending StringIndexOutOfBoundsException.
+GetStringChars/GetStringUTFChars leases and Java string method execution are
+not yet supported. Any generated profile linking runtime/jni32.cpp must now also
+link runtime/modified_utf8.cpp; the CMake target and validation tools do so.
+The ABI slots were measured from the
+[OpenJDK17 JNI header](https://github.com/openjdk/jdk/blob/jdk-17-ga/src/java.base/share/native/include/jni.h);
+encoding follows the [JNI modified UTF8 specification](https://docs.oracle.com/en/java/javase/17/docs/specs/jni/types.html).
+
 The public JNI guest bridge can be exercised separately:
 
 ```sh

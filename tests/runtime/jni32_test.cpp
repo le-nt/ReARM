@@ -111,8 +111,8 @@ int main() {
   test("unsupported table callback traps explicitly", [] {
     Fixture f;
     const auto env_table = f.memory.readU32(f.env);
-    const auto binding = f.host.bindingForAddress(f.memory.readU32(env_table + 167 * 4));
-    check(binding && !binding->supported, "unsupported NewStringUTF was advertised");
+    const auto binding = f.host.bindingForAddress(f.memory.readU32(env_table + 169 * 4));
+    check(binding && !binding->supported, "unsupported GetStringUTFChars was advertised");
     throws<UnsupportedFunction>([&] { call(f.host, binding->function, 1, {f.env, 0}); });
     throws<UnsupportedFunction>([&] { call(f.host, Function::DestroyJavaVM, 1, {f.host.vmPointer()}); });
   });
@@ -471,6 +471,58 @@ int main() {
     auto name=memory.string("test/Missing");call(host,Function::FindClass,1,{env,name});
     throws([&]{host.beginNativeCall(1);});throws([&]{host.endNativeCall(1);});
     call(host,Function::ExceptionClear,1,{env});host.beginNativeCall(1);host.endNativeCall(1);
+  });
+  test("JNI string table indices and intrinsic class identity", [] {
+    Fixture f;
+    check(static_cast<unsigned>(Function::NewString)==163&&static_cast<unsigned>(Function::GetStringUTFRegion)==221,"wrong string ABI indices");
+    auto text=call(f.host,Function::NewStringUTF,1,{f.env,f.memory.string("abc")});
+    auto klass=call(f.host,Function::GetObjectClass,1,{f.env,text});
+    auto expected=call(f.host,Function::FindClass,1,{f.env,f.memory.string("java/lang/String")});
+    check(call(f.host,Function::IsSameObject,1,{f.env,klass,expected})==1,"string intrinsic class mismatch");
+  });
+  test("modified UTF-8 string lengths include NUL and surrogate units correctly", [] {
+    Fixture f;const auto bytes=std::string("A\xc0\x80\xed\xa0\xbd\xed\xb8\x80");
+    auto text=call(f.host,Function::NewStringUTF,1,{f.env,f.memory.string(bytes)});
+    check(call(f.host,Function::GetStringLength,1,{f.env,text})==4,"wrong UTF16 length");
+    check(call(f.host,Function::GetStringUTFLength,1,{f.env,text})==9,"wrong modified UTF8 length");
+  });
+  test("NewString reads guest UTF16 little endian and permits embedded zero", [] {
+    Fixture f;auto at=f.memory.allocate(8,4);f.memory.writeU32(at,0x00000041);f.memory.writeU32(at+4,0xde00d83d);
+    auto text=call(f.host,Function::NewString,1,{f.env,at,4});
+    check(call(f.host,Function::GetStringLength,1,{f.env,text})==4&&call(f.host,Function::GetStringUTFLength,1,{f.env,text})==9,"UTF16 construction mismatch");
+    auto out=f.memory.allocate(8,4);call(f.host,Function::GetStringRegion,1,{f.env,text,0,4,out});
+    check(f.memory.readU32(out)==0x00000041&&f.memory.readU32(out+4)==0xde00d83d,"UTF16 region mismatch");
+  });
+  test("string UTF regions write exact bytes without a terminator", [] {
+    Fixture f;auto text=call(f.host,Function::NewStringUTF,1,{f.env,f.memory.string("ab\xc0\x80")});
+    auto out=f.memory.allocate(8,4);f.memory.writeU32(out,0xaaaaaaaa);f.memory.writeU32(out+4,0xbbbbbbbb);
+    call(f.host,Function::GetStringUTFRegion,1,{f.env,text,1,2,out});
+    check(f.memory.readU32(out)==0xaa80c062&&f.memory.readU32(out+4)==0xbbbbbbbb,"UTF region over-wrote terminator guard");
+  });
+  test("invalid string regions raise pending exception without writing", [] {
+    Fixture f;auto text=call(f.host,Function::NewStringUTF,1,{f.env,f.memory.string("abc")});auto out=f.memory.allocate(4,4);f.memory.writeU32(out,0x12345678);
+    for(auto start:{0xffffffffu,4u,0x7fffffffu}){call(f.host,Function::GetStringRegion,1,{f.env,text,start,1,out});check(f.host.pendingException(1)->class_name=="java/lang/StringIndexOutOfBoundsException","missing region exception");check(f.memory.readU32(out)==0x12345678,"failed region wrote output");f.clear();}
+  });
+  test("zero-length strings and regions make no guest access", [] {
+    Fixture f;auto text=call(f.host,Function::NewString,1,{f.env,0,0});check(!call(f.host,Function::GetStringLength,1,{f.env,text}),"empty string not empty");call(f.host,Function::GetStringRegion,1,{f.env,text,0,0,0});call(f.host,Function::GetStringUTFRegion,1,{f.env,text,0,0,0});
+  });
+  test("string bounds malformed input and wrong object kinds fail diagnostically", [] {
+    Fixture f;throws([&]{call(f.host,Function::NewString,1,{f.env,0,0xffffffff});});throws([&]{call(f.host,Function::NewString,1,{f.env,0,4097});});
+    throws([&]{call(f.host,Function::NewStringUTF,1,{f.env,f.memory.string("\xf0\x9f\x98\x80")});});
+    throws([&]{call(f.host,Function::GetStringLength,1,{f.env,f.klass()});});
+    auto text=call(f.host,Function::NewStringUTF,1,{f.env,f.memory.string("a")});throws([&]{call(f.host,Function::GetStringRegion,1,{f.env,text,0,1,0});});
+  });
+  test("string references obey native-call cleanup and global lifetime", [] {
+    Fixture f;f.host.beginNativeCall(1);auto text=call(f.host,Function::NewStringUTF,1,{f.env,f.memory.string("kept")});auto global=call(f.host,Function::NewGlobalRef,1,{f.env,text});f.host.endNativeCall(1);
+    throws([&]{call(f.host,Function::GetStringLength,1,{f.env,text});});check(call(f.host,Function::GetStringLength,1,{f.env,global})==4,"global string lost");
+  });
+  test("live string byte budget follows shared refs and recovers on release", [] {
+    Fixture f(Limits{.max_string_storage_bytes=8});auto input=f.memory.string("abcd");
+    auto local=call(f.host,Function::NewStringUTF,1,{f.env,input});check(local,"initial string failed");
+    auto global=call(f.host,Function::NewGlobalRef,1,{f.env,local});call(f.host,Function::DeleteLocalRef,1,{f.env,local});
+    check(!call(f.host,Function::NewStringUTF,1,{f.env,input}),"global-held string was not charged");
+    check(f.host.pendingException(1)->class_name=="java/lang/OutOfMemoryError","missing string OOM");f.clear();
+    call(f.host,Function::DeleteGlobalRef,1,{f.env,global});check(call(f.host,Function::NewStringUTF,1,{f.env,input}),"released string budget not recovered");
   });
   std::cout << "JNI32 tests: " << passed << " passed, " << failed << " failed\n";
   return failed ? 1 : 0;

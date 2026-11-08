@@ -53,6 +53,8 @@ enum class Function : std::uint32_t {
   DeleteGlobalRef = 22, DeleteLocalRef = 23, IsSameObject = 24,
   NewLocalRef = 25, EnsureLocalCapacity = 26, GetObjectClass = 31,
   GetMethodID = 33, GetStaticMethodID = 113, RegisterNatives = 215,
+  NewString = 163, GetStringLength = 164, NewStringUTF = 167,
+  GetStringUTFLength = 168, GetStringRegion = 220, GetStringUTFRegion = 221,
   UnregisterNatives = 216, GetJavaVM = 219, ExceptionCheck = 228,
   GetObjectRefType = 232,
   DestroyJavaVM = 0x10003, AttachCurrentThread = 0x10004,
@@ -79,6 +81,8 @@ struct Limits {
   std::uint32_t max_global_refs = 65536;
   std::uint32_t max_frames = 256;
   std::uint32_t max_string_bytes = 4096;
+  std::uint32_t max_string_units = 4096;
+  std::uint32_t max_string_storage_bytes = 16*1024*1024;
   std::uint32_t max_native_methods = 4096;
 };
 
@@ -105,7 +109,8 @@ class Host {
   // marshalled 32-bit ABI words; ARM registers/stack marshalling is separate.
   std::uint32_t invoke(Function function, ThreadId thread,
                        std::span<const std::uint32_t> args);
-  // Registration declares an already initialized host-provided class. There is
+  // java/lang/String is intrinsic. Registration declares another already
+  // initialized host-provided class. There is
   // no Java class loading/bytecode initialization, inheritance or method execution.
   void registerClass(std::string name, bool throwable = false);
   std::uint32_t registerMethod(std::string_view class_name, std::string name,

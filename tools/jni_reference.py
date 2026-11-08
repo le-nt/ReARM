@@ -15,7 +15,7 @@ class ReferenceJni:
     vm = vm_table + 8 * 4
     env = vm + 4
 
-    def __init__(self, registered=False, extra_args=()):
+    def __init__(self, registered=False, extra_args=(), strings=False):
         self.pending = False
         self.trace = []
         self.registered = registered
@@ -24,6 +24,14 @@ class ReferenceJni:
         self.class_handles = set()
         self.extra_args = tuple(extra_args)
         self.native_signature = "(" + "I" * (1 + len(self.extra_args)) + ")I"
+        self.strings = strings
+        self.string_handles = {}
+
+    @staticmethod
+    def encoded(units):
+        # Python's standard UTF-8 codec independently encodes each UTF-16 unit;
+        # surrogatepass retains surrogate units; JNI uses a special NUL encoding.
+        return b"".join(chr(u).encode("utf-8", "surrogatepass") if u else b"\xc0\x80" for u in units)
 
     @staticmethod
     def string(machine, address):
@@ -111,6 +119,45 @@ class ReferenceJni:
                     result = 0
                 if (name, descriptor) != ("transform", self.native_signature):
                     raise RuntimeError("reference undeclared native method")
+            elif slot in (163,164,167,168,220,221) and self.strings:
+                result = 0
+                if slot in (163,167):
+                    if slot == 163:
+                        if args[2] > 4096:
+                            raise RuntimeError("reference UTF16 string length limit")
+                        raw = bytes(machine.mem_read(args[1], args[2]*2)) if args[2] else b""
+                    else:
+                        data = bytearray()
+                        for index in range(4096):
+                            b = bytes(machine.mem_read(args[1]+index,1))[0]
+                            if not b:
+                                break
+                            data.append(b)
+                        else:
+                            raise RuntimeError("unterminated reference modified UTF8 string")
+                        raw = bytes(data).replace(b"\xc0\x80",b"\0").decode("utf-8","surrogatepass").encode("utf-16-le","surrogatepass")
+                    units = list(struct.unpack("<"+"H"*(len(raw)//2),raw))
+                    result = self.next_handle
+                    self.next_handle += 1
+                    self.string_handles[result] = units
+                else:
+                    if args[1] not in self.string_handles:
+                        raise RuntimeError("reference invalid jstring")
+                    units = self.string_handles[args[1]]
+                    if slot == 164:
+                        result = len(units)
+                    elif slot == 168:
+                        result = len(self.encoded(units))
+                    else:
+                        start, count = args[2:4]
+                        if start >= 0x80000000 or count >= 0x80000000 or start+count > len(units):
+                            self.pending = True
+                        else:
+                            address = struct.unpack("<I",machine.mem_read(machine.reg_read(arm.UC_ARM_REG_SP),4))[0]
+                            part = units[start:start+count]
+                            data = self.encoded(part) if slot==221 else struct.pack("<"+"H"*len(part),*part)
+                            if data:
+                                machine.mem_write(address,data)
             elif slot == 228:
                 result = int(self.pending)
             elif slot == 17:
