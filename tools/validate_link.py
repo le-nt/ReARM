@@ -33,6 +33,7 @@ def main() -> int:
     parser.add_argument("--node", default="node")
     parser.add_argument("--browser", action="store_true")
     parser.add_argument("--native-only", action="store_true")
+    parser.add_argument("--jni-onload", action="store_true", help="finite public JNI fixture validation profile")
     parser.add_argument("--cases", type=int, default=4)
     parser.add_argument("--max-instructions", type=int, default=1000000)
     parser.add_argument("--out", type=Path, default=Path("build/link-e2e"))
@@ -82,17 +83,30 @@ def main() -> int:
                    "--max-instructions", str(args.max_instructions)]
         for dependency in args.dependency:
             command += ["--dependency", dependency]
+        if args.jni_onload:
+            command += ["--jni", "onload"]
         stage("translate", command, (generated,))
-        stage("native_compile", [args.cxx, str(generated), "-std=c++20", "-O2", "-o", str(native)], (native,))
+        runtime = (["-I", str(root), str(root / "runtime/jni32.cpp"), str(root / "runtime/aapcs32.cpp")] if args.jni_onload else [])
+        stage("native_compile", [args.cxx, str(generated), *runtime, "-std=c++20", "-O2", "-o", str(native)], (native,))
         if not args.native_only:
-            stage("wasm_compile", [args.emxx, str(generated), "-std=c++20", "-O2", "-sMODULARIZE=1",
+            stage("wasm_compile", [args.emxx, str(generated), *runtime, "-std=c++20", "-O2", "-sMODULARIZE=1",
                   "-sEXPORT_NAME=createRearmModule", "-sENVIRONMENT=node,web", "-sEXIT_RUNTIME=0", "-sINVOKE_RUN=0",
                   "-sEXPORTED_RUNTIME_METHODS=callMain", "-sALLOW_MEMORY_GROWTH=1", "-o", str(module)],
                   (module, module.with_suffix(".wasm")))
         for seed in case_seeds:
             report["active"] = {"stage": "reference", "seed": seed}
             checkpoint()
-            expected = validation.reference_state(fixture, args.entry, observed, args.max_instructions, seed, args.initialize == "yes")
+            host = None
+            if args.jni_onload:
+                spec = importlib.util.spec_from_file_location("jni_reference", Path(__file__).with_name("jni_reference.py"))
+                service = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(service)
+                host = service.ReferenceJni()
+            expected = validation.reference_state(fixture, args.entry, observed, args.max_instructions, seed, args.initialize == "yes", host)
+            if host is not None:
+                if host.trace != [1030, 4, 219, 6, 228, 17, 228, 4]:
+                    raise validation.FixtureError(f"unexpected JNI reference trace: {host.trace}")
+                expected["reference"]["jni_slots"] = host.trace
             case = {"seed": seed, "reference": expected, "backends": {}}
             report["cases"].append(case)
             commands = [("native", [str(native), str(seed)])]

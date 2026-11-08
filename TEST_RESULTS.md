@@ -99,3 +99,23 @@ using a separate `--out` directory per suite.
   Java method execution and real client JNI_OnLoad remain unverified.
 - Next: AAPCS32 callback adapter and public ARM/Thumb JNI_OnLoad execution through
   the generated static dispatcher, followed by native/Node/Chromium checks.
+
+## JNI guest callback slice
+
+- The generated static dispatcher now bridges ARM AAPCS integer/pointer calls to
+  the JNI32 host, with guest-only pointers and ARM/Thumb return interworking.
+- 13 adapter tests and38 host tests pass on Windows and Linux; all six CTest
+  suites pass. The39 Python reference/harness tests and a linked-library native
+  regression also pass after emitter changes.
+- Public ARM/Thumb O0/O2 JNI_OnLoad fixtures pass native, Node-WASM and Chromium-WASM:
+  four builds,12 full-state comparisons against Unicorn plus an independent finite
+  JNI reference service. Exact source/ELF/output hashes and timing/size/RSS evidence
+  are in tests/evidence/jni-onload-windows.json.
+- The optional --jni onload profile requires linking the runtime sources. It
+  supplies a JavaVM pointer and reserved=null, not a complete Android process.
+- Earlier expanded hosted CI42368507523 at92bc85b passed; new JNI workflow coverage
+  must be observed separately after pushing.
+- Next: explicit host class/method declarations and a RegisterNatives guest fixture,
+  then native registration dispatch and measured Android import bridges. No client
+  binaries are available; no authentic Roblox initialization is claimed.
+`n- Linux-native JNI guest validation additionally passed all four ARM/Thumb O0/O2 builds using Clang18 and pinned Unicorn2.1.4 in a workspace venv; see tests/evidence/jni-onload-linux.json.

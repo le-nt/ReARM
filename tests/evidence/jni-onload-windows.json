@@ -1,0 +1,924 @@
+{
+  "schema_version": 1,
+  "passed": true,
+  "scope": "Public synthetic JNI_OnLoad; explicit finite host subset, not Roblox initialization",
+  "source_sha256": "969ce0d8718b461fef9efd4d76c8cdd4e1e27a65df57528c5d72e1a335f2e8ea",
+  "suites": [
+    {
+      "mode": "arm",
+      "optimization": "O0",
+      "elf_sha256": "7afc8d2b002da93b3871df5533a468841ffb94e24c0509f2f2c166ac2ca0c5c5",
+      "build_seconds": 0.1606288000184577,
+      "cases": [
+        {
+          "seed": 0,
+          "reference": {
+            "registers": [
+              65542,
+              4292870160,
+              4292870168,
+              4292874264,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              2146435072,
+              268501896,
+              4294901760
+            ],
+            "cpsr": 536870928,
+            "memory": [
+              {
+                "address": 268633092,
+                "bytes": "00000000060001000000000001000000000000000100000000000000010000000000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "reference": {
+              "engine": "unicorn",
+              "version": "2.1.4",
+              "instructions": 102,
+              "elapsed_seconds": 0.000660400022752583,
+              "load_bias": 268435456,
+              "relocations": [
+                {
+                  "address": 268567552,
+                  "type": 21,
+                  "symbol": 268633092,
+                  "name": "fixture_output",
+                  "symbol_index": 2
+                }
+              ],
+              "initializers": [],
+              "initialization_enabled": true,
+              "modules": [
+                {
+                  "name": "libjni.so",
+                  "soname": "libjni.so",
+                  "sha256": "7afc8d2b002da93b3871df5533a468841ffb94e24c0509f2f2c166ac2ca0c5c5",
+                  "load_bias": 268435456,
+                  "needed": []
+                }
+              ],
+              "jni_slots": [
+                1030,
+                4,
+                219,
+                6,
+                228,
+                17,
+                228,
+                4
+              ]
+            }
+          },
+          "backends": {
+            "native": {
+              "actual": {
+                "registers": [
+                  65542,
+                  4292870160,
+                  4292870168,
+                  4292874264,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  2146435072,
+                  268501896,
+                  4294901760
+                ],
+                "cpsr": 536870928,
+                "memory": [
+                  {
+                    "address": 268633092,
+                    "bytes": "00000000060001000000000001000000000000000100000000000000010000000000000000000000000000000000000000000000000000000000000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "node": {
+              "actual": {
+                "registers": [
+                  65542,
+                  4292870160,
+                  4292870168,
+                  4292874264,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  2146435072,
+                  268501896,
+                  4294901760
+                ],
+                "cpsr": 536870928,
+                "memory": [
+                  {
+                    "address": 268633092,
+                    "bytes": "00000000060001000000000001000000000000000100000000000000010000000000000000000000000000000000000000000000000000000000000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "chromium": {
+              "actual": {
+                "registers": [
+                  65542,
+                  4292870160,
+                  4292870168,
+                  4292874264,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  2146435072,
+                  268501896,
+                  4294901760
+                ],
+                "cpsr": 536870928,
+                "memory": [
+                  {
+                    "address": 268633092,
+                    "bytes": "00000000060001000000000001000000000000000100000000000000010000000000000000000000000000000000000000000000000000000000000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true,
+              "elapsed_seconds": 1.038451200001873
+            }
+          }
+        }
+      ],
+      "artifacts": [
+        {
+          "name": "linked.cpp",
+          "size_bytes": 71567,
+          "sha256": "38b9509ae68a7f13a68916d2ff23c24f2e1bfdd2ebde3c04ac7f2eca7d031f2c"
+        },
+        {
+          "name": "linked.exe",
+          "size_bytes": 147456,
+          "sha256": "3f3f36ad90f82962449e2aba7b0b6adce20f270511728a1de7f93314e0d7760a"
+        },
+        {
+          "name": "linked.js",
+          "size_bytes": 59662,
+          "sha256": "fe332d50c111a9298e04a8f3e14adfcdfc4d30420cc1487f6f819fb1c01de759"
+        },
+        {
+          "name": "linked.wasm",
+          "size_bytes": 171648,
+          "sha256": "494c5249b0ab439f20ff349bf4549597f81dc6062bba3c19ffd1e00dd07b8699"
+        }
+      ],
+      "steps": [
+        {
+          "stage": "translate",
+          "elapsed_seconds": 0.06989509999402799,
+          "peak_sampled_rss_bytes": 9949184,
+          "translation": {
+            "summary": {
+              "instructions": 98,
+              "pcode_ops": 334,
+              "translation_seconds": 0.0576612
+            },
+            "instructions_per_second": 1402.1011488412403,
+            "pcode_ops_per_second": 4778.589629724227
+          }
+        },
+        {
+          "stage": "native_compile",
+          "elapsed_seconds": 3.9565296999935526,
+          "peak_sampled_rss_bytes": 137736192
+        },
+        {
+          "stage": "wasm_compile",
+          "elapsed_seconds": 8.867830900009722,
+          "peak_sampled_rss_bytes": 155377664
+        },
+        {
+          "stage": "native",
+          "elapsed_seconds": 0.08402149999164976,
+          "peak_sampled_rss_bytes": null
+        },
+        {
+          "stage": "node",
+          "elapsed_seconds": 0.0754882000037469,
+          "peak_sampled_rss_bytes": 45858816
+        }
+      ]
+    },
+    {
+      "mode": "arm",
+      "optimization": "O2",
+      "elf_sha256": "cbee8bf067d1cb88b7152ff6d80d5cc8671b7c1c675b21ecb701bb1006aaadd3",
+      "build_seconds": 0.2006091000221204,
+      "cases": [
+        {
+          "seed": 0,
+          "reference": {
+            "registers": [
+              65542,
+              1,
+              1,
+              4292874264,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              2146435072,
+              268501760,
+              4294901760
+            ],
+            "cpsr": 536870928,
+            "memory": [
+              {
+                "address": 268632952,
+                "bytes": "00000000060001000000000001000000000000000100000000000000010000000000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "reference": {
+              "engine": "unicorn",
+              "version": "2.1.4",
+              "instructions": 69,
+              "elapsed_seconds": 0.001116700004786253,
+              "load_bias": 268435456,
+              "relocations": [
+                {
+                  "address": 268567412,
+                  "type": 21,
+                  "symbol": 268632952,
+                  "name": "fixture_output",
+                  "symbol_index": 2
+                }
+              ],
+              "initializers": [],
+              "initialization_enabled": true,
+              "modules": [
+                {
+                  "name": "libjni.so",
+                  "soname": "libjni.so",
+                  "sha256": "cbee8bf067d1cb88b7152ff6d80d5cc8671b7c1c675b21ecb701bb1006aaadd3",
+                  "load_bias": 268435456,
+                  "needed": []
+                }
+              ],
+              "jni_slots": [
+                1030,
+                4,
+                219,
+                6,
+                228,
+                17,
+                228,
+                4
+              ]
+            }
+          },
+          "backends": {
+            "native": {
+              "actual": {
+                "registers": [
+                  65542,
+                  1,
+                  1,
+                  4292874264,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  2146435072,
+                  268501760,
+                  4294901760
+                ],
+                "cpsr": 536870928,
+                "memory": [
+                  {
+                    "address": 268632952,
+                    "bytes": "00000000060001000000000001000000000000000100000000000000010000000000000000000000000000000000000000000000000000000000000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "node": {
+              "actual": {
+                "registers": [
+                  65542,
+                  1,
+                  1,
+                  4292874264,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  2146435072,
+                  268501760,
+                  4294901760
+                ],
+                "cpsr": 536870928,
+                "memory": [
+                  {
+                    "address": 268632952,
+                    "bytes": "00000000060001000000000001000000000000000100000000000000010000000000000000000000000000000000000000000000000000000000000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "chromium": {
+              "actual": {
+                "registers": [
+                  65542,
+                  1,
+                  1,
+                  4292874264,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  2146435072,
+                  268501760,
+                  4294901760
+                ],
+                "cpsr": 536870928,
+                "memory": [
+                  {
+                    "address": 268632952,
+                    "bytes": "00000000060001000000000001000000000000000100000000000000010000000000000000000000000000000000000000000000000000000000000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true,
+              "elapsed_seconds": 1.0161481999966782
+            }
+          }
+        }
+      ],
+      "artifacts": [
+        {
+          "name": "linked.cpp",
+          "size_bytes": 59365,
+          "sha256": "af7e228eb59e09acf78297275945049ba079c6e7795882f0fc5b03ac4e23f680"
+        },
+        {
+          "name": "linked.exe",
+          "size_bytes": 146944,
+          "sha256": "1a2451c89b64718927d100e4d22c4f4167df37dc1625a4c7b1e15d21b07a850b"
+        },
+        {
+          "name": "linked.js",
+          "size_bytes": 59662,
+          "sha256": "fe332d50c111a9298e04a8f3e14adfcdfc4d30420cc1487f6f819fb1c01de759"
+        },
+        {
+          "name": "linked.wasm",
+          "size_bytes": 171316,
+          "sha256": "dd95f85ec4f97deb120bef25de189b028a3c6e225a30c5ffd880cc545ba697f8"
+        }
+      ],
+      "steps": [
+        {
+          "stage": "translate",
+          "elapsed_seconds": 0.08019889998831786,
+          "peak_sampled_rss_bytes": 16891904,
+          "translation": {
+            "summary": {
+              "instructions": 64,
+              "pcode_ops": 322,
+              "translation_seconds": 0.0636647
+            },
+            "instructions_per_second": 798.0159330031026,
+            "pcode_ops_per_second": 4015.0176629218604
+          }
+        },
+        {
+          "stage": "native_compile",
+          "elapsed_seconds": 5.459355900005903,
+          "peak_sampled_rss_bytes": 135168000
+        },
+        {
+          "stage": "wasm_compile",
+          "elapsed_seconds": 9.527265599987004,
+          "peak_sampled_rss_bytes": 154238976
+        },
+        {
+          "stage": "native",
+          "elapsed_seconds": 0.07105319999391213,
+          "peak_sampled_rss_bytes": null
+        },
+        {
+          "stage": "node",
+          "elapsed_seconds": 0.0795771999983117,
+          "peak_sampled_rss_bytes": 38883328
+        }
+      ]
+    },
+    {
+      "mode": "thumb",
+      "optimization": "O0",
+      "elf_sha256": "8430035b9994a5f0675fc550bc73f1891da873311b398727c823ae702bf17e1d",
+      "build_seconds": 0.18696669998462312,
+      "cases": [
+        {
+          "seed": 0,
+          "reference": {
+            "registers": [
+              65542,
+              4292870160,
+              4292870168,
+              4292874264,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              2146435072,
+              268501725,
+              4294901760
+            ],
+            "cpsr": 16,
+            "memory": [
+              {
+                "address": 268632912,
+                "bytes": "00000000060001000000000001000000000000000100000000000000010000000000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "reference": {
+              "engine": "unicorn",
+              "version": "2.1.4",
+              "instructions": 103,
+              "elapsed_seconds": 0.0015451000072062016,
+              "load_bias": 268435456,
+              "relocations": [
+                {
+                  "address": 268567372,
+                  "type": 21,
+                  "symbol": 268632912,
+                  "name": "fixture_output",
+                  "symbol_index": 2
+                }
+              ],
+              "initializers": [],
+              "initialization_enabled": true,
+              "modules": [
+                {
+                  "name": "libjni.so",
+                  "soname": "libjni.so",
+                  "sha256": "8430035b9994a5f0675fc550bc73f1891da873311b398727c823ae702bf17e1d",
+                  "load_bias": 268435456,
+                  "needed": []
+                }
+              ],
+              "jni_slots": [
+                1030,
+                4,
+                219,
+                6,
+                228,
+                17,
+                228,
+                4
+              ]
+            }
+          },
+          "backends": {
+            "native": {
+              "actual": {
+                "registers": [
+                  65542,
+                  4292870160,
+                  4292870168,
+                  4292874264,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  2146435072,
+                  268501725,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268632912,
+                    "bytes": "00000000060001000000000001000000000000000100000000000000010000000000000000000000000000000000000000000000000000000000000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "node": {
+              "actual": {
+                "registers": [
+                  65542,
+                  4292870160,
+                  4292870168,
+                  4292874264,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  2146435072,
+                  268501725,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268632912,
+                    "bytes": "00000000060001000000000001000000000000000100000000000000010000000000000000000000000000000000000000000000000000000000000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "chromium": {
+              "actual": {
+                "registers": [
+                  65542,
+                  4292870160,
+                  4292870168,
+                  4292874264,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  2146435072,
+                  268501725,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268632912,
+                    "bytes": "00000000060001000000000001000000000000000100000000000000010000000000000000000000000000000000000000000000000000000000000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true,
+              "elapsed_seconds": 1.3438854000123683
+            }
+          }
+        }
+      ],
+      "artifacts": [
+        {
+          "name": "linked.cpp",
+          "size_bytes": 64715,
+          "sha256": "fd301a4ebb401e1f501a26b6734abcbcf3b75acba8b32ff33674dd822208758c"
+        },
+        {
+          "name": "linked.exe",
+          "size_bytes": 146944,
+          "sha256": "2038b29b131a51c327ba63961ca29fdddb35b3864a171bca489fcff69e6a709a"
+        },
+        {
+          "name": "linked.js",
+          "size_bytes": 59662,
+          "sha256": "fe332d50c111a9298e04a8f3e14adfcdfc4d30420cc1487f6f819fb1c01de759"
+        },
+        {
+          "name": "linked.wasm",
+          "size_bytes": 172484,
+          "sha256": "090e6da2e878f7a3593b8fb39ad3f2cd8a1d37b7b85dda6ce4f84ba99da64b43"
+        }
+      ],
+      "steps": [
+        {
+          "stage": "translate",
+          "elapsed_seconds": 0.09871109999949113,
+          "peak_sampled_rss_bytes": 16900096,
+          "translation": {
+            "summary": {
+              "instructions": 99,
+              "pcode_ops": 281,
+              "translation_seconds": 0.0738051
+            },
+            "instructions_per_second": 1002.9267225318163,
+            "pcode_ops_per_second": 2846.6910003175794
+          }
+        },
+        {
+          "stage": "native_compile",
+          "elapsed_seconds": 4.630952600011369,
+          "peak_sampled_rss_bytes": 134828032
+        },
+        {
+          "stage": "wasm_compile",
+          "elapsed_seconds": 10.46613939999952,
+          "peak_sampled_rss_bytes": 154943488
+        },
+        {
+          "stage": "native",
+          "elapsed_seconds": 0.0956000000005588,
+          "peak_sampled_rss_bytes": null
+        },
+        {
+          "stage": "node",
+          "elapsed_seconds": 0.08250330001465045,
+          "peak_sampled_rss_bytes": 53227520
+        }
+      ]
+    },
+    {
+      "mode": "thumb",
+      "optimization": "O2",
+      "elf_sha256": "b1a19e01bf46439c8be6e4a043751b36abad2d5a9171f734de6816e8fd121453",
+      "build_seconds": 0.16004990000510588,
+      "cases": [
+        {
+          "seed": 0,
+          "reference": {
+            "registers": [
+              65542,
+              1,
+              1,
+              4292874264,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              2146435072,
+              268501661,
+              4294901760
+            ],
+            "cpsr": 16,
+            "memory": [
+              {
+                "address": 268632848,
+                "bytes": "00000000060001000000000001000000000000000100000000000000010000000000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "reference": {
+              "engine": "unicorn",
+              "version": "2.1.4",
+              "instructions": 69,
+              "elapsed_seconds": 0.0012915999977849424,
+              "load_bias": 268435456,
+              "relocations": [
+                {
+                  "address": 268567308,
+                  "type": 21,
+                  "symbol": 268632848,
+                  "name": "fixture_output",
+                  "symbol_index": 2
+                }
+              ],
+              "initializers": [],
+              "initialization_enabled": true,
+              "modules": [
+                {
+                  "name": "libjni.so",
+                  "soname": "libjni.so",
+                  "sha256": "b1a19e01bf46439c8be6e4a043751b36abad2d5a9171f734de6816e8fd121453",
+                  "load_bias": 268435456,
+                  "needed": []
+                }
+              ],
+              "jni_slots": [
+                1030,
+                4,
+                219,
+                6,
+                228,
+                17,
+                228,
+                4
+              ]
+            }
+          },
+          "backends": {
+            "native": {
+              "actual": {
+                "registers": [
+                  65542,
+                  1,
+                  1,
+                  4292874264,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  2146435072,
+                  268501661,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268632848,
+                    "bytes": "00000000060001000000000001000000000000000100000000000000010000000000000000000000000000000000000000000000000000000000000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "node": {
+              "actual": {
+                "registers": [
+                  65542,
+                  1,
+                  1,
+                  4292874264,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  2146435072,
+                  268501661,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268632848,
+                    "bytes": "00000000060001000000000001000000000000000100000000000000010000000000000000000000000000000000000000000000000000000000000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "chromium": {
+              "actual": {
+                "registers": [
+                  65542,
+                  1,
+                  1,
+                  4292874264,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  2146435072,
+                  268501661,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268632848,
+                    "bytes": "00000000060001000000000001000000000000000100000000000000010000000000000000000000000000000000000000000000000000000000000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true,
+              "elapsed_seconds": 1.1354601999919396
+            }
+          }
+        }
+      ],
+      "artifacts": [
+        {
+          "name": "linked.cpp",
+          "size_bytes": 51490,
+          "sha256": "a6f1692fb176a8605eccfc71983a9018314502117ed45dc0ae2b4cce0db95037"
+        },
+        {
+          "name": "linked.exe",
+          "size_bytes": 146944,
+          "sha256": "7abc36e58a1a41f4f66c8ed409a406e7b60b9ee03b39d50c4bc2c9debf27d194"
+        },
+        {
+          "name": "linked.js",
+          "size_bytes": 59662,
+          "sha256": "fe332d50c111a9298e04a8f3e14adfcdfc4d30420cc1487f6f819fb1c01de759"
+        },
+        {
+          "name": "linked.wasm",
+          "size_bytes": 171943,
+          "sha256": "a4a134117fc20044561cda2328382ecf6c5beaad552ed0bfb7bec605be00cdf1"
+        }
+      ],
+      "steps": [
+        {
+          "stage": "translate",
+          "elapsed_seconds": 0.08150649999151938,
+          "peak_sampled_rss_bytes": 10485760,
+          "translation": {
+            "summary": {
+              "instructions": 64,
+              "pcode_ops": 259,
+              "translation_seconds": 0.067281
+            },
+            "instructions_per_second": 785.2134493158104,
+            "pcode_ops_per_second": 3177.66067769992
+          }
+        },
+        {
+          "stage": "native_compile",
+          "elapsed_seconds": 6.053998399991542,
+          "peak_sampled_rss_bytes": 137183232
+        },
+        {
+          "stage": "wasm_compile",
+          "elapsed_seconds": 12.835044000006747,
+          "peak_sampled_rss_bytes": 155287552
+        },
+        {
+          "stage": "native",
+          "elapsed_seconds": 0.10960460000205785,
+          "peak_sampled_rss_bytes": null
+        },
+        {
+          "stage": "node",
+          "elapsed_seconds": 0.1025581999856513,
+          "peak_sampled_rss_bytes": 51789824
+        }
+      ]
+    }
+  ]
+}

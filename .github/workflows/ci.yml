@@ -79,6 +79,13 @@ jobs:
             --dependency build/recomp/link-fixtures/libprovider.so@0x20000000 \
             --cxx clang++-18 --emxx third_party/emsdk/upstream/emscripten/em++ \
             --out build/e2e-linked --browser
+      - name: Public JNI_OnLoad guest-to-host validation
+        run: |
+          build/venv/bin/python tools/validate_jni.py \
+            --rearm build/recomp/rearm --sla third_party/sla/ARM/ARM7_le.sla \
+            --clang clang-18 --cxx clang++-18 \
+            --emxx third_party/emsdk/upstream/emscripten/em++ \
+            --out build/jni-e2e --browser
       - name: Preserved M0 pthread smoke
         run: |
           build/venv/bin/python tools/check_pthreads.py \
@@ -93,5 +100,6 @@ jobs:
             build/e2e-*/*.json
             build/negative/*.json
             build/m0-pthreads/*.json
+            build/jni-e2e/metrics.json
             build/recomp/Testing/Temporary/LastTest.log
           if-no-files-found: warn

@@ -134,6 +134,23 @@ and configuration.
 
 ## Preserved M0 pthread toolchain smoke
 
+The public JNI guest bridge can be exercised separately:
+
+```sh
+python tools/validate_jni.py --rearm build/recomp/rearm \
+  --sla third_party/sla/ARM/ARM7_le.sla --clang clang-18 --cxx clang++-18 \
+  --emxx third_party/emsdk/upstream/emscripten/em++ --browser
+```
+
+This builds ARM/Thumb O0/O2 shared libraries and compares registers, flags and
+observed memory against Unicorn with an independently implemented finite JNI
+test service. `--jni onload` supplies a guest JavaVM pointer to the chosen entry
+with reserved r1=0. Generated code in this mode requires `-I <ReARM>` and linking
+`runtime/jni32.cpp runtime/aapcs32.cpp`; normal freestanding output remains a
+single translation unit. Fixed JNI data/callback arenas reject ELF overlaps.
+This explicit host subset does not load Java classes or execute Java bytecode.
+Unsupported callbacks and undeclared class/method requirements fail visibly.
+
 ```sh
 python tools/check_pthreads.py \
   --emcc third_party/emsdk/upstream/emscripten/emcc --node node --browser

@@ -39,10 +39,12 @@ acceptance gate has passing evidence.
 
 ## Environment notes
 
-Linux/Chromium is the intended baseline (`BUILDING.md`); its bootstrap and CI must
-be executed before claiming baseline reproducibility. The current Windows host
-denied WSL enumeration. Portable LLVM MinGW and embedded Python in the enclosing
-workspace enable local tests without changing global installations.
+Linux/Chromium is the intended baseline (`BUILDING.md`). Hosted clean Linux CI
+42368507523 passed at 92bc85b, including bootstrap and native/Node/Chromium tests.
+WSL Ubuntu24.04 also runs native builds and tests after permissions changed.
+Portable LLVM MinGW and embedded Python in the enclosing workspace enable Windows
+tests without global installations. Use separate Linux/Windows dependency build
+trees and SDK configurations; bootstrap guards reject cross-host reuse.
 
 This host may inherit an unrelated home-directory Git context. If ordinary Git
 tries to enter that directory, explicitly set `GIT_DIR` to this checkout's `.git`

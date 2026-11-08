@@ -13,7 +13,9 @@ int main(int argc,char** argv){try{
  std::vector<std::string> dependencies;
  for(int i=1;i<argc;i+=2){if(i+1==argc)throw std::runtime_error("option requires value");if(std::string(argv[i])=="--dependency")dependencies.push_back(argv[i+1]);else if(!args.emplace(argv[i],argv[i+1]).second)throw std::runtime_error("duplicate option: "+std::string(argv[i]));}
  for(auto key:{"--input","--sla","--output"})if(!args.contains(key))throw std::runtime_error(std::string("required option: ")+key);
- for(const auto& [key,_]:args)if(key!="--input"&&key!="--sla"&&key!="--output"&&key!="--entry"&&key!="--observe"&&key!="--max-instructions"&&key!="--load-bias"&&key!="--dispatch"&&key!="--initialize")throw std::runtime_error("unknown option: "+key);
+ for(const auto& [key,_]:args)if(key!="--input"&&key!="--sla"&&key!="--output"&&key!="--entry"&&key!="--observe"&&key!="--max-instructions"&&key!="--load-bias"&&key!="--dispatch"&&key!="--initialize"&&key!="--jni")throw std::runtime_error("unknown option: "+key);
+ const bool jni_onload=args.contains("--jni")&&args.at("--jni")=="onload";
+ if(args.contains("--jni")&&!jni_onload)throw std::runtime_error("--jni expects onload");
  if(args.contains("--dispatch")&&args.at("--dispatch")!="iterative")throw std::runtime_error("unsupported dispatch mode: "+args.at("--dispatch")+" (available: iterative)");
  const auto start=std::chrono::steady_clock::now();
  std::uint32_t bias=0;
@@ -36,7 +38,7 @@ int main(int argc,char** argv){try{
  if(!limit||limit>10000000)throw std::runtime_error("instruction limit must be 1..10000000");
  auto program=rearm::lift::lift(image,args.at("--sla"),entry,static_cast<std::uint32_t>(limit),linked.constructors);
  rearm::ir::verify(program);
- std::ofstream out(args.at("--output"));if(!out)throw std::runtime_error("cannot open output");rearm::emit::cpp(out,image,program,entry,observed,limit,linked.constructors);out.close();if(!out)throw std::runtime_error("failed to write generated source");
+ std::ofstream out(args.at("--output"));if(!out)throw std::runtime_error("cannot open output");rearm::emit::cpp(out,image,program,entry,observed,limit,linked.constructors,jni_onload);out.close();if(!out)throw std::runtime_error("failed to write generated source");
  std::size_t ops=0;for(const auto& i:program.instructions)ops+=i.ops.size();
  auto seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count();
  std::cout<<"{\"instructions\":"<<program.instructions.size()<<",\"pcode_ops\":"<<ops<<",\"translation_seconds\":"<<seconds<<"}\n";return 0;

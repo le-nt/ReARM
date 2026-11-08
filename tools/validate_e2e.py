@@ -369,7 +369,7 @@ class LinkedFixture:
 
 
 def reference_state(elf: ElfFixture | LinkedFixture, entry: str, observed: list[tuple[int, int]], limit: int,
-                    seed: int = 0, initialize: bool = True) -> dict:
+                    seed: int = 0, initialize: bool = True, host=None) -> dict:
     try:
         import unicorn as uc
         from unicorn import arm_const as arm
@@ -391,17 +391,21 @@ def reference_state(elf: ElfFixture | LinkedFixture, entry: str, observed: list[
         if data:
             machine.mem_write(va, data)
     elf.relocate(machine.mem_read, machine.mem_write)
+    if host is not None:
+        host.install(machine)
     regs = [getattr(arm, f"UC_ARM_REG_R{i}") for i in range(13)] + [arm.UC_ARM_REG_SP, arm.UC_ARM_REG_LR, arm.UC_ARM_REG_PC]
     count = 0
 
     def instruction_hook(engine, pc, size, user):
         nonlocal count
         count += 1
+        if host is not None:
+            host.instruction(engine, pc, arm)
 
     machine.hook_add(uc.UC_HOOK_CODE, instruction_hook)
     started = time.perf_counter()
     initializers = elf.initializers(machine.mem_read) if initialize else []
-    for function, argument in [(function, 0) for function in initializers] + [(address, seed)]:
+    for function, argument in [(function, 0) for function in initializers] + [(address, host.vm if host is not None else seed)]:
         # Fixture contract: independent invocation registers, persistent guest
         # memory, and one aggregate instruction budget across initialization.
         machine.reg_write(arm.UC_ARM_REG_CPSR, 0x30 if function & 1 else 0x10)

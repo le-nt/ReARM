@@ -1,0 +1,552 @@
+{
+  "schema_version": 1,
+  "passed": true,
+  "scope": "Public synthetic JNI_OnLoad, Linux-native only",
+  "source_sha256": "969ce0d8718b461fef9efd4d76c8cdd4e1e27a65df57528c5d72e1a335f2e8ea",
+  "suites": [
+    {
+      "mode": "arm",
+      "optimization": "O0",
+      "elf_sha256": "d82c2fd1e6c56a350e12cb49f6576b0f463381fe66ca8ca61a6d7c82ea12a932",
+      "cases": [
+        {
+          "seed": 0,
+          "reference": {
+            "registers": [
+              65542,
+              4292870160,
+              4292870168,
+              4292874264,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              2146435072,
+              268501900,
+              4294901760
+            ],
+            "cpsr": 536870928,
+            "memory": [
+              {
+                "address": 268633096,
+                "bytes": "00000000060001000000000001000000000000000100000000000000010000000000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "reference": {
+              "engine": "unicorn",
+              "version": "2.1.4",
+              "instructions": 103,
+              "elapsed_seconds": 0.003275016999850777,
+              "load_bias": 268435456,
+              "relocations": [
+                {
+                  "address": 268567556,
+                  "type": 21,
+                  "symbol": 268633096,
+                  "name": "fixture_output",
+                  "symbol_index": 2
+                }
+              ],
+              "initializers": [],
+              "initialization_enabled": true,
+              "modules": [
+                {
+                  "name": "libjni.so",
+                  "soname": "libjni.so",
+                  "sha256": "d82c2fd1e6c56a350e12cb49f6576b0f463381fe66ca8ca61a6d7c82ea12a932",
+                  "load_bias": 268435456,
+                  "needed": []
+                }
+              ],
+              "jni_slots": [
+                1030,
+                4,
+                219,
+                6,
+                228,
+                17,
+                228,
+                4
+              ]
+            }
+          },
+          "backends": {
+            "native": {
+              "actual": {
+                "registers": [
+                  65542,
+                  4292870160,
+                  4292870168,
+                  4292874264,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  2146435072,
+                  268501900,
+                  4294901760
+                ],
+                "cpsr": 536870928,
+                "memory": [
+                  {
+                    "address": 268633096,
+                    "bytes": "00000000060001000000000001000000000000000100000000000000010000000000000000000000000000000000000000000000000000000000000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            }
+          }
+        }
+      ],
+      "artifacts": [
+        {
+          "name": "linked.cpp",
+          "size_bytes": 68857,
+          "sha256": "a5d9ff9cd4fa2223c44fbbdb2907990d58c2463e1c0e343111cac490e857ffc9"
+        },
+        {
+          "name": "linked",
+          "size_bytes": 114896,
+          "sha256": "2086d74199b94d98c70100b8661d2e86529f8ee5fbad2d7ddd41d92231e919e1"
+        }
+      ],
+      "steps": [
+        {
+          "stage": "translate",
+          "elapsed_seconds": 0.08543142799999259,
+          "peak_sampled_rss_bytes": 19456000
+        },
+        {
+          "stage": "native_compile",
+          "elapsed_seconds": 6.911012003999986,
+          "peak_sampled_rss_bytes": 229474304
+        },
+        {
+          "stage": "native",
+          "elapsed_seconds": 0.0101605769998514,
+          "peak_sampled_rss_bytes": 745472
+        }
+      ]
+    },
+    {
+      "mode": "arm",
+      "optimization": "O2",
+      "elf_sha256": "f19b481ad664825b9e3e77bc955e647e588e08e530df69a9477f3fd912101d00",
+      "cases": [
+        {
+          "seed": 0,
+          "reference": {
+            "registers": [
+              65542,
+              268435972,
+              65542,
+              4292874264,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              2146435072,
+              268501756,
+              4294901760
+            ],
+            "cpsr": 536870928,
+            "memory": [
+              {
+                "address": 268632948,
+                "bytes": "00000000060001000000000001000000000000000100000000000000010000000000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "reference": {
+              "engine": "unicorn",
+              "version": "2.1.4",
+              "instructions": 68,
+              "elapsed_seconds": 0.003322950999972818,
+              "load_bias": 268435456,
+              "relocations": [
+                {
+                  "address": 268567408,
+                  "type": 21,
+                  "symbol": 268632948,
+                  "name": "fixture_output",
+                  "symbol_index": 2
+                }
+              ],
+              "initializers": [],
+              "initialization_enabled": true,
+              "modules": [
+                {
+                  "name": "libjni.so",
+                  "soname": "libjni.so",
+                  "sha256": "f19b481ad664825b9e3e77bc955e647e588e08e530df69a9477f3fd912101d00",
+                  "load_bias": 268435456,
+                  "needed": []
+                }
+              ],
+              "jni_slots": [
+                1030,
+                4,
+                219,
+                6,
+                228,
+                17,
+                228,
+                4
+              ]
+            }
+          },
+          "backends": {
+            "native": {
+              "actual": {
+                "registers": [
+                  65542,
+                  268435972,
+                  65542,
+                  4292874264,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  2146435072,
+                  268501756,
+                  4294901760
+                ],
+                "cpsr": 536870928,
+                "memory": [
+                  {
+                    "address": 268632948,
+                    "bytes": "00000000060001000000000001000000000000000100000000000000010000000000000000000000000000000000000000000000000000000000000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            }
+          }
+        }
+      ],
+      "artifacts": [
+        {
+          "name": "linked.cpp",
+          "size_bytes": 59601,
+          "sha256": "1c32dd7492ed5dd6e32aaa126b7c4fa77c8fa8f643dcadac9aa6b5477dd194b9"
+        },
+        {
+          "name": "linked",
+          "size_bytes": 114896,
+          "sha256": "64f5dab6c4de005c38dba45cc412aedf837f5d4420b3e9bc755497d494a1af4a"
+        }
+      ],
+      "steps": [
+        {
+          "stage": "translate",
+          "elapsed_seconds": 0.08499313599986635,
+          "peak_sampled_rss_bytes": 19746816
+        },
+        {
+          "stage": "native_compile",
+          "elapsed_seconds": 5.822691570000188,
+          "peak_sampled_rss_bytes": 229462016
+        },
+        {
+          "stage": "native",
+          "elapsed_seconds": 0.007968964999918171,
+          "peak_sampled_rss_bytes": 331776
+        }
+      ]
+    },
+    {
+      "mode": "thumb",
+      "optimization": "O0",
+      "elf_sha256": "a04e4d0c17180be8e435f822091a795afe34e8f32ff9f6830187eda39ae83a7d",
+      "cases": [
+        {
+          "seed": 0,
+          "reference": {
+            "registers": [
+              65542,
+              4292870160,
+              4292870168,
+              4292874264,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              2146435072,
+              268501727,
+              4294901760
+            ],
+            "cpsr": 16,
+            "memory": [
+              {
+                "address": 268632912,
+                "bytes": "00000000060001000000000001000000000000000100000000000000010000000000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "reference": {
+              "engine": "unicorn",
+              "version": "2.1.4",
+              "instructions": 104,
+              "elapsed_seconds": 0.005344689999901675,
+              "load_bias": 268435456,
+              "relocations": [
+                {
+                  "address": 268567372,
+                  "type": 21,
+                  "symbol": 268632912,
+                  "name": "fixture_output",
+                  "symbol_index": 2
+                }
+              ],
+              "initializers": [],
+              "initialization_enabled": true,
+              "modules": [
+                {
+                  "name": "libjni.so",
+                  "soname": "libjni.so",
+                  "sha256": "a04e4d0c17180be8e435f822091a795afe34e8f32ff9f6830187eda39ae83a7d",
+                  "load_bias": 268435456,
+                  "needed": []
+                }
+              ],
+              "jni_slots": [
+                1030,
+                4,
+                219,
+                6,
+                228,
+                17,
+                228,
+                4
+              ]
+            }
+          },
+          "backends": {
+            "native": {
+              "actual": {
+                "registers": [
+                  65542,
+                  4292870160,
+                  4292870168,
+                  4292874264,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  2146435072,
+                  268501727,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268632912,
+                    "bytes": "00000000060001000000000001000000000000000100000000000000010000000000000000000000000000000000000000000000000000000000000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            }
+          }
+        }
+      ],
+      "artifacts": [
+        {
+          "name": "linked.cpp",
+          "size_bytes": 63389,
+          "sha256": "a94ae3079ac1a746fe1a02eb993dc0c6b9fb4308779ee36523e1985f432988f0"
+        },
+        {
+          "name": "linked",
+          "size_bytes": 114896,
+          "sha256": "5068751eef4eac17dac81b49c5319435d267bc0686b8e83ad0bff5292d72f389"
+        }
+      ],
+      "steps": [
+        {
+          "stage": "translate",
+          "elapsed_seconds": 0.07341102200007299,
+          "peak_sampled_rss_bytes": 19857408
+        },
+        {
+          "stage": "native_compile",
+          "elapsed_seconds": 6.777108000999988,
+          "peak_sampled_rss_bytes": 229298176
+        },
+        {
+          "stage": "native",
+          "elapsed_seconds": 0.012445221999996647,
+          "peak_sampled_rss_bytes": 884736
+        }
+      ]
+    },
+    {
+      "mode": "thumb",
+      "optimization": "O2",
+      "elf_sha256": "fd86660e3d3dfdadea2d3f0eac86c0aaddad102d1ac8d5d1cb4e81defe6d320d",
+      "cases": [
+        {
+          "seed": 0,
+          "reference": {
+            "registers": [
+              65542,
+              268435972,
+              65542,
+              4292874264,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              2146435072,
+              268501661,
+              4294901760
+            ],
+            "cpsr": 16,
+            "memory": [
+              {
+                "address": 268632848,
+                "bytes": "00000000060001000000000001000000000000000100000000000000010000000000000000000000000000000000000000000000000000000000000000000000"
+              }
+            ],
+            "reference": {
+              "engine": "unicorn",
+              "version": "2.1.4",
+              "instructions": 70,
+              "elapsed_seconds": 0.004083560000026409,
+              "load_bias": 268435456,
+              "relocations": [
+                {
+                  "address": 268567308,
+                  "type": 21,
+                  "symbol": 268632848,
+                  "name": "fixture_output",
+                  "symbol_index": 2
+                }
+              ],
+              "initializers": [],
+              "initialization_enabled": true,
+              "modules": [
+                {
+                  "name": "libjni.so",
+                  "soname": "libjni.so",
+                  "sha256": "fd86660e3d3dfdadea2d3f0eac86c0aaddad102d1ac8d5d1cb4e81defe6d320d",
+                  "load_bias": 268435456,
+                  "needed": []
+                }
+              ],
+              "jni_slots": [
+                1030,
+                4,
+                219,
+                6,
+                228,
+                17,
+                228,
+                4
+              ]
+            }
+          },
+          "backends": {
+            "native": {
+              "actual": {
+                "registers": [
+                  65542,
+                  268435972,
+                  65542,
+                  4292874264,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  2146435072,
+                  268501661,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268632848,
+                    "bytes": "00000000060001000000000001000000000000000100000000000000010000000000000000000000000000000000000000000000000000000000000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            }
+          }
+        }
+      ],
+      "artifacts": [
+        {
+          "name": "linked.cpp",
+          "size_bytes": 48798,
+          "sha256": "19abfd8e6f631fbebe209b0fa1d0401ef01a2dc4ed76dadbcc4a97a37536fb7e"
+        },
+        {
+          "name": "linked",
+          "size_bytes": 114896,
+          "sha256": "2f174278897d84210c667f2da60052293105dd4c667a261f40863fd8af444bed"
+        }
+      ],
+      "steps": [
+        {
+          "stage": "translate",
+          "elapsed_seconds": 0.09450013400009993,
+          "peak_sampled_rss_bytes": 19804160
+        },
+        {
+          "stage": "native_compile",
+          "elapsed_seconds": 6.354496762000053,
+          "peak_sampled_rss_bytes": 229650432
+        },
+        {
+          "stage": "native",
+          "elapsed_seconds": 0.00974524899993412,
+          "peak_sampled_rss_bytes": 507904
+        }
+      ]
+    }
+  ]
+}
