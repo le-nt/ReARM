@@ -19,6 +19,7 @@ class Heap {
   std::uint32_t reallocate(std::uint32_t address,std::uint32_t size);
   void release(std::uint32_t address);
   HeapStats stats()const;
+  bool overlapsArena(std::uint32_t address,std::uint32_t count)const;
  private:
   struct Block {std::uint32_t requested,reserved;};
   jni32::GuestMemory& memory_;
@@ -26,6 +27,7 @@ class Heap {
   std::map<std::uint32_t,Block> live_;
   std::uint64_t reserved_=0,peak_=0;
   std::uint32_t max_allocations_;
+  std::uint32_t base_,bytes_;
   mutable std::mutex mutex_;
   std::uint32_t allocateLocked(std::uint32_t);
   void releaseLocked(std::uint32_t);

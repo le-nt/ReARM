@@ -36,7 +36,7 @@ def main() -> int:
     parser.add_argument("--jni-onload", action="store_true", help="finite public JNI fixture validation profile")
     parser.add_argument("--jni-registered", action="store_true", help="public registered static native callback fixture")
     parser.add_argument("--jni-stack", action="store_true", help="six-jint registered native fixture with stack arguments")
-    parser.add_argument("--runtime", choices=("libc-memory",))
+    parser.add_argument("--runtime", choices=("libc-memory", "libc-basic"))
     parser.add_argument("--cases", type=int, default=4)
     parser.add_argument("--max-instructions", type=int, default=1000000)
     parser.add_argument("--out", type=Path, default=Path("build/link-e2e"))
@@ -59,10 +59,10 @@ def main() -> int:
         raise validation.FixtureError("libc oracle currently validates a standalone main DSO without JNI")
     libc_oracle = None
     if args.runtime:
-        spec = importlib.util.spec_from_file_location("libc_reference", Path(__file__).with_name("libc_reference.py"))
+        spec = importlib.util.spec_from_file_location("libc_reference", Path(__file__).with_name("allocator_reference.py" if args.runtime=="libc-basic" else "libc_reference.py"))
         service = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(service)
-        libc_oracle = service.ReferenceLibc
+        libc_oracle = service.ReferenceBasic if args.runtime=="libc-basic" else service.ReferenceLibc
         fixture = validation.ElfFixture(args.input.read_bytes(), args.load_bias, defer_unresolved=True)
         if fixture.needed != ["libc.so"]:
             raise validation.FixtureError("libc oracle fixture must declare exactly DT_NEEDED libc.so")
@@ -116,6 +116,8 @@ def main() -> int:
         runtime = (["-I", str(root), str(root / "runtime/jni32.cpp"), str(root / "runtime/aapcs32.cpp")] if args.jni_onload or args.runtime else [])
         if args.runtime:
             runtime += [str(root / "runtime/libc_memory32.cpp"), str(root / "runtime/libc_imports32.cpp")]
+        if args.runtime=="libc-basic":
+            runtime += [str(root / "runtime/heap32.cpp"), str(root / "runtime/libc_allocator32.cpp")]
         stage("native_compile", [args.cxx, str(generated), *runtime, "-std=c++20", "-O2", "-o", str(native)], (native,))
         if not args.native_only:
             stage("wasm_compile", [args.emxx, str(generated), *runtime, "-std=c++20", "-O2", "-sMODULARIZE=1",

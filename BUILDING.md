@@ -160,6 +160,24 @@ string scans to1MiB; over-limit requests produce errors, not successful truncati
 JNI and libc profiles can coexist in generated code, but combined profile
 execution is not yet acceptance-tested by this harness.
 
+`validate_libc.py --allocator` selects the distinct `--runtime libc-basic`
+profile. This adds malloc/calloc/realloc/free and Android `__errno` to the ten
+memory functions. Generated programs additionally link `runtime/heap32.cpp` and
+`runtime/libc_allocator32.cpp`. The heap is a bounded16MiB arena at0x60000000;
+errno cells use guest metadata storage at0x70000000 and remain distinct by
+guest thread identity. Allocator metadata defaults to65536 live blocks.
+OOM and checked size overflow return null and set ENOMEM; success/free preserve
+errno. Zero-size malloc/calloc reserve a minimum block, and realloc(p,0) frees p.
+These are explicit initial policies, not a promise of matching every Android
+allocator's layout or undefined-input behavior. The independent ARM oracle uses
+an occupancy bitmap rather than the production free-range algorithm.
+
+The Android ABI references are Bionic's
+[thread-specific __errno declaration](https://android.googlesource.com/platform/bionic/+/bd8773d19d96cd8794f944ce5f93f4feb43e386b/libc/include/errno.h)
+and [ENOMEM constant](https://android.googlesource.com/platform/bionic/+/557b1c4dfe0b0d38891b57fb9dfea44aa511013f/libc/kernel/uapi/asm-generic/errno-base.h).
+Guest pthreads, TLS register access and thread lifecycle remain separate work;
+per-thread errno unit coverage does not establish R17 compatibility.
+
 The public JNI guest bridge can be exercised separately:
 
 ```sh

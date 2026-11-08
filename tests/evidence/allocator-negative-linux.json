@@ -1,0 +1,203 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "profile-disabled",
+      "passed": true,
+      "command": [
+        "build/linux/rearm",
+        "--input",
+        "build/linux-libc-e2e/arm-O2/libfixture.so",
+        "--sla",
+        "third_party/sla/ARM/ARM7_le.sla",
+        "--load-bias",
+        "0x10000000",
+        "--entry",
+        "fixture_entry",
+        "--output",
+        "<repo>/build/linux-allocator-negative/profile-disabled.cpp"
+      ],
+      "input_sha256": "d05f8561f30c5b49232b9158ccae0819edd90343583245537905a12b47a12871",
+      "exit_code": 1,
+      "stderr": "ReARM: Module 'libfixture.so' requires missing DT_NEEDED 'libc.so'\n"
+    },
+    {
+      "name": "unknown-import",
+      "passed": true,
+      "command": [
+        "build/linux/rearm",
+        "--input",
+        "<repo>/build/linux-allocator-negative/unknown.so",
+        "--sla",
+        "third_party/sla/ARM/ARM7_le.sla",
+        "--load-bias",
+        "0x10000000",
+        "--entry",
+        "fixture_entry",
+        "--output",
+        "<repo>/build/linux-allocator-negative/unknown-import.cpp",
+        "--runtime",
+        "libc-memory"
+      ],
+      "input_sha256": "667fbede446abed6b3987cca8aa319283ca31825d044d3b5edabc6596a285fe1",
+      "exit_code": 1,
+      "stderr": "ReARM: Module 'unknown.so': Unresolved ELF symbol 'rearm_unknown_import' at 0x100302d4\n"
+    },
+    {
+      "name": "callback-overlap",
+      "passed": true,
+      "command": [
+        "build/linux/rearm",
+        "--input",
+        "build/linux-libc-e2e/arm-O2/libfixture.so",
+        "--sla",
+        "third_party/sla/ARM/ARM7_le.sla",
+        "--load-bias",
+        "0xffd00000",
+        "--entry",
+        "fixture_entry",
+        "--output",
+        "<repo>/build/linux-allocator-negative/callback-overlap.cpp",
+        "--runtime",
+        "libc-memory"
+      ],
+      "input_sha256": "d05f8561f30c5b49232b9158ccae0819edd90343583245537905a12b47a12871",
+      "exit_code": 1,
+      "stderr": "ReARM: ELF overlaps libc-memory callback arena\n"
+    },
+    {
+      "name": "stack-overlap",
+      "passed": true,
+      "command": [
+        "build/linux/rearm",
+        "--input",
+        "build/linux-libc-e2e/arm-O2/libfixture.so",
+        "--sla",
+        "third_party/sla/ARM/ARM7_le.sla",
+        "--load-bias",
+        "0x7fef0000",
+        "--entry",
+        "fixture_entry",
+        "--output",
+        "<repo>/build/linux-allocator-negative/stack-overlap.cpp",
+        "--runtime",
+        "libc-memory"
+      ],
+      "input_sha256": "d05f8561f30c5b49232b9158ccae0819edd90343583245537905a12b47a12871",
+      "exit_code": 1,
+      "stderr": "ReARM: ELF overlaps reserved guest stack\n"
+    },
+    {
+      "name": "sentinel-overlap",
+      "passed": true,
+      "command": [
+        "build/linux/rearm",
+        "--input",
+        "build/linux-libc-e2e/arm-O2/libfixture.so",
+        "--sla",
+        "third_party/sla/ARM/ARM7_le.sla",
+        "--load-bias",
+        "0xffff0000",
+        "--entry",
+        "fixture_entry",
+        "--output",
+        "<repo>/build/linux-allocator-negative/sentinel-overlap.cpp",
+        "--runtime",
+        "libc-memory"
+      ],
+      "input_sha256": "d05f8561f30c5b49232b9158ccae0819edd90343583245537905a12b47a12871",
+      "exit_code": 1,
+      "stderr": "ReARM: ELF overlaps reserved return sentinel\n"
+    },
+    {
+      "name": "allocator-profile-disabled",
+      "passed": true,
+      "command": [
+        "build/linux/rearm",
+        "--input",
+        "build/linux-allocator-e2e/arm-O2/libfixture.so",
+        "--sla",
+        "third_party/sla/ARM/ARM7_le.sla",
+        "--load-bias",
+        "0x10000000",
+        "--entry",
+        "fixture_entry",
+        "--output",
+        "<repo>/build/linux-allocator-negative/allocator-profile-disabled.cpp",
+        "--runtime",
+        "libc-memory"
+      ],
+      "input_sha256": "07f14d88e70a617bb6449a4ccf6caf438cad8698c46660b2a7f75cf62b7ff6d0",
+      "exit_code": 1,
+      "stderr": "ReARM: Module 'libfixture.so': Unresolved ELF symbol '__errno' at 0x10003bf0\n"
+    },
+    {
+      "name": "heap-overlap",
+      "passed": true,
+      "command": [
+        "build/linux/rearm",
+        "--input",
+        "build/linux-allocator-e2e/arm-O2/libfixture.so",
+        "--sla",
+        "third_party/sla/ARM/ARM7_le.sla",
+        "--load-bias",
+        "0x60000000",
+        "--entry",
+        "fixture_entry",
+        "--output",
+        "<repo>/build/linux-allocator-negative/heap-overlap.cpp",
+        "--runtime",
+        "libc-basic"
+      ],
+      "input_sha256": "07f14d88e70a617bb6449a4ccf6caf438cad8698c46660b2a7f75cf62b7ff6d0",
+      "exit_code": 1,
+      "stderr": "ReARM: ELF overlaps libc-basic heap/errno arena\n"
+    },
+    {
+      "name": "errno-overlap",
+      "passed": true,
+      "command": [
+        "build/linux/rearm",
+        "--input",
+        "build/linux-allocator-e2e/arm-O2/libfixture.so",
+        "--sla",
+        "third_party/sla/ARM/ARM7_le.sla",
+        "--load-bias",
+        "0x70000000",
+        "--entry",
+        "fixture_entry",
+        "--output",
+        "<repo>/build/linux-allocator-negative/errno-overlap.cpp",
+        "--runtime",
+        "libc-basic"
+      ],
+      "input_sha256": "07f14d88e70a617bb6449a4ccf6caf438cad8698c46660b2a7f75cf62b7ff6d0",
+      "exit_code": 1,
+      "stderr": "ReARM: ELF overlaps libc-basic heap/errno arena\n"
+    }
+  ],
+  "unknown_build": {
+    "command": [
+      "clang-18",
+      "--target=armv7a-linux-gnueabi",
+      "-marm",
+      "-mfloat-abi=soft",
+      "-nostdlib",
+      "-fPIC",
+      "-shared",
+      "-fuse-ld=lld",
+      "<repo>/build/linux-allocator-negative/unknown.c",
+      "-Lbuild/linux-libc-e2e",
+      "-Wl,--no-as-needed",
+      "-l:libc.so",
+      "-o",
+      "<repo>/build/linux-allocator-negative/unknown.so"
+    ],
+    "elapsed_seconds": 0.23793100299999992,
+    "peak_sampled_rss_bytes": 157986816,
+    "rss_sampling_seconds": 0.02,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+}

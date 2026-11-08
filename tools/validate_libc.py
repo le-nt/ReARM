@@ -21,6 +21,7 @@ def main():
     parser.add_argument("--node", default="node")
     parser.add_argument("--browser", action="store_true")
     parser.add_argument("--native-only", action="store_true")
+    parser.add_argument("--allocator", action="store_true")
     parser.add_argument("--cases", type=int, default=4)
     parser.add_argument("--out", type=Path, default=Path("build/libc-e2e"))
     args = parser.parse_args()
@@ -32,6 +33,8 @@ def main():
     args.out.mkdir(parents=True, exist_ok=True)
     source = root / "tests/fixtures/libc_imports.c"
     names = ("memcpy", "memmove", "memset", "memcmp", "strlen", "strnlen", "strcmp", "strncmp", "strcpy", "strncpy")
+    if args.allocator:
+        names += ("malloc", "calloc", "realloc", "free", "__errno")
     stub = args.out / "link-metadata.S"
     stub.write_text(".syntax unified\n.arm\n.text\n" + "".join(
         f".global {name}\n.type {name},%function\n{name}:\n bx lr\n.size {name},.-{name}\n" for name in names))
@@ -48,10 +51,10 @@ def main():
                 elf = out / "libfixture.so"
                 suite = {"mode": mode, "optimization": optimization}
                 report["suites"].append(suite)
-                suite["build"] = validation.run_measured(common + ["-m" + mode, "-" + optimization, "-fno-builtin", str(source),
+                suite["build"] = validation.run_measured(common + ["-m" + mode, "-" + optimization, "-fno-builtin", *(["-DALLOCATOR_IMPORTS"] if args.allocator else []), str(source),
                     "-Wl,-soname,libfixture.so", "-L" + str(args.out), "-Wl,--no-as-needed", "-l:libc.so", "-o", str(elf)])
                 suite["elf_sha256"] = hashlib.sha256(elf.read_bytes()).hexdigest()
-                command = [sys.executable, str(root / "tools/validate_link.py"), "--input", str(elf), "--runtime", "libc-memory",
+                command = [sys.executable, str(root / "tools/validate_link.py"), "--input", str(elf), "--runtime", "libc-basic" if args.allocator else "libc-memory",
                     "--cases", str(args.cases), "--rearm", args.rearm, "--sla", args.sla, "--cxx", args.cxx,
                     "--out", str(out / "execution"), "--node", args.node]
                 if args.emxx:

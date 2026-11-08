@@ -181,3 +181,29 @@ Never mark a milestone passed without its actual acceptance evidence.
 - Next: a separate explicit libc-basic profile with malloc/calloc/realloc/free
   imports and guest-thread errno storage; validate a real imported-ELF fixture
   before claiming allocator ABI compatibility.
+
+## Imported heap and errno vertical slice
+
+- Explicit libc-basic profile adds malloc/calloc/realloc/free and __errno to
+  tested memory imports. Heap addresses, limits, zero-size policy and guest-thread
+  errno cells are explicit; unknown imports remain errors.
+- Public ARM/Thumb O0/O2 allocation fixtures pass16 input/build cases on native,
+  Node-WASM and Chromium-WASM (48 comparisons), plus16 Linux-native comparisons.
+  The independent ARM allocator oracle uses an occupancy bitmap; production uses
+  ordered free ranges. Evidence: tests/evidence/allocator-imports-*.json.
+- Nine allocator bridge tests pass, including errno isolation/preservation, checked
+  overflow/OOM, invalid frees, metadata overlap and ABI guards. Eight real-ELF
+  negative gates pass on Windows and Linux. Stack/sentinel overlap is now rejected
+  before translation, preventing accidental shadow mappings/early termination.
+- Added bounded JNI modified UTF-8 codec:7 known-vector/invalid-input/bound tests
+  and1000 seeded UTF-16 round trips pass on both hosts. This is a string-codec
+  foundation, not yet NewString/GetString guest JNI support or Java differential proof.
+- All12 CTest suites pass on Windows and Linux;39 reference harness tests pass.
+- Linux Clang18 native allocator fixture compilation takes74–131seconds versus
+  13–23seconds for Windows Clang23; source output is272–405KiB. Record this early
+  scaling concern without claiming R31. Translation remains around0.1seconds.
+- Next: test an optional emitter layout with small static instruction functions
+  to measure compile-time scaling while preserving the existing dispatcher;
+  then wire JNI string functions and test real guest string lifecycles.
+- Authentic Roblox initialization is not established. Authorized inputs remain
+  unavailable, and no private service or production 2x2/Pizda was modified.

@@ -1,0 +1,5259 @@
+{
+  "schema_version": 1,
+  "passed": true,
+  "scope": "Public synthetic libc-basic malloc/calloc/realloc/free/__errno and memory imports; bounded initial policy, not complete Bionic",
+  "source_sha256_lf_normalized": {
+    "runtime/heap32.cpp": "d0fef0dc5c1a7834f10038e3bf579dd9bb33c8c46454b138daef34dd099216a6",
+    "runtime/heap32.hpp": "c4f6dfec72acb3215a32fc8bf2a27bba291a950f40d7aa0cab4f7be321cd44bf",
+    "runtime/libc_allocator32.cpp": "e3e0b6cd63087e2a2866c476c73a963fda29cfbe0b1ff020b274fea5dd717b22",
+    "runtime/libc_allocator32.hpp": "a9b9b3014fb9c305779f2669f2ce5fe57565c7a1841dbaf8048d7a340efc9d40",
+    "runtime/libc_imports32.cpp": "effd44d8cd7ec9b8d4cc5e2e58fcf9c987eff91f78215a5a37233f02bc6647e7",
+    "recomp/emit/emitter.cpp": "019ec68a3b5c833d3f867a7fe85096023e1ad44bdfe9a88a0a1972bf1208627f",
+    "recomp/tools/rearm.cpp": "38201f4ca5d94dacbe9f0f74b8649c887fe10b54ebd82303b4a28a7e312634b4",
+    "tools/allocator_reference.py": "59d9000fd5f48c8db39c3be6806881d7943ade09aef8c3d0ba2f32d7a3bef4a6",
+    "tools/libc_reference.py": "9fb3b07087e85dd5945dfe3deb31638e90d29ba98f40a7a1fd46f0c5af87dee3",
+    "tools/validate_libc.py": "50678deb65b8547b79419b9c2ba707667765e072b75f15c09f41f622ce270823",
+    "tools/validate_link.py": "4663080db63df923a7ccbba4a4f4e079a87d22e20d3d33b7dff39f6ec7331026",
+    "tests/fixtures/libc_imports.c": "e3e87a53e3d03b6424f0e4215479f6e497c1490664e02763ea5dc007b1eb412e",
+    "dependencies.lock.json": "ae7ea54435f60e2025f42ef45f2310e91b29d4720f8d4bc320141132f671921f"
+  },
+  "fixture_source_sha256_raw": "e3e87a53e3d03b6424f0e4215479f6e497c1490664e02763ea5dc007b1eb412e",
+  "suites": [
+    {
+      "mode": "arm",
+      "optimization": "O0",
+      "elf_sha256": "f1420c737206c734700770e51b76a0f9f64a06c0585e819cd696e89ddd4706be",
+      "build": {
+        "command": [
+          "clang",
+          "--target=armv7a-linux-gnueabi",
+          "-mfloat-abi=soft",
+          "-nostdlib",
+          "-fPIC",
+          "-shared",
+          "-fuse-ld=lld",
+          "-Wl,--hash-style=sysv,--pack-dyn-relocs=none",
+          "-Wl,-z,max-page-size=4096,-z,common-page-size=4096",
+          "-marm",
+          "-O0",
+          "-fno-builtin",
+          "-DALLOCATOR_IMPORTS",
+          "<repo>\\tests\\fixtures\\libc_imports.c",
+          "-Wl,-soname,libfixture.so",
+          "-L<repo>\\build\\allocator-e2e",
+          "-Wl,--no-as-needed",
+          "-l:libc.so",
+          "-o",
+          "<repo>\\build\\allocator-e2e\\arm-O0\\libfixture.so"
+        ],
+        "elapsed_seconds": 0.1489430999790784,
+        "peak_sampled_rss_bytes": 48787456,
+        "rss_sampling_seconds": 0.02,
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "cases": [
+        {
+          "seed": 0,
+          "reference": {
+            "registers": [
+              3485482273,
+              268451412,
+              24,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              268451216,
+              2146435072,
+              268442280,
+              4294901760
+            ],
+            "cpsr": 1610612752,
+            "memory": [
+              {
+                "address": 268451412,
+                "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000213dc0cf0c00000001000000010000000100000000000000"
+              }
+            ],
+            "reference": {
+              "engine": "unicorn",
+              "version": "2.1.4",
+              "instructions": 1910,
+              "elapsed_seconds": 0.0042384999978821725,
+              "load_bias": 268435456,
+              "relocations": [
+                {
+                  "address": 268447048,
+                  "type": 21,
+                  "symbol": 268451412,
+                  "name": "fixture_output",
+                  "symbol_index": 17
+                },
+                {
+                  "address": 268451160,
+                  "type": 22,
+                  "symbol": 4291821576,
+                  "name": "memset",
+                  "symbol_index": 2
+                },
+                {
+                  "address": 268451164,
+                  "type": 22,
+                  "symbol": 4291821568,
+                  "name": "memcpy",
+                  "symbol_index": 3
+                },
+                {
+                  "address": 268451168,
+                  "type": 22,
+                  "symbol": 4291821572,
+                  "name": "memmove",
+                  "symbol_index": 4
+                },
+                {
+                  "address": 268451172,
+                  "type": 22,
+                  "symbol": 4291821580,
+                  "name": "memcmp",
+                  "symbol_index": 5
+                },
+                {
+                  "address": 268451176,
+                  "type": 22,
+                  "symbol": 4291821584,
+                  "name": "strlen",
+                  "symbol_index": 6
+                },
+                {
+                  "address": 268451180,
+                  "type": 22,
+                  "symbol": 4291821588,
+                  "name": "strnlen",
+                  "symbol_index": 7
+                },
+                {
+                  "address": 268451184,
+                  "type": 22,
+                  "symbol": 4291821592,
+                  "name": "strcmp",
+                  "symbol_index": 8
+                },
+                {
+                  "address": 268451188,
+                  "type": 22,
+                  "symbol": 4291821596,
+                  "name": "strncmp",
+                  "symbol_index": 9
+                },
+                {
+                  "address": 268451192,
+                  "type": 22,
+                  "symbol": 4291821600,
+                  "name": "strcpy",
+                  "symbol_index": 10
+                },
+                {
+                  "address": 268451196,
+                  "type": 22,
+                  "symbol": 4291821604,
+                  "name": "strncpy",
+                  "symbol_index": 11
+                },
+                {
+                  "address": 268451200,
+                  "type": 22,
+                  "symbol": 4291821840,
+                  "name": "__errno",
+                  "symbol_index": 12
+                },
+                {
+                  "address": 268451204,
+                  "type": 22,
+                  "symbol": 4291821824,
+                  "name": "malloc",
+                  "symbol_index": 13
+                },
+                {
+                  "address": 268451208,
+                  "type": 22,
+                  "symbol": 4291821828,
+                  "name": "calloc",
+                  "symbol_index": 14
+                },
+                {
+                  "address": 268451212,
+                  "type": 22,
+                  "symbol": 4291821832,
+                  "name": "realloc",
+                  "symbol_index": 15
+                },
+                {
+                  "address": 268451216,
+                  "type": 22,
+                  "symbol": 4291821836,
+                  "name": "free",
+                  "symbol_index": 16
+                }
+              ],
+              "initializers": [],
+              "initialization_enabled": true,
+              "modules": [
+                {
+                  "name": "libfixture.so",
+                  "sha256": "f1420c737206c734700770e51b76a0f9f64a06c0585e819cd696e89ddd4706be",
+                  "load_bias": 268435456,
+                  "needed": [
+                    "libc.so"
+                  ]
+                }
+              ],
+              "libc_calls": [
+                "memset",
+                "memcpy",
+                "memmove",
+                "memcmp",
+                "strlen",
+                "strnlen",
+                "strcmp",
+                "strncmp",
+                "strcpy",
+                "strncpy",
+                "strcmp",
+                "strnlen",
+                "memcmp",
+                "memcmp",
+                "__errno",
+                "malloc",
+                "malloc",
+                "calloc",
+                "memset",
+                "realloc",
+                "realloc",
+                "calloc",
+                "free",
+                "free",
+                "free",
+                "__errno",
+                "malloc",
+                "free",
+                "malloc",
+                "free"
+              ]
+            }
+          },
+          "backends": {
+            "native": {
+              "actual": {
+                "registers": [
+                  3485482273,
+                  268451412,
+                  24,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268451216,
+                  2146435072,
+                  268442280,
+                  4294901760
+                ],
+                "cpsr": 1610612752,
+                "memory": [
+                  {
+                    "address": 268451412,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000213dc0cf0c00000001000000010000000100000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "node": {
+              "actual": {
+                "registers": [
+                  3485482273,
+                  268451412,
+                  24,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268451216,
+                  2146435072,
+                  268442280,
+                  4294901760
+                ],
+                "cpsr": 1610612752,
+                "memory": [
+                  {
+                    "address": 268451412,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000213dc0cf0c00000001000000010000000100000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "chromium": {
+              "actual": {
+                "registers": [
+                  3485482273,
+                  268451412,
+                  24,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268451216,
+                  2146435072,
+                  268442280,
+                  4294901760
+                ],
+                "cpsr": 1610612752,
+                "memory": [
+                  {
+                    "address": 268451412,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000213dc0cf0c00000001000000010000000100000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true,
+              "elapsed_seconds": 1.161425300000701
+            }
+          }
+        },
+        {
+          "seed": 1,
+          "reference": {
+            "registers": [
+              326211523,
+              268451412,
+              24,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              268451216,
+              2146435072,
+              268442280,
+              4294901760
+            ],
+            "cpsr": 1610612752,
+            "memory": [
+              {
+                "address": 268451412,
+                "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000c39771130c00000001000000010000000100000001000000"
+              }
+            ],
+            "reference": {
+              "engine": "unicorn",
+              "version": "2.1.4",
+              "instructions": 1910,
+              "elapsed_seconds": 0.006449499982409179,
+              "load_bias": 268435456,
+              "relocations": [
+                {
+                  "address": 268447048,
+                  "type": 21,
+                  "symbol": 268451412,
+                  "name": "fixture_output",
+                  "symbol_index": 17
+                },
+                {
+                  "address": 268451160,
+                  "type": 22,
+                  "symbol": 4291821576,
+                  "name": "memset",
+                  "symbol_index": 2
+                },
+                {
+                  "address": 268451164,
+                  "type": 22,
+                  "symbol": 4291821568,
+                  "name": "memcpy",
+                  "symbol_index": 3
+                },
+                {
+                  "address": 268451168,
+                  "type": 22,
+                  "symbol": 4291821572,
+                  "name": "memmove",
+                  "symbol_index": 4
+                },
+                {
+                  "address": 268451172,
+                  "type": 22,
+                  "symbol": 4291821580,
+                  "name": "memcmp",
+                  "symbol_index": 5
+                },
+                {
+                  "address": 268451176,
+                  "type": 22,
+                  "symbol": 4291821584,
+                  "name": "strlen",
+                  "symbol_index": 6
+                },
+                {
+                  "address": 268451180,
+                  "type": 22,
+                  "symbol": 4291821588,
+                  "name": "strnlen",
+                  "symbol_index": 7
+                },
+                {
+                  "address": 268451184,
+                  "type": 22,
+                  "symbol": 4291821592,
+                  "name": "strcmp",
+                  "symbol_index": 8
+                },
+                {
+                  "address": 268451188,
+                  "type": 22,
+                  "symbol": 4291821596,
+                  "name": "strncmp",
+                  "symbol_index": 9
+                },
+                {
+                  "address": 268451192,
+                  "type": 22,
+                  "symbol": 4291821600,
+                  "name": "strcpy",
+                  "symbol_index": 10
+                },
+                {
+                  "address": 268451196,
+                  "type": 22,
+                  "symbol": 4291821604,
+                  "name": "strncpy",
+                  "symbol_index": 11
+                },
+                {
+                  "address": 268451200,
+                  "type": 22,
+                  "symbol": 4291821840,
+                  "name": "__errno",
+                  "symbol_index": 12
+                },
+                {
+                  "address": 268451204,
+                  "type": 22,
+                  "symbol": 4291821824,
+                  "name": "malloc",
+                  "symbol_index": 13
+                },
+                {
+                  "address": 268451208,
+                  "type": 22,
+                  "symbol": 4291821828,
+                  "name": "calloc",
+                  "symbol_index": 14
+                },
+                {
+                  "address": 268451212,
+                  "type": 22,
+                  "symbol": 4291821832,
+                  "name": "realloc",
+                  "symbol_index": 15
+                },
+                {
+                  "address": 268451216,
+                  "type": 22,
+                  "symbol": 4291821836,
+                  "name": "free",
+                  "symbol_index": 16
+                }
+              ],
+              "initializers": [],
+              "initialization_enabled": true,
+              "modules": [
+                {
+                  "name": "libfixture.so",
+                  "sha256": "f1420c737206c734700770e51b76a0f9f64a06c0585e819cd696e89ddd4706be",
+                  "load_bias": 268435456,
+                  "needed": [
+                    "libc.so"
+                  ]
+                }
+              ],
+              "libc_calls": [
+                "memset",
+                "memcpy",
+                "memmove",
+                "memcmp",
+                "strlen",
+                "strnlen",
+                "strcmp",
+                "strncmp",
+                "strcpy",
+                "strncpy",
+                "strcmp",
+                "strnlen",
+                "memcmp",
+                "memcmp",
+                "__errno",
+                "malloc",
+                "malloc",
+                "calloc",
+                "memset",
+                "realloc",
+                "realloc",
+                "calloc",
+                "free",
+                "free",
+                "free",
+                "__errno",
+                "malloc",
+                "free",
+                "malloc",
+                "free"
+              ]
+            }
+          },
+          "backends": {
+            "native": {
+              "actual": {
+                "registers": [
+                  326211523,
+                  268451412,
+                  24,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268451216,
+                  2146435072,
+                  268442280,
+                  4294901760
+                ],
+                "cpsr": 1610612752,
+                "memory": [
+                  {
+                    "address": 268451412,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000c39771130c00000001000000010000000100000001000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "node": {
+              "actual": {
+                "registers": [
+                  326211523,
+                  268451412,
+                  24,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268451216,
+                  2146435072,
+                  268442280,
+                  4294901760
+                ],
+                "cpsr": 1610612752,
+                "memory": [
+                  {
+                    "address": 268451412,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000c39771130c00000001000000010000000100000001000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "chromium": {
+              "actual": {
+                "registers": [
+                  326211523,
+                  268451412,
+                  24,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268451216,
+                  2146435072,
+                  268442280,
+                  4294901760
+                ],
+                "cpsr": 1610612752,
+                "memory": [
+                  {
+                    "address": 268451412,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000c39771130c00000001000000010000000100000001000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true,
+              "elapsed_seconds": 1.3740769999858458
+            }
+          }
+        },
+        {
+          "seed": 4294967295,
+          "reference": {
+            "registers": [
+              155468166,
+              268451412,
+              24,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              268451216,
+              2146435072,
+              268442280,
+              4294901760
+            ],
+            "cpsr": 1610612752,
+            "memory": [
+              {
+                "address": 268451412,
+                "bytes": "000000000000000001000000ff000000ff000000010000000c000000ff000000010000000c000000864144090c000000010000000100000001000000ffffffff"
+              }
+            ],
+            "reference": {
+              "engine": "unicorn",
+              "version": "2.1.4",
+              "instructions": 1910,
+              "elapsed_seconds": 0.004871999990427867,
+              "load_bias": 268435456,
+              "relocations": [
+                {
+                  "address": 268447048,
+                  "type": 21,
+                  "symbol": 268451412,
+                  "name": "fixture_output",
+                  "symbol_index": 17
+                },
+                {
+                  "address": 268451160,
+                  "type": 22,
+                  "symbol": 4291821576,
+                  "name": "memset",
+                  "symbol_index": 2
+                },
+                {
+                  "address": 268451164,
+                  "type": 22,
+                  "symbol": 4291821568,
+                  "name": "memcpy",
+                  "symbol_index": 3
+                },
+                {
+                  "address": 268451168,
+                  "type": 22,
+                  "symbol": 4291821572,
+                  "name": "memmove",
+                  "symbol_index": 4
+                },
+                {
+                  "address": 268451172,
+                  "type": 22,
+                  "symbol": 4291821580,
+                  "name": "memcmp",
+                  "symbol_index": 5
+                },
+                {
+                  "address": 268451176,
+                  "type": 22,
+                  "symbol": 4291821584,
+                  "name": "strlen",
+                  "symbol_index": 6
+                },
+                {
+                  "address": 268451180,
+                  "type": 22,
+                  "symbol": 4291821588,
+                  "name": "strnlen",
+                  "symbol_index": 7
+                },
+                {
+                  "address": 268451184,
+                  "type": 22,
+                  "symbol": 4291821592,
+                  "name": "strcmp",
+                  "symbol_index": 8
+                },
+                {
+                  "address": 268451188,
+                  "type": 22,
+                  "symbol": 4291821596,
+                  "name": "strncmp",
+                  "symbol_index": 9
+                },
+                {
+                  "address": 268451192,
+                  "type": 22,
+                  "symbol": 4291821600,
+                  "name": "strcpy",
+                  "symbol_index": 10
+                },
+                {
+                  "address": 268451196,
+                  "type": 22,
+                  "symbol": 4291821604,
+                  "name": "strncpy",
+                  "symbol_index": 11
+                },
+                {
+                  "address": 268451200,
+                  "type": 22,
+                  "symbol": 4291821840,
+                  "name": "__errno",
+                  "symbol_index": 12
+                },
+                {
+                  "address": 268451204,
+                  "type": 22,
+                  "symbol": 4291821824,
+                  "name": "malloc",
+                  "symbol_index": 13
+                },
+                {
+                  "address": 268451208,
+                  "type": 22,
+                  "symbol": 4291821828,
+                  "name": "calloc",
+                  "symbol_index": 14
+                },
+                {
+                  "address": 268451212,
+                  "type": 22,
+                  "symbol": 4291821832,
+                  "name": "realloc",
+                  "symbol_index": 15
+                },
+                {
+                  "address": 268451216,
+                  "type": 22,
+                  "symbol": 4291821836,
+                  "name": "free",
+                  "symbol_index": 16
+                }
+              ],
+              "initializers": [],
+              "initialization_enabled": true,
+              "modules": [
+                {
+                  "name": "libfixture.so",
+                  "sha256": "f1420c737206c734700770e51b76a0f9f64a06c0585e819cd696e89ddd4706be",
+                  "load_bias": 268435456,
+                  "needed": [
+                    "libc.so"
+                  ]
+                }
+              ],
+              "libc_calls": [
+                "memset",
+                "memcpy",
+                "memmove",
+                "memcmp",
+                "strlen",
+                "strnlen",
+                "strcmp",
+                "strncmp",
+                "strcpy",
+                "strncpy",
+                "strcmp",
+                "strnlen",
+                "memcmp",
+                "memcmp",
+                "__errno",
+                "malloc",
+                "malloc",
+                "calloc",
+                "memset",
+                "realloc",
+                "realloc",
+                "calloc",
+                "free",
+                "free",
+                "free",
+                "__errno",
+                "malloc",
+                "free",
+                "malloc",
+                "free"
+              ]
+            }
+          },
+          "backends": {
+            "native": {
+              "actual": {
+                "registers": [
+                  155468166,
+                  268451412,
+                  24,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268451216,
+                  2146435072,
+                  268442280,
+                  4294901760
+                ],
+                "cpsr": 1610612752,
+                "memory": [
+                  {
+                    "address": 268451412,
+                    "bytes": "000000000000000001000000ff000000ff000000010000000c000000ff000000010000000c000000864144090c000000010000000100000001000000ffffffff"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "node": {
+              "actual": {
+                "registers": [
+                  155468166,
+                  268451412,
+                  24,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268451216,
+                  2146435072,
+                  268442280,
+                  4294901760
+                ],
+                "cpsr": 1610612752,
+                "memory": [
+                  {
+                    "address": 268451412,
+                    "bytes": "000000000000000001000000ff000000ff000000010000000c000000ff000000010000000c000000864144090c000000010000000100000001000000ffffffff"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "chromium": {
+              "actual": {
+                "registers": [
+                  155468166,
+                  268451412,
+                  24,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268451216,
+                  2146435072,
+                  268442280,
+                  4294901760
+                ],
+                "cpsr": 1610612752,
+                "memory": [
+                  {
+                    "address": 268451412,
+                    "bytes": "000000000000000001000000ff000000ff000000010000000c000000ff000000010000000c000000864144090c000000010000000100000001000000ffffffff"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true,
+              "elapsed_seconds": 1.0721748000069056
+            }
+          }
+        },
+        {
+          "seed": 2147483648,
+          "reference": {
+            "registers": [
+              3909090281,
+              268451412,
+              24,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              268451216,
+              2146435072,
+              268442280,
+              4294901760
+            ],
+            "cpsr": 1610612752,
+            "memory": [
+              {
+                "address": 268451412,
+                "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000e9fbffe80c00000001000000010000000100000000000080"
+              }
+            ],
+            "reference": {
+              "engine": "unicorn",
+              "version": "2.1.4",
+              "instructions": 1910,
+              "elapsed_seconds": 0.007569900015369058,
+              "load_bias": 268435456,
+              "relocations": [
+                {
+                  "address": 268447048,
+                  "type": 21,
+                  "symbol": 268451412,
+                  "name": "fixture_output",
+                  "symbol_index": 17
+                },
+                {
+                  "address": 268451160,
+                  "type": 22,
+                  "symbol": 4291821576,
+                  "name": "memset",
+                  "symbol_index": 2
+                },
+                {
+                  "address": 268451164,
+                  "type": 22,
+                  "symbol": 4291821568,
+                  "name": "memcpy",
+                  "symbol_index": 3
+                },
+                {
+                  "address": 268451168,
+                  "type": 22,
+                  "symbol": 4291821572,
+                  "name": "memmove",
+                  "symbol_index": 4
+                },
+                {
+                  "address": 268451172,
+                  "type": 22,
+                  "symbol": 4291821580,
+                  "name": "memcmp",
+                  "symbol_index": 5
+                },
+                {
+                  "address": 268451176,
+                  "type": 22,
+                  "symbol": 4291821584,
+                  "name": "strlen",
+                  "symbol_index": 6
+                },
+                {
+                  "address": 268451180,
+                  "type": 22,
+                  "symbol": 4291821588,
+                  "name": "strnlen",
+                  "symbol_index": 7
+                },
+                {
+                  "address": 268451184,
+                  "type": 22,
+                  "symbol": 4291821592,
+                  "name": "strcmp",
+                  "symbol_index": 8
+                },
+                {
+                  "address": 268451188,
+                  "type": 22,
+                  "symbol": 4291821596,
+                  "name": "strncmp",
+                  "symbol_index": 9
+                },
+                {
+                  "address": 268451192,
+                  "type": 22,
+                  "symbol": 4291821600,
+                  "name": "strcpy",
+                  "symbol_index": 10
+                },
+                {
+                  "address": 268451196,
+                  "type": 22,
+                  "symbol": 4291821604,
+                  "name": "strncpy",
+                  "symbol_index": 11
+                },
+                {
+                  "address": 268451200,
+                  "type": 22,
+                  "symbol": 4291821840,
+                  "name": "__errno",
+                  "symbol_index": 12
+                },
+                {
+                  "address": 268451204,
+                  "type": 22,
+                  "symbol": 4291821824,
+                  "name": "malloc",
+                  "symbol_index": 13
+                },
+                {
+                  "address": 268451208,
+                  "type": 22,
+                  "symbol": 4291821828,
+                  "name": "calloc",
+                  "symbol_index": 14
+                },
+                {
+                  "address": 268451212,
+                  "type": 22,
+                  "symbol": 4291821832,
+                  "name": "realloc",
+                  "symbol_index": 15
+                },
+                {
+                  "address": 268451216,
+                  "type": 22,
+                  "symbol": 4291821836,
+                  "name": "free",
+                  "symbol_index": 16
+                }
+              ],
+              "initializers": [],
+              "initialization_enabled": true,
+              "modules": [
+                {
+                  "name": "libfixture.so",
+                  "sha256": "f1420c737206c734700770e51b76a0f9f64a06c0585e819cd696e89ddd4706be",
+                  "load_bias": 268435456,
+                  "needed": [
+                    "libc.so"
+                  ]
+                }
+              ],
+              "libc_calls": [
+                "memset",
+                "memcpy",
+                "memmove",
+                "memcmp",
+                "strlen",
+                "strnlen",
+                "strcmp",
+                "strncmp",
+                "strcpy",
+                "strncpy",
+                "strcmp",
+                "strnlen",
+                "memcmp",
+                "memcmp",
+                "__errno",
+                "malloc",
+                "malloc",
+                "calloc",
+                "memset",
+                "realloc",
+                "realloc",
+                "calloc",
+                "free",
+                "free",
+                "free",
+                "__errno",
+                "malloc",
+                "free",
+                "malloc",
+                "free"
+              ]
+            }
+          },
+          "backends": {
+            "native": {
+              "actual": {
+                "registers": [
+                  3909090281,
+                  268451412,
+                  24,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268451216,
+                  2146435072,
+                  268442280,
+                  4294901760
+                ],
+                "cpsr": 1610612752,
+                "memory": [
+                  {
+                    "address": 268451412,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000e9fbffe80c00000001000000010000000100000000000080"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "node": {
+              "actual": {
+                "registers": [
+                  3909090281,
+                  268451412,
+                  24,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268451216,
+                  2146435072,
+                  268442280,
+                  4294901760
+                ],
+                "cpsr": 1610612752,
+                "memory": [
+                  {
+                    "address": 268451412,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000e9fbffe80c00000001000000010000000100000000000080"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "chromium": {
+              "actual": {
+                "registers": [
+                  3909090281,
+                  268451412,
+                  24,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268451216,
+                  2146435072,
+                  268442280,
+                  4294901760
+                ],
+                "cpsr": 1610612752,
+                "memory": [
+                  {
+                    "address": 268451412,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000e9fbffe80c00000001000000010000000100000000000080"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true,
+              "elapsed_seconds": 1.0715058999776375
+            }
+          }
+        }
+      ],
+      "artifacts": [
+        {
+          "name": "linked.cpp",
+          "size_bytes": 340706,
+          "sha256": "e1907da2b8f79478eb9789010289fa8c041a5888e64ec506c729ef706129952e"
+        },
+        {
+          "name": "linked.exe",
+          "size_bytes": 194560,
+          "sha256": "f530ef39db3d30fe206749263cd8c926953e17cf65c2025b85580af4388bc184"
+        },
+        {
+          "name": "linked.js",
+          "size_bytes": 59662,
+          "sha256": "fe332d50c111a9298e04a8f3e14adfcdfc4d30420cc1487f6f819fb1c01de759"
+        },
+        {
+          "name": "linked.wasm",
+          "size_bytes": 180369,
+          "sha256": "98b906a78bf2835497447a8cc38aa2f13d829952245492fcb4dc1cf44ddafa9f"
+        }
+      ],
+      "compile_steps": [
+        {
+          "stage": "translate",
+          "command": [
+            "build/recomp/rearm.exe",
+            "--input",
+            "<repo>\\build\\allocator-e2e\\arm-O0\\libfixture.so",
+            "--load-bias",
+            "0x10000000",
+            "--entry",
+            "fixture_entry",
+            "--observe",
+            "fixture_output:64",
+            "--output",
+            "<repo>\\build\\allocator-e2e\\arm-O0\\execution\\linked.cpp",
+            "--sla",
+            "third_party/sla/ARM/ARM7_le.sla",
+            "--initialize",
+            "yes",
+            "--max-instructions",
+            "1000000",
+            "--runtime",
+            "libc-basic"
+          ],
+          "elapsed_seconds": 0.10515759998816065,
+          "peak_sampled_rss_bytes": 17170432,
+          "translation": {
+            "summary": {
+              "instructions": 457,
+              "pcode_ops": 1959,
+              "translation_seconds": 0.0699689
+            },
+            "instructions_per_second": 4345.858026918188,
+            "pcode_ops_per_second": 18629.18134514821
+          }
+        },
+        {
+          "stage": "native_compile",
+          "command": [
+            "clang++",
+            "<repo>\\build\\allocator-e2e\\arm-O0\\execution\\linked.cpp",
+            "-I",
+            "<repo>",
+            "<repo>\\runtime\\jni32.cpp",
+            "<repo>\\runtime\\aapcs32.cpp",
+            "<repo>\\runtime\\libc_memory32.cpp",
+            "<repo>\\runtime\\libc_imports32.cpp",
+            "<repo>\\runtime\\heap32.cpp",
+            "<repo>\\runtime\\libc_allocator32.cpp",
+            "-std=c++20",
+            "-O2",
+            "-o",
+            "<repo>\\build\\allocator-e2e\\arm-O0\\execution\\linked.exe"
+          ],
+          "elapsed_seconds": 12.792709999979706,
+          "peak_sampled_rss_bytes": 137158656
+        },
+        {
+          "stage": "wasm_compile",
+          "command": [
+            "third_party/emsdk/upstream/emscripten/em++.exe",
+            "<repo>\\build\\allocator-e2e\\arm-O0\\execution\\linked.cpp",
+            "-I",
+            "<repo>",
+            "<repo>\\runtime\\jni32.cpp",
+            "<repo>\\runtime\\aapcs32.cpp",
+            "<repo>\\runtime\\libc_memory32.cpp",
+            "<repo>\\runtime\\libc_imports32.cpp",
+            "<repo>\\runtime\\heap32.cpp",
+            "<repo>\\runtime\\libc_allocator32.cpp",
+            "-std=c++20",
+            "-O2",
+            "-sMODULARIZE=1",
+            "-sEXPORT_NAME=createRearmModule",
+            "-sENVIRONMENT=node,web",
+            "-sEXIT_RUNTIME=0",
+            "-sINVOKE_RUN=0",
+            "-sEXPORTED_RUNTIME_METHODS=callMain",
+            "-sALLOW_MEMORY_GROWTH=1",
+            "-o",
+            "<repo>\\build\\allocator-e2e\\arm-O0\\execution\\linked.js"
+          ],
+          "elapsed_seconds": 19.679523099999642,
+          "peak_sampled_rss_bytes": 156987392
+        }
+      ]
+    },
+    {
+      "mode": "arm",
+      "optimization": "O2",
+      "elf_sha256": "71643b049483f82b493454b75bdb34be89350478bce80c0003ba9a8f7f0a537c",
+      "build": {
+        "command": [
+          "clang",
+          "--target=armv7a-linux-gnueabi",
+          "-mfloat-abi=soft",
+          "-nostdlib",
+          "-fPIC",
+          "-shared",
+          "-fuse-ld=lld",
+          "-Wl,--hash-style=sysv,--pack-dyn-relocs=none",
+          "-Wl,-z,max-page-size=4096,-z,common-page-size=4096",
+          "-marm",
+          "-O2",
+          "-fno-builtin",
+          "-DALLOCATOR_IMPORTS",
+          "<repo>\\tests\\fixtures\\libc_imports.c",
+          "-Wl,-soname,libfixture.so",
+          "-L<repo>\\build\\allocator-e2e",
+          "-Wl,--no-as-needed",
+          "-l:libc.so",
+          "-o",
+          "<repo>\\build\\allocator-e2e\\arm-O2\\libfixture.so"
+        ],
+        "elapsed_seconds": 0.210712500003865,
+        "peak_sampled_rss_bytes": 51499008,
+        "rss_sampling_seconds": 0.02,
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "cases": [
+        {
+          "seed": 0,
+          "reference": {
+            "registers": [
+              3485482273,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              268450752,
+              2146435072,
+              268442048,
+              4294901760
+            ],
+            "cpsr": 536870928,
+            "memory": [
+              {
+                "address": 268450948,
+                "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000213dc0cf0c00000001000000010000000100000000000000"
+              }
+            ],
+            "reference": {
+              "engine": "unicorn",
+              "version": "2.1.4",
+              "instructions": 704,
+              "elapsed_seconds": 0.004206999990856275,
+              "load_bias": 268435456,
+              "relocations": [
+                {
+                  "address": 268446584,
+                  "type": 21,
+                  "symbol": 268450948,
+                  "name": "fixture_output",
+                  "symbol_index": 17
+                },
+                {
+                  "address": 268450696,
+                  "type": 22,
+                  "symbol": 4291821576,
+                  "name": "memset",
+                  "symbol_index": 2
+                },
+                {
+                  "address": 268450700,
+                  "type": 22,
+                  "symbol": 4291821568,
+                  "name": "memcpy",
+                  "symbol_index": 3
+                },
+                {
+                  "address": 268450704,
+                  "type": 22,
+                  "symbol": 4291821572,
+                  "name": "memmove",
+                  "symbol_index": 4
+                },
+                {
+                  "address": 268450708,
+                  "type": 22,
+                  "symbol": 4291821580,
+                  "name": "memcmp",
+                  "symbol_index": 5
+                },
+                {
+                  "address": 268450712,
+                  "type": 22,
+                  "symbol": 4291821584,
+                  "name": "strlen",
+                  "symbol_index": 6
+                },
+                {
+                  "address": 268450716,
+                  "type": 22,
+                  "symbol": 4291821588,
+                  "name": "strnlen",
+                  "symbol_index": 7
+                },
+                {
+                  "address": 268450720,
+                  "type": 22,
+                  "symbol": 4291821592,
+                  "name": "strcmp",
+                  "symbol_index": 8
+                },
+                {
+                  "address": 268450724,
+                  "type": 22,
+                  "symbol": 4291821596,
+                  "name": "strncmp",
+                  "symbol_index": 9
+                },
+                {
+                  "address": 268450728,
+                  "type": 22,
+                  "symbol": 4291821600,
+                  "name": "strcpy",
+                  "symbol_index": 10
+                },
+                {
+                  "address": 268450732,
+                  "type": 22,
+                  "symbol": 4291821604,
+                  "name": "strncpy",
+                  "symbol_index": 11
+                },
+                {
+                  "address": 268450736,
+                  "type": 22,
+                  "symbol": 4291821840,
+                  "name": "__errno",
+                  "symbol_index": 12
+                },
+                {
+                  "address": 268450740,
+                  "type": 22,
+                  "symbol": 4291821824,
+                  "name": "malloc",
+                  "symbol_index": 13
+                },
+                {
+                  "address": 268450744,
+                  "type": 22,
+                  "symbol": 4291821828,
+                  "name": "calloc",
+                  "symbol_index": 14
+                },
+                {
+                  "address": 268450748,
+                  "type": 22,
+                  "symbol": 4291821832,
+                  "name": "realloc",
+                  "symbol_index": 15
+                },
+                {
+                  "address": 268450752,
+                  "type": 22,
+                  "symbol": 4291821836,
+                  "name": "free",
+                  "symbol_index": 16
+                }
+              ],
+              "initializers": [],
+              "initialization_enabled": true,
+              "modules": [
+                {
+                  "name": "libfixture.so",
+                  "sha256": "71643b049483f82b493454b75bdb34be89350478bce80c0003ba9a8f7f0a537c",
+                  "load_bias": 268435456,
+                  "needed": [
+                    "libc.so"
+                  ]
+                }
+              ],
+              "libc_calls": [
+                "memset",
+                "memcpy",
+                "memmove",
+                "memcmp",
+                "strlen",
+                "strnlen",
+                "strcmp",
+                "strncmp",
+                "strcpy",
+                "strncpy",
+                "strcmp",
+                "strnlen",
+                "memcmp",
+                "memcmp",
+                "__errno",
+                "malloc",
+                "malloc",
+                "calloc",
+                "memset",
+                "realloc",
+                "realloc",
+                "calloc",
+                "free",
+                "free",
+                "free",
+                "__errno",
+                "malloc",
+                "free",
+                "malloc",
+                "free"
+              ]
+            }
+          },
+          "backends": {
+            "native": {
+              "actual": {
+                "registers": [
+                  3485482273,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450752,
+                  2146435072,
+                  268442048,
+                  4294901760
+                ],
+                "cpsr": 536870928,
+                "memory": [
+                  {
+                    "address": 268450948,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000213dc0cf0c00000001000000010000000100000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "node": {
+              "actual": {
+                "registers": [
+                  3485482273,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450752,
+                  2146435072,
+                  268442048,
+                  4294901760
+                ],
+                "cpsr": 536870928,
+                "memory": [
+                  {
+                    "address": 268450948,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000213dc0cf0c00000001000000010000000100000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "chromium": {
+              "actual": {
+                "registers": [
+                  3485482273,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450752,
+                  2146435072,
+                  268442048,
+                  4294901760
+                ],
+                "cpsr": 536870928,
+                "memory": [
+                  {
+                    "address": 268450948,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000213dc0cf0c00000001000000010000000100000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true,
+              "elapsed_seconds": 1.1752213999861851
+            }
+          }
+        },
+        {
+          "seed": 1,
+          "reference": {
+            "registers": [
+              326211523,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              268450752,
+              2146435072,
+              268442048,
+              4294901760
+            ],
+            "cpsr": 536870928,
+            "memory": [
+              {
+                "address": 268450948,
+                "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000c39771130c00000001000000010000000100000001000000"
+              }
+            ],
+            "reference": {
+              "engine": "unicorn",
+              "version": "2.1.4",
+              "instructions": 704,
+              "elapsed_seconds": 0.0026732000114861876,
+              "load_bias": 268435456,
+              "relocations": [
+                {
+                  "address": 268446584,
+                  "type": 21,
+                  "symbol": 268450948,
+                  "name": "fixture_output",
+                  "symbol_index": 17
+                },
+                {
+                  "address": 268450696,
+                  "type": 22,
+                  "symbol": 4291821576,
+                  "name": "memset",
+                  "symbol_index": 2
+                },
+                {
+                  "address": 268450700,
+                  "type": 22,
+                  "symbol": 4291821568,
+                  "name": "memcpy",
+                  "symbol_index": 3
+                },
+                {
+                  "address": 268450704,
+                  "type": 22,
+                  "symbol": 4291821572,
+                  "name": "memmove",
+                  "symbol_index": 4
+                },
+                {
+                  "address": 268450708,
+                  "type": 22,
+                  "symbol": 4291821580,
+                  "name": "memcmp",
+                  "symbol_index": 5
+                },
+                {
+                  "address": 268450712,
+                  "type": 22,
+                  "symbol": 4291821584,
+                  "name": "strlen",
+                  "symbol_index": 6
+                },
+                {
+                  "address": 268450716,
+                  "type": 22,
+                  "symbol": 4291821588,
+                  "name": "strnlen",
+                  "symbol_index": 7
+                },
+                {
+                  "address": 268450720,
+                  "type": 22,
+                  "symbol": 4291821592,
+                  "name": "strcmp",
+                  "symbol_index": 8
+                },
+                {
+                  "address": 268450724,
+                  "type": 22,
+                  "symbol": 4291821596,
+                  "name": "strncmp",
+                  "symbol_index": 9
+                },
+                {
+                  "address": 268450728,
+                  "type": 22,
+                  "symbol": 4291821600,
+                  "name": "strcpy",
+                  "symbol_index": 10
+                },
+                {
+                  "address": 268450732,
+                  "type": 22,
+                  "symbol": 4291821604,
+                  "name": "strncpy",
+                  "symbol_index": 11
+                },
+                {
+                  "address": 268450736,
+                  "type": 22,
+                  "symbol": 4291821840,
+                  "name": "__errno",
+                  "symbol_index": 12
+                },
+                {
+                  "address": 268450740,
+                  "type": 22,
+                  "symbol": 4291821824,
+                  "name": "malloc",
+                  "symbol_index": 13
+                },
+                {
+                  "address": 268450744,
+                  "type": 22,
+                  "symbol": 4291821828,
+                  "name": "calloc",
+                  "symbol_index": 14
+                },
+                {
+                  "address": 268450748,
+                  "type": 22,
+                  "symbol": 4291821832,
+                  "name": "realloc",
+                  "symbol_index": 15
+                },
+                {
+                  "address": 268450752,
+                  "type": 22,
+                  "symbol": 4291821836,
+                  "name": "free",
+                  "symbol_index": 16
+                }
+              ],
+              "initializers": [],
+              "initialization_enabled": true,
+              "modules": [
+                {
+                  "name": "libfixture.so",
+                  "sha256": "71643b049483f82b493454b75bdb34be89350478bce80c0003ba9a8f7f0a537c",
+                  "load_bias": 268435456,
+                  "needed": [
+                    "libc.so"
+                  ]
+                }
+              ],
+              "libc_calls": [
+                "memset",
+                "memcpy",
+                "memmove",
+                "memcmp",
+                "strlen",
+                "strnlen",
+                "strcmp",
+                "strncmp",
+                "strcpy",
+                "strncpy",
+                "strcmp",
+                "strnlen",
+                "memcmp",
+                "memcmp",
+                "__errno",
+                "malloc",
+                "malloc",
+                "calloc",
+                "memset",
+                "realloc",
+                "realloc",
+                "calloc",
+                "free",
+                "free",
+                "free",
+                "__errno",
+                "malloc",
+                "free",
+                "malloc",
+                "free"
+              ]
+            }
+          },
+          "backends": {
+            "native": {
+              "actual": {
+                "registers": [
+                  326211523,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450752,
+                  2146435072,
+                  268442048,
+                  4294901760
+                ],
+                "cpsr": 536870928,
+                "memory": [
+                  {
+                    "address": 268450948,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000c39771130c00000001000000010000000100000001000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "node": {
+              "actual": {
+                "registers": [
+                  326211523,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450752,
+                  2146435072,
+                  268442048,
+                  4294901760
+                ],
+                "cpsr": 536870928,
+                "memory": [
+                  {
+                    "address": 268450948,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000c39771130c00000001000000010000000100000001000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "chromium": {
+              "actual": {
+                "registers": [
+                  326211523,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450752,
+                  2146435072,
+                  268442048,
+                  4294901760
+                ],
+                "cpsr": 536870928,
+                "memory": [
+                  {
+                    "address": 268450948,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000c39771130c00000001000000010000000100000001000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true,
+              "elapsed_seconds": 0.9776457999832928
+            }
+          }
+        },
+        {
+          "seed": 4294967295,
+          "reference": {
+            "registers": [
+              155468166,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              268450752,
+              2146435072,
+              268442048,
+              4294901760
+            ],
+            "cpsr": 536870928,
+            "memory": [
+              {
+                "address": 268450948,
+                "bytes": "000000000000000001000000ff000000ff000000010000000c000000ff000000010000000c000000864144090c000000010000000100000001000000ffffffff"
+              }
+            ],
+            "reference": {
+              "engine": "unicorn",
+              "version": "2.1.4",
+              "instructions": 704,
+              "elapsed_seconds": 0.004042699991259724,
+              "load_bias": 268435456,
+              "relocations": [
+                {
+                  "address": 268446584,
+                  "type": 21,
+                  "symbol": 268450948,
+                  "name": "fixture_output",
+                  "symbol_index": 17
+                },
+                {
+                  "address": 268450696,
+                  "type": 22,
+                  "symbol": 4291821576,
+                  "name": "memset",
+                  "symbol_index": 2
+                },
+                {
+                  "address": 268450700,
+                  "type": 22,
+                  "symbol": 4291821568,
+                  "name": "memcpy",
+                  "symbol_index": 3
+                },
+                {
+                  "address": 268450704,
+                  "type": 22,
+                  "symbol": 4291821572,
+                  "name": "memmove",
+                  "symbol_index": 4
+                },
+                {
+                  "address": 268450708,
+                  "type": 22,
+                  "symbol": 4291821580,
+                  "name": "memcmp",
+                  "symbol_index": 5
+                },
+                {
+                  "address": 268450712,
+                  "type": 22,
+                  "symbol": 4291821584,
+                  "name": "strlen",
+                  "symbol_index": 6
+                },
+                {
+                  "address": 268450716,
+                  "type": 22,
+                  "symbol": 4291821588,
+                  "name": "strnlen",
+                  "symbol_index": 7
+                },
+                {
+                  "address": 268450720,
+                  "type": 22,
+                  "symbol": 4291821592,
+                  "name": "strcmp",
+                  "symbol_index": 8
+                },
+                {
+                  "address": 268450724,
+                  "type": 22,
+                  "symbol": 4291821596,
+                  "name": "strncmp",
+                  "symbol_index": 9
+                },
+                {
+                  "address": 268450728,
+                  "type": 22,
+                  "symbol": 4291821600,
+                  "name": "strcpy",
+                  "symbol_index": 10
+                },
+                {
+                  "address": 268450732,
+                  "type": 22,
+                  "symbol": 4291821604,
+                  "name": "strncpy",
+                  "symbol_index": 11
+                },
+                {
+                  "address": 268450736,
+                  "type": 22,
+                  "symbol": 4291821840,
+                  "name": "__errno",
+                  "symbol_index": 12
+                },
+                {
+                  "address": 268450740,
+                  "type": 22,
+                  "symbol": 4291821824,
+                  "name": "malloc",
+                  "symbol_index": 13
+                },
+                {
+                  "address": 268450744,
+                  "type": 22,
+                  "symbol": 4291821828,
+                  "name": "calloc",
+                  "symbol_index": 14
+                },
+                {
+                  "address": 268450748,
+                  "type": 22,
+                  "symbol": 4291821832,
+                  "name": "realloc",
+                  "symbol_index": 15
+                },
+                {
+                  "address": 268450752,
+                  "type": 22,
+                  "symbol": 4291821836,
+                  "name": "free",
+                  "symbol_index": 16
+                }
+              ],
+              "initializers": [],
+              "initialization_enabled": true,
+              "modules": [
+                {
+                  "name": "libfixture.so",
+                  "sha256": "71643b049483f82b493454b75bdb34be89350478bce80c0003ba9a8f7f0a537c",
+                  "load_bias": 268435456,
+                  "needed": [
+                    "libc.so"
+                  ]
+                }
+              ],
+              "libc_calls": [
+                "memset",
+                "memcpy",
+                "memmove",
+                "memcmp",
+                "strlen",
+                "strnlen",
+                "strcmp",
+                "strncmp",
+                "strcpy",
+                "strncpy",
+                "strcmp",
+                "strnlen",
+                "memcmp",
+                "memcmp",
+                "__errno",
+                "malloc",
+                "malloc",
+                "calloc",
+                "memset",
+                "realloc",
+                "realloc",
+                "calloc",
+                "free",
+                "free",
+                "free",
+                "__errno",
+                "malloc",
+                "free",
+                "malloc",
+                "free"
+              ]
+            }
+          },
+          "backends": {
+            "native": {
+              "actual": {
+                "registers": [
+                  155468166,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450752,
+                  2146435072,
+                  268442048,
+                  4294901760
+                ],
+                "cpsr": 536870928,
+                "memory": [
+                  {
+                    "address": 268450948,
+                    "bytes": "000000000000000001000000ff000000ff000000010000000c000000ff000000010000000c000000864144090c000000010000000100000001000000ffffffff"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "node": {
+              "actual": {
+                "registers": [
+                  155468166,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450752,
+                  2146435072,
+                  268442048,
+                  4294901760
+                ],
+                "cpsr": 536870928,
+                "memory": [
+                  {
+                    "address": 268450948,
+                    "bytes": "000000000000000001000000ff000000ff000000010000000c000000ff000000010000000c000000864144090c000000010000000100000001000000ffffffff"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "chromium": {
+              "actual": {
+                "registers": [
+                  155468166,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450752,
+                  2146435072,
+                  268442048,
+                  4294901760
+                ],
+                "cpsr": 536870928,
+                "memory": [
+                  {
+                    "address": 268450948,
+                    "bytes": "000000000000000001000000ff000000ff000000010000000c000000ff000000010000000c000000864144090c000000010000000100000001000000ffffffff"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true,
+              "elapsed_seconds": 0.9136198000051081
+            }
+          }
+        },
+        {
+          "seed": 2147483648,
+          "reference": {
+            "registers": [
+              3909090281,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              268450752,
+              2146435072,
+              268442048,
+              4294901760
+            ],
+            "cpsr": 536870928,
+            "memory": [
+              {
+                "address": 268450948,
+                "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000e9fbffe80c00000001000000010000000100000000000080"
+              }
+            ],
+            "reference": {
+              "engine": "unicorn",
+              "version": "2.1.4",
+              "instructions": 704,
+              "elapsed_seconds": 0.003919599985238165,
+              "load_bias": 268435456,
+              "relocations": [
+                {
+                  "address": 268446584,
+                  "type": 21,
+                  "symbol": 268450948,
+                  "name": "fixture_output",
+                  "symbol_index": 17
+                },
+                {
+                  "address": 268450696,
+                  "type": 22,
+                  "symbol": 4291821576,
+                  "name": "memset",
+                  "symbol_index": 2
+                },
+                {
+                  "address": 268450700,
+                  "type": 22,
+                  "symbol": 4291821568,
+                  "name": "memcpy",
+                  "symbol_index": 3
+                },
+                {
+                  "address": 268450704,
+                  "type": 22,
+                  "symbol": 4291821572,
+                  "name": "memmove",
+                  "symbol_index": 4
+                },
+                {
+                  "address": 268450708,
+                  "type": 22,
+                  "symbol": 4291821580,
+                  "name": "memcmp",
+                  "symbol_index": 5
+                },
+                {
+                  "address": 268450712,
+                  "type": 22,
+                  "symbol": 4291821584,
+                  "name": "strlen",
+                  "symbol_index": 6
+                },
+                {
+                  "address": 268450716,
+                  "type": 22,
+                  "symbol": 4291821588,
+                  "name": "strnlen",
+                  "symbol_index": 7
+                },
+                {
+                  "address": 268450720,
+                  "type": 22,
+                  "symbol": 4291821592,
+                  "name": "strcmp",
+                  "symbol_index": 8
+                },
+                {
+                  "address": 268450724,
+                  "type": 22,
+                  "symbol": 4291821596,
+                  "name": "strncmp",
+                  "symbol_index": 9
+                },
+                {
+                  "address": 268450728,
+                  "type": 22,
+                  "symbol": 4291821600,
+                  "name": "strcpy",
+                  "symbol_index": 10
+                },
+                {
+                  "address": 268450732,
+                  "type": 22,
+                  "symbol": 4291821604,
+                  "name": "strncpy",
+                  "symbol_index": 11
+                },
+                {
+                  "address": 268450736,
+                  "type": 22,
+                  "symbol": 4291821840,
+                  "name": "__errno",
+                  "symbol_index": 12
+                },
+                {
+                  "address": 268450740,
+                  "type": 22,
+                  "symbol": 4291821824,
+                  "name": "malloc",
+                  "symbol_index": 13
+                },
+                {
+                  "address": 268450744,
+                  "type": 22,
+                  "symbol": 4291821828,
+                  "name": "calloc",
+                  "symbol_index": 14
+                },
+                {
+                  "address": 268450748,
+                  "type": 22,
+                  "symbol": 4291821832,
+                  "name": "realloc",
+                  "symbol_index": 15
+                },
+                {
+                  "address": 268450752,
+                  "type": 22,
+                  "symbol": 4291821836,
+                  "name": "free",
+                  "symbol_index": 16
+                }
+              ],
+              "initializers": [],
+              "initialization_enabled": true,
+              "modules": [
+                {
+                  "name": "libfixture.so",
+                  "sha256": "71643b049483f82b493454b75bdb34be89350478bce80c0003ba9a8f7f0a537c",
+                  "load_bias": 268435456,
+                  "needed": [
+                    "libc.so"
+                  ]
+                }
+              ],
+              "libc_calls": [
+                "memset",
+                "memcpy",
+                "memmove",
+                "memcmp",
+                "strlen",
+                "strnlen",
+                "strcmp",
+                "strncmp",
+                "strcpy",
+                "strncpy",
+                "strcmp",
+                "strnlen",
+                "memcmp",
+                "memcmp",
+                "__errno",
+                "malloc",
+                "malloc",
+                "calloc",
+                "memset",
+                "realloc",
+                "realloc",
+                "calloc",
+                "free",
+                "free",
+                "free",
+                "__errno",
+                "malloc",
+                "free",
+                "malloc",
+                "free"
+              ]
+            }
+          },
+          "backends": {
+            "native": {
+              "actual": {
+                "registers": [
+                  3909090281,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450752,
+                  2146435072,
+                  268442048,
+                  4294901760
+                ],
+                "cpsr": 536870928,
+                "memory": [
+                  {
+                    "address": 268450948,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000e9fbffe80c00000001000000010000000100000000000080"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "node": {
+              "actual": {
+                "registers": [
+                  3909090281,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450752,
+                  2146435072,
+                  268442048,
+                  4294901760
+                ],
+                "cpsr": 536870928,
+                "memory": [
+                  {
+                    "address": 268450948,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000e9fbffe80c00000001000000010000000100000000000080"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "chromium": {
+              "actual": {
+                "registers": [
+                  3909090281,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450752,
+                  2146435072,
+                  268442048,
+                  4294901760
+                ],
+                "cpsr": 536870928,
+                "memory": [
+                  {
+                    "address": 268450948,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000e9fbffe80c00000001000000010000000100000000000080"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true,
+              "elapsed_seconds": 0.850634500005981
+            }
+          }
+        }
+      ],
+      "artifacts": [
+        {
+          "name": "linked.cpp",
+          "size_bytes": 404510,
+          "sha256": "79806e34f3801d9bae5af55ce055854167cbc906d9eea138ebdfad3f95ded1f3"
+        },
+        {
+          "name": "linked.exe",
+          "size_bytes": 192000,
+          "sha256": "43141ff8e45b9671ece1d63c5fba83c815599559bf098f1f5a364d1d111f04ec"
+        },
+        {
+          "name": "linked.js",
+          "size_bytes": 59662,
+          "sha256": "fe332d50c111a9298e04a8f3e14adfcdfc4d30420cc1487f6f819fb1c01de759"
+        },
+        {
+          "name": "linked.wasm",
+          "size_bytes": 179436,
+          "sha256": "16e002f7a8da81feb448193499735a0e76a0ce3db581abc0303bb7ab2a48c407"
+        }
+      ],
+      "compile_steps": [
+        {
+          "stage": "translate",
+          "command": [
+            "build/recomp/rearm.exe",
+            "--input",
+            "<repo>\\build\\allocator-e2e\\arm-O2\\libfixture.so",
+            "--load-bias",
+            "0x10000000",
+            "--entry",
+            "fixture_entry",
+            "--observe",
+            "fixture_output:64",
+            "--output",
+            "<repo>\\build\\allocator-e2e\\arm-O2\\execution\\linked.cpp",
+            "--sla",
+            "third_party/sla/ARM/ARM7_le.sla",
+            "--initialize",
+            "yes",
+            "--max-instructions",
+            "1000000",
+            "--runtime",
+            "libc-basic"
+          ],
+          "elapsed_seconds": 0.13381769999978133,
+          "peak_sampled_rss_bytes": 17276928,
+          "translation": {
+            "summary": {
+              "instructions": 398,
+              "pcode_ops": 2436,
+              "translation_seconds": 0.0856164
+            },
+            "instructions_per_second": 2974.1954913337354,
+            "pcode_ops_per_second": 18203.869891680853
+          }
+        },
+        {
+          "stage": "native_compile",
+          "command": [
+            "clang++",
+            "<repo>\\build\\allocator-e2e\\arm-O2\\execution\\linked.cpp",
+            "-I",
+            "<repo>",
+            "<repo>\\runtime\\jni32.cpp",
+            "<repo>\\runtime\\aapcs32.cpp",
+            "<repo>\\runtime\\libc_memory32.cpp",
+            "<repo>\\runtime\\libc_imports32.cpp",
+            "<repo>\\runtime\\heap32.cpp",
+            "<repo>\\runtime\\libc_allocator32.cpp",
+            "-std=c++20",
+            "-O2",
+            "-o",
+            "<repo>\\build\\allocator-e2e\\arm-O2\\execution\\linked.exe"
+          ],
+          "elapsed_seconds": 23.38762090000091,
+          "peak_sampled_rss_bytes": 139149312
+        },
+        {
+          "stage": "wasm_compile",
+          "command": [
+            "third_party/emsdk/upstream/emscripten/em++.exe",
+            "<repo>\\build\\allocator-e2e\\arm-O2\\execution\\linked.cpp",
+            "-I",
+            "<repo>",
+            "<repo>\\runtime\\jni32.cpp",
+            "<repo>\\runtime\\aapcs32.cpp",
+            "<repo>\\runtime\\libc_memory32.cpp",
+            "<repo>\\runtime\\libc_imports32.cpp",
+            "<repo>\\runtime\\heap32.cpp",
+            "<repo>\\runtime\\libc_allocator32.cpp",
+            "-std=c++20",
+            "-O2",
+            "-sMODULARIZE=1",
+            "-sEXPORT_NAME=createRearmModule",
+            "-sENVIRONMENT=node,web",
+            "-sEXIT_RUNTIME=0",
+            "-sINVOKE_RUN=0",
+            "-sEXPORTED_RUNTIME_METHODS=callMain",
+            "-sALLOW_MEMORY_GROWTH=1",
+            "-o",
+            "<repo>\\build\\allocator-e2e\\arm-O2\\execution\\linked.js"
+          ],
+          "elapsed_seconds": 27.74330479998025,
+          "peak_sampled_rss_bytes": 158203904
+        }
+      ]
+    },
+    {
+      "mode": "thumb",
+      "optimization": "O0",
+      "elf_sha256": "ab399fde3039374821a70053fc942b1604102e629e487d8a5aa90231203408ef",
+      "build": {
+        "command": [
+          "clang",
+          "--target=armv7a-linux-gnueabi",
+          "-mfloat-abi=soft",
+          "-nostdlib",
+          "-fPIC",
+          "-shared",
+          "-fuse-ld=lld",
+          "-Wl,--hash-style=sysv,--pack-dyn-relocs=none",
+          "-Wl,-z,max-page-size=4096,-z,common-page-size=4096",
+          "-mthumb",
+          "-O0",
+          "-fno-builtin",
+          "-DALLOCATOR_IMPORTS",
+          "<repo>\\tests\\fixtures\\libc_imports.c",
+          "-Wl,-soname,libfixture.so",
+          "-L<repo>\\build\\allocator-e2e",
+          "-Wl,--no-as-needed",
+          "-l:libc.so",
+          "-o",
+          "<repo>\\build\\allocator-e2e\\thumb-O0\\libfixture.so"
+        ],
+        "elapsed_seconds": 0.15751550000277348,
+        "peak_sampled_rss_bytes": 23199744,
+        "rss_sampling_seconds": 0.02,
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "cases": [
+        {
+          "seed": 0,
+          "reference": {
+            "registers": [
+              3485482273,
+              268450404,
+              1610612736,
+              268450404,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              268450208,
+              2146435072,
+              268441477,
+              4294901760
+            ],
+            "cpsr": 16,
+            "memory": [
+              {
+                "address": 268450404,
+                "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000213dc0cf0c00000001000000010000000100000000000000"
+              }
+            ],
+            "reference": {
+              "engine": "unicorn",
+              "version": "2.1.4",
+              "instructions": 1866,
+              "elapsed_seconds": 0.005091700004413724,
+              "load_bias": 268435456,
+              "relocations": [
+                {
+                  "address": 268446040,
+                  "type": 21,
+                  "symbol": 268450404,
+                  "name": "fixture_output",
+                  "symbol_index": 17
+                },
+                {
+                  "address": 268450152,
+                  "type": 22,
+                  "symbol": 4291821576,
+                  "name": "memset",
+                  "symbol_index": 2
+                },
+                {
+                  "address": 268450156,
+                  "type": 22,
+                  "symbol": 4291821568,
+                  "name": "memcpy",
+                  "symbol_index": 3
+                },
+                {
+                  "address": 268450160,
+                  "type": 22,
+                  "symbol": 4291821572,
+                  "name": "memmove",
+                  "symbol_index": 4
+                },
+                {
+                  "address": 268450164,
+                  "type": 22,
+                  "symbol": 4291821580,
+                  "name": "memcmp",
+                  "symbol_index": 5
+                },
+                {
+                  "address": 268450168,
+                  "type": 22,
+                  "symbol": 4291821584,
+                  "name": "strlen",
+                  "symbol_index": 6
+                },
+                {
+                  "address": 268450172,
+                  "type": 22,
+                  "symbol": 4291821588,
+                  "name": "strnlen",
+                  "symbol_index": 7
+                },
+                {
+                  "address": 268450176,
+                  "type": 22,
+                  "symbol": 4291821592,
+                  "name": "strcmp",
+                  "symbol_index": 8
+                },
+                {
+                  "address": 268450180,
+                  "type": 22,
+                  "symbol": 4291821596,
+                  "name": "strncmp",
+                  "symbol_index": 9
+                },
+                {
+                  "address": 268450184,
+                  "type": 22,
+                  "symbol": 4291821600,
+                  "name": "strcpy",
+                  "symbol_index": 10
+                },
+                {
+                  "address": 268450188,
+                  "type": 22,
+                  "symbol": 4291821604,
+                  "name": "strncpy",
+                  "symbol_index": 11
+                },
+                {
+                  "address": 268450192,
+                  "type": 22,
+                  "symbol": 4291821840,
+                  "name": "__errno",
+                  "symbol_index": 12
+                },
+                {
+                  "address": 268450196,
+                  "type": 22,
+                  "symbol": 4291821824,
+                  "name": "malloc",
+                  "symbol_index": 13
+                },
+                {
+                  "address": 268450200,
+                  "type": 22,
+                  "symbol": 4291821828,
+                  "name": "calloc",
+                  "symbol_index": 14
+                },
+                {
+                  "address": 268450204,
+                  "type": 22,
+                  "symbol": 4291821832,
+                  "name": "realloc",
+                  "symbol_index": 15
+                },
+                {
+                  "address": 268450208,
+                  "type": 22,
+                  "symbol": 4291821836,
+                  "name": "free",
+                  "symbol_index": 16
+                }
+              ],
+              "initializers": [],
+              "initialization_enabled": true,
+              "modules": [
+                {
+                  "name": "libfixture.so",
+                  "sha256": "ab399fde3039374821a70053fc942b1604102e629e487d8a5aa90231203408ef",
+                  "load_bias": 268435456,
+                  "needed": [
+                    "libc.so"
+                  ]
+                }
+              ],
+              "libc_calls": [
+                "memset",
+                "memcpy",
+                "memmove",
+                "memcmp",
+                "strlen",
+                "strnlen",
+                "strcmp",
+                "strncmp",
+                "strcpy",
+                "strncpy",
+                "strcmp",
+                "strnlen",
+                "memcmp",
+                "memcmp",
+                "__errno",
+                "malloc",
+                "malloc",
+                "calloc",
+                "memset",
+                "realloc",
+                "realloc",
+                "calloc",
+                "free",
+                "free",
+                "free",
+                "__errno",
+                "malloc",
+                "free",
+                "malloc",
+                "free"
+              ]
+            }
+          },
+          "backends": {
+            "native": {
+              "actual": {
+                "registers": [
+                  3485482273,
+                  268450404,
+                  1610612736,
+                  268450404,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450208,
+                  2146435072,
+                  268441477,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268450404,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000213dc0cf0c00000001000000010000000100000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "node": {
+              "actual": {
+                "registers": [
+                  3485482273,
+                  268450404,
+                  1610612736,
+                  268450404,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450208,
+                  2146435072,
+                  268441477,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268450404,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000213dc0cf0c00000001000000010000000100000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "chromium": {
+              "actual": {
+                "registers": [
+                  3485482273,
+                  268450404,
+                  1610612736,
+                  268450404,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450208,
+                  2146435072,
+                  268441477,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268450404,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000213dc0cf0c00000001000000010000000100000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true,
+              "elapsed_seconds": 1.2468931000039447
+            }
+          }
+        },
+        {
+          "seed": 1,
+          "reference": {
+            "registers": [
+              326211523,
+              268450404,
+              1610612736,
+              268450404,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              268450208,
+              2146435072,
+              268441477,
+              4294901760
+            ],
+            "cpsr": 16,
+            "memory": [
+              {
+                "address": 268450404,
+                "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000c39771130c00000001000000010000000100000001000000"
+              }
+            ],
+            "reference": {
+              "engine": "unicorn",
+              "version": "2.1.4",
+              "instructions": 1866,
+              "elapsed_seconds": 0.0048470000037923455,
+              "load_bias": 268435456,
+              "relocations": [
+                {
+                  "address": 268446040,
+                  "type": 21,
+                  "symbol": 268450404,
+                  "name": "fixture_output",
+                  "symbol_index": 17
+                },
+                {
+                  "address": 268450152,
+                  "type": 22,
+                  "symbol": 4291821576,
+                  "name": "memset",
+                  "symbol_index": 2
+                },
+                {
+                  "address": 268450156,
+                  "type": 22,
+                  "symbol": 4291821568,
+                  "name": "memcpy",
+                  "symbol_index": 3
+                },
+                {
+                  "address": 268450160,
+                  "type": 22,
+                  "symbol": 4291821572,
+                  "name": "memmove",
+                  "symbol_index": 4
+                },
+                {
+                  "address": 268450164,
+                  "type": 22,
+                  "symbol": 4291821580,
+                  "name": "memcmp",
+                  "symbol_index": 5
+                },
+                {
+                  "address": 268450168,
+                  "type": 22,
+                  "symbol": 4291821584,
+                  "name": "strlen",
+                  "symbol_index": 6
+                },
+                {
+                  "address": 268450172,
+                  "type": 22,
+                  "symbol": 4291821588,
+                  "name": "strnlen",
+                  "symbol_index": 7
+                },
+                {
+                  "address": 268450176,
+                  "type": 22,
+                  "symbol": 4291821592,
+                  "name": "strcmp",
+                  "symbol_index": 8
+                },
+                {
+                  "address": 268450180,
+                  "type": 22,
+                  "symbol": 4291821596,
+                  "name": "strncmp",
+                  "symbol_index": 9
+                },
+                {
+                  "address": 268450184,
+                  "type": 22,
+                  "symbol": 4291821600,
+                  "name": "strcpy",
+                  "symbol_index": 10
+                },
+                {
+                  "address": 268450188,
+                  "type": 22,
+                  "symbol": 4291821604,
+                  "name": "strncpy",
+                  "symbol_index": 11
+                },
+                {
+                  "address": 268450192,
+                  "type": 22,
+                  "symbol": 4291821840,
+                  "name": "__errno",
+                  "symbol_index": 12
+                },
+                {
+                  "address": 268450196,
+                  "type": 22,
+                  "symbol": 4291821824,
+                  "name": "malloc",
+                  "symbol_index": 13
+                },
+                {
+                  "address": 268450200,
+                  "type": 22,
+                  "symbol": 4291821828,
+                  "name": "calloc",
+                  "symbol_index": 14
+                },
+                {
+                  "address": 268450204,
+                  "type": 22,
+                  "symbol": 4291821832,
+                  "name": "realloc",
+                  "symbol_index": 15
+                },
+                {
+                  "address": 268450208,
+                  "type": 22,
+                  "symbol": 4291821836,
+                  "name": "free",
+                  "symbol_index": 16
+                }
+              ],
+              "initializers": [],
+              "initialization_enabled": true,
+              "modules": [
+                {
+                  "name": "libfixture.so",
+                  "sha256": "ab399fde3039374821a70053fc942b1604102e629e487d8a5aa90231203408ef",
+                  "load_bias": 268435456,
+                  "needed": [
+                    "libc.so"
+                  ]
+                }
+              ],
+              "libc_calls": [
+                "memset",
+                "memcpy",
+                "memmove",
+                "memcmp",
+                "strlen",
+                "strnlen",
+                "strcmp",
+                "strncmp",
+                "strcpy",
+                "strncpy",
+                "strcmp",
+                "strnlen",
+                "memcmp",
+                "memcmp",
+                "__errno",
+                "malloc",
+                "malloc",
+                "calloc",
+                "memset",
+                "realloc",
+                "realloc",
+                "calloc",
+                "free",
+                "free",
+                "free",
+                "__errno",
+                "malloc",
+                "free",
+                "malloc",
+                "free"
+              ]
+            }
+          },
+          "backends": {
+            "native": {
+              "actual": {
+                "registers": [
+                  326211523,
+                  268450404,
+                  1610612736,
+                  268450404,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450208,
+                  2146435072,
+                  268441477,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268450404,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000c39771130c00000001000000010000000100000001000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "node": {
+              "actual": {
+                "registers": [
+                  326211523,
+                  268450404,
+                  1610612736,
+                  268450404,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450208,
+                  2146435072,
+                  268441477,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268450404,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000c39771130c00000001000000010000000100000001000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "chromium": {
+              "actual": {
+                "registers": [
+                  326211523,
+                  268450404,
+                  1610612736,
+                  268450404,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450208,
+                  2146435072,
+                  268441477,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268450404,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000c39771130c00000001000000010000000100000001000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true,
+              "elapsed_seconds": 0.959874000021955
+            }
+          }
+        },
+        {
+          "seed": 4294967295,
+          "reference": {
+            "registers": [
+              155468166,
+              268450404,
+              1610612736,
+              268450404,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              268450208,
+              2146435072,
+              268441477,
+              4294901760
+            ],
+            "cpsr": 16,
+            "memory": [
+              {
+                "address": 268450404,
+                "bytes": "000000000000000001000000ff000000ff000000010000000c000000ff000000010000000c000000864144090c000000010000000100000001000000ffffffff"
+              }
+            ],
+            "reference": {
+              "engine": "unicorn",
+              "version": "2.1.4",
+              "instructions": 1866,
+              "elapsed_seconds": 0.005216399993514642,
+              "load_bias": 268435456,
+              "relocations": [
+                {
+                  "address": 268446040,
+                  "type": 21,
+                  "symbol": 268450404,
+                  "name": "fixture_output",
+                  "symbol_index": 17
+                },
+                {
+                  "address": 268450152,
+                  "type": 22,
+                  "symbol": 4291821576,
+                  "name": "memset",
+                  "symbol_index": 2
+                },
+                {
+                  "address": 268450156,
+                  "type": 22,
+                  "symbol": 4291821568,
+                  "name": "memcpy",
+                  "symbol_index": 3
+                },
+                {
+                  "address": 268450160,
+                  "type": 22,
+                  "symbol": 4291821572,
+                  "name": "memmove",
+                  "symbol_index": 4
+                },
+                {
+                  "address": 268450164,
+                  "type": 22,
+                  "symbol": 4291821580,
+                  "name": "memcmp",
+                  "symbol_index": 5
+                },
+                {
+                  "address": 268450168,
+                  "type": 22,
+                  "symbol": 4291821584,
+                  "name": "strlen",
+                  "symbol_index": 6
+                },
+                {
+                  "address": 268450172,
+                  "type": 22,
+                  "symbol": 4291821588,
+                  "name": "strnlen",
+                  "symbol_index": 7
+                },
+                {
+                  "address": 268450176,
+                  "type": 22,
+                  "symbol": 4291821592,
+                  "name": "strcmp",
+                  "symbol_index": 8
+                },
+                {
+                  "address": 268450180,
+                  "type": 22,
+                  "symbol": 4291821596,
+                  "name": "strncmp",
+                  "symbol_index": 9
+                },
+                {
+                  "address": 268450184,
+                  "type": 22,
+                  "symbol": 4291821600,
+                  "name": "strcpy",
+                  "symbol_index": 10
+                },
+                {
+                  "address": 268450188,
+                  "type": 22,
+                  "symbol": 4291821604,
+                  "name": "strncpy",
+                  "symbol_index": 11
+                },
+                {
+                  "address": 268450192,
+                  "type": 22,
+                  "symbol": 4291821840,
+                  "name": "__errno",
+                  "symbol_index": 12
+                },
+                {
+                  "address": 268450196,
+                  "type": 22,
+                  "symbol": 4291821824,
+                  "name": "malloc",
+                  "symbol_index": 13
+                },
+                {
+                  "address": 268450200,
+                  "type": 22,
+                  "symbol": 4291821828,
+                  "name": "calloc",
+                  "symbol_index": 14
+                },
+                {
+                  "address": 268450204,
+                  "type": 22,
+                  "symbol": 4291821832,
+                  "name": "realloc",
+                  "symbol_index": 15
+                },
+                {
+                  "address": 268450208,
+                  "type": 22,
+                  "symbol": 4291821836,
+                  "name": "free",
+                  "symbol_index": 16
+                }
+              ],
+              "initializers": [],
+              "initialization_enabled": true,
+              "modules": [
+                {
+                  "name": "libfixture.so",
+                  "sha256": "ab399fde3039374821a70053fc942b1604102e629e487d8a5aa90231203408ef",
+                  "load_bias": 268435456,
+                  "needed": [
+                    "libc.so"
+                  ]
+                }
+              ],
+              "libc_calls": [
+                "memset",
+                "memcpy",
+                "memmove",
+                "memcmp",
+                "strlen",
+                "strnlen",
+                "strcmp",
+                "strncmp",
+                "strcpy",
+                "strncpy",
+                "strcmp",
+                "strnlen",
+                "memcmp",
+                "memcmp",
+                "__errno",
+                "malloc",
+                "malloc",
+                "calloc",
+                "memset",
+                "realloc",
+                "realloc",
+                "calloc",
+                "free",
+                "free",
+                "free",
+                "__errno",
+                "malloc",
+                "free",
+                "malloc",
+                "free"
+              ]
+            }
+          },
+          "backends": {
+            "native": {
+              "actual": {
+                "registers": [
+                  155468166,
+                  268450404,
+                  1610612736,
+                  268450404,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450208,
+                  2146435072,
+                  268441477,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268450404,
+                    "bytes": "000000000000000001000000ff000000ff000000010000000c000000ff000000010000000c000000864144090c000000010000000100000001000000ffffffff"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "node": {
+              "actual": {
+                "registers": [
+                  155468166,
+                  268450404,
+                  1610612736,
+                  268450404,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450208,
+                  2146435072,
+                  268441477,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268450404,
+                    "bytes": "000000000000000001000000ff000000ff000000010000000c000000ff000000010000000c000000864144090c000000010000000100000001000000ffffffff"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "chromium": {
+              "actual": {
+                "registers": [
+                  155468166,
+                  268450404,
+                  1610612736,
+                  268450404,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450208,
+                  2146435072,
+                  268441477,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268450404,
+                    "bytes": "000000000000000001000000ff000000ff000000010000000c000000ff000000010000000c000000864144090c000000010000000100000001000000ffffffff"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true,
+              "elapsed_seconds": 1.0099537999776658
+            }
+          }
+        },
+        {
+          "seed": 2147483648,
+          "reference": {
+            "registers": [
+              3909090281,
+              268450404,
+              1610612736,
+              268450404,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              268450208,
+              2146435072,
+              268441477,
+              4294901760
+            ],
+            "cpsr": 16,
+            "memory": [
+              {
+                "address": 268450404,
+                "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000e9fbffe80c00000001000000010000000100000000000080"
+              }
+            ],
+            "reference": {
+              "engine": "unicorn",
+              "version": "2.1.4",
+              "instructions": 1866,
+              "elapsed_seconds": 0.003393899998627603,
+              "load_bias": 268435456,
+              "relocations": [
+                {
+                  "address": 268446040,
+                  "type": 21,
+                  "symbol": 268450404,
+                  "name": "fixture_output",
+                  "symbol_index": 17
+                },
+                {
+                  "address": 268450152,
+                  "type": 22,
+                  "symbol": 4291821576,
+                  "name": "memset",
+                  "symbol_index": 2
+                },
+                {
+                  "address": 268450156,
+                  "type": 22,
+                  "symbol": 4291821568,
+                  "name": "memcpy",
+                  "symbol_index": 3
+                },
+                {
+                  "address": 268450160,
+                  "type": 22,
+                  "symbol": 4291821572,
+                  "name": "memmove",
+                  "symbol_index": 4
+                },
+                {
+                  "address": 268450164,
+                  "type": 22,
+                  "symbol": 4291821580,
+                  "name": "memcmp",
+                  "symbol_index": 5
+                },
+                {
+                  "address": 268450168,
+                  "type": 22,
+                  "symbol": 4291821584,
+                  "name": "strlen",
+                  "symbol_index": 6
+                },
+                {
+                  "address": 268450172,
+                  "type": 22,
+                  "symbol": 4291821588,
+                  "name": "strnlen",
+                  "symbol_index": 7
+                },
+                {
+                  "address": 268450176,
+                  "type": 22,
+                  "symbol": 4291821592,
+                  "name": "strcmp",
+                  "symbol_index": 8
+                },
+                {
+                  "address": 268450180,
+                  "type": 22,
+                  "symbol": 4291821596,
+                  "name": "strncmp",
+                  "symbol_index": 9
+                },
+                {
+                  "address": 268450184,
+                  "type": 22,
+                  "symbol": 4291821600,
+                  "name": "strcpy",
+                  "symbol_index": 10
+                },
+                {
+                  "address": 268450188,
+                  "type": 22,
+                  "symbol": 4291821604,
+                  "name": "strncpy",
+                  "symbol_index": 11
+                },
+                {
+                  "address": 268450192,
+                  "type": 22,
+                  "symbol": 4291821840,
+                  "name": "__errno",
+                  "symbol_index": 12
+                },
+                {
+                  "address": 268450196,
+                  "type": 22,
+                  "symbol": 4291821824,
+                  "name": "malloc",
+                  "symbol_index": 13
+                },
+                {
+                  "address": 268450200,
+                  "type": 22,
+                  "symbol": 4291821828,
+                  "name": "calloc",
+                  "symbol_index": 14
+                },
+                {
+                  "address": 268450204,
+                  "type": 22,
+                  "symbol": 4291821832,
+                  "name": "realloc",
+                  "symbol_index": 15
+                },
+                {
+                  "address": 268450208,
+                  "type": 22,
+                  "symbol": 4291821836,
+                  "name": "free",
+                  "symbol_index": 16
+                }
+              ],
+              "initializers": [],
+              "initialization_enabled": true,
+              "modules": [
+                {
+                  "name": "libfixture.so",
+                  "sha256": "ab399fde3039374821a70053fc942b1604102e629e487d8a5aa90231203408ef",
+                  "load_bias": 268435456,
+                  "needed": [
+                    "libc.so"
+                  ]
+                }
+              ],
+              "libc_calls": [
+                "memset",
+                "memcpy",
+                "memmove",
+                "memcmp",
+                "strlen",
+                "strnlen",
+                "strcmp",
+                "strncmp",
+                "strcpy",
+                "strncpy",
+                "strcmp",
+                "strnlen",
+                "memcmp",
+                "memcmp",
+                "__errno",
+                "malloc",
+                "malloc",
+                "calloc",
+                "memset",
+                "realloc",
+                "realloc",
+                "calloc",
+                "free",
+                "free",
+                "free",
+                "__errno",
+                "malloc",
+                "free",
+                "malloc",
+                "free"
+              ]
+            }
+          },
+          "backends": {
+            "native": {
+              "actual": {
+                "registers": [
+                  3909090281,
+                  268450404,
+                  1610612736,
+                  268450404,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450208,
+                  2146435072,
+                  268441477,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268450404,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000e9fbffe80c00000001000000010000000100000000000080"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "node": {
+              "actual": {
+                "registers": [
+                  3909090281,
+                  268450404,
+                  1610612736,
+                  268450404,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450208,
+                  2146435072,
+                  268441477,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268450404,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000e9fbffe80c00000001000000010000000100000000000080"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "chromium": {
+              "actual": {
+                "registers": [
+                  3909090281,
+                  268450404,
+                  1610612736,
+                  268450404,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450208,
+                  2146435072,
+                  268441477,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268450404,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000e9fbffe80c00000001000000010000000100000000000080"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true,
+              "elapsed_seconds": 0.9327952999738045
+            }
+          }
+        }
+      ],
+      "artifacts": [
+        {
+          "name": "linked.cpp",
+          "size_bytes": 271726,
+          "sha256": "83baa128b23654556aa75d265647751a8ebbf70896b762bfb1e91c64a0a15e9f"
+        },
+        {
+          "name": "linked.exe",
+          "size_bytes": 189440,
+          "sha256": "ea434b4f03cb40a966bdccc536bce6b4d8957b1bbc712102152e8aca0e79aab2"
+        },
+        {
+          "name": "linked.js",
+          "size_bytes": 59662,
+          "sha256": "fe332d50c111a9298e04a8f3e14adfcdfc4d30420cc1487f6f819fb1c01de759"
+        },
+        {
+          "name": "linked.wasm",
+          "size_bytes": 179502,
+          "sha256": "ab320e8e1d517f69a78dfce3d1a2f326a4a3beaca52de760270c78ce155118a9"
+        }
+      ],
+      "compile_steps": [
+        {
+          "stage": "translate",
+          "command": [
+            "build/recomp/rearm.exe",
+            "--input",
+            "<repo>\\build\\allocator-e2e\\thumb-O0\\libfixture.so",
+            "--load-bias",
+            "0x10000000",
+            "--entry",
+            "fixture_entry",
+            "--observe",
+            "fixture_output:64",
+            "--output",
+            "<repo>\\build\\allocator-e2e\\thumb-O0\\execution\\linked.cpp",
+            "--sla",
+            "third_party/sla/ARM/ARM7_le.sla",
+            "--initialize",
+            "yes",
+            "--max-instructions",
+            "1000000",
+            "--runtime",
+            "libc-basic"
+          ],
+          "elapsed_seconds": 0.08092750000650994,
+          "peak_sampled_rss_bytes": 17084416,
+          "translation": {
+            "summary": {
+              "instructions": 407,
+              "pcode_ops": 1521,
+              "translation_seconds": 0.0586779
+            },
+            "instructions_per_second": 5029.192795616574,
+            "pcode_ops_per_second": 18794.600103520414
+          }
+        },
+        {
+          "stage": "native_compile",
+          "command": [
+            "clang++",
+            "<repo>\\build\\allocator-e2e\\thumb-O0\\execution\\linked.cpp",
+            "-I",
+            "<repo>",
+            "<repo>\\runtime\\jni32.cpp",
+            "<repo>\\runtime\\aapcs32.cpp",
+            "<repo>\\runtime\\libc_memory32.cpp",
+            "<repo>\\runtime\\libc_imports32.cpp",
+            "<repo>\\runtime\\heap32.cpp",
+            "<repo>\\runtime\\libc_allocator32.cpp",
+            "-std=c++20",
+            "-O2",
+            "-o",
+            "<repo>\\build\\allocator-e2e\\thumb-O0\\execution\\linked.exe"
+          ],
+          "elapsed_seconds": 14.011744299990823,
+          "peak_sampled_rss_bytes": 136392704
+        },
+        {
+          "stage": "wasm_compile",
+          "command": [
+            "third_party/emsdk/upstream/emscripten/em++.exe",
+            "<repo>\\build\\allocator-e2e\\thumb-O0\\execution\\linked.cpp",
+            "-I",
+            "<repo>",
+            "<repo>\\runtime\\jni32.cpp",
+            "<repo>\\runtime\\aapcs32.cpp",
+            "<repo>\\runtime\\libc_memory32.cpp",
+            "<repo>\\runtime\\libc_imports32.cpp",
+            "<repo>\\runtime\\heap32.cpp",
+            "<repo>\\runtime\\libc_allocator32.cpp",
+            "-std=c++20",
+            "-O2",
+            "-sMODULARIZE=1",
+            "-sEXPORT_NAME=createRearmModule",
+            "-sENVIRONMENT=node,web",
+            "-sEXIT_RUNTIME=0",
+            "-sINVOKE_RUN=0",
+            "-sEXPORTED_RUNTIME_METHODS=callMain",
+            "-sALLOW_MEMORY_GROWTH=1",
+            "-o",
+            "<repo>\\build\\allocator-e2e\\thumb-O0\\execution\\linked.js"
+          ],
+          "elapsed_seconds": 21.01070520002395,
+          "peak_sampled_rss_bytes": 157073408
+        }
+      ]
+    },
+    {
+      "mode": "thumb",
+      "optimization": "O2",
+      "elf_sha256": "19ed76fe85ffe5a8be437b9660ad9a2474285f3a60afa0f60f6c3c89fe8af5a7",
+      "build": {
+        "command": [
+          "clang",
+          "--target=armv7a-linux-gnueabi",
+          "-mfloat-abi=soft",
+          "-nostdlib",
+          "-fPIC",
+          "-shared",
+          "-fuse-ld=lld",
+          "-Wl,--hash-style=sysv,--pack-dyn-relocs=none",
+          "-Wl,-z,max-page-size=4096,-z,common-page-size=4096",
+          "-mthumb",
+          "-O2",
+          "-fno-builtin",
+          "-DALLOCATOR_IMPORTS",
+          "<repo>\\tests\\fixtures\\libc_imports.c",
+          "-Wl,-soname,libfixture.so",
+          "-L<repo>\\build\\allocator-e2e",
+          "-Wl,--no-as-needed",
+          "-l:libc.so",
+          "-o",
+          "<repo>\\build\\allocator-e2e\\thumb-O2\\libfixture.so"
+        ],
+        "elapsed_seconds": 0.1678193999978248,
+        "peak_sampled_rss_bytes": 58122240,
+        "rss_sampling_seconds": 0.02,
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "cases": [
+        {
+          "seed": 0,
+          "reference": {
+            "registers": [
+              3485482273,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              268450384,
+              2146435072,
+              268441687,
+              4294901760
+            ],
+            "cpsr": 16,
+            "memory": [
+              {
+                "address": 268450580,
+                "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000213dc0cf0c00000001000000010000000100000000000000"
+              }
+            ],
+            "reference": {
+              "engine": "unicorn",
+              "version": "2.1.4",
+              "instructions": 713,
+              "elapsed_seconds": 0.004400200006784871,
+              "load_bias": 268435456,
+              "relocations": [
+                {
+                  "address": 268446216,
+                  "type": 21,
+                  "symbol": 268450580,
+                  "name": "fixture_output",
+                  "symbol_index": 17
+                },
+                {
+                  "address": 268450328,
+                  "type": 22,
+                  "symbol": 4291821576,
+                  "name": "memset",
+                  "symbol_index": 2
+                },
+                {
+                  "address": 268450332,
+                  "type": 22,
+                  "symbol": 4291821568,
+                  "name": "memcpy",
+                  "symbol_index": 3
+                },
+                {
+                  "address": 268450336,
+                  "type": 22,
+                  "symbol": 4291821572,
+                  "name": "memmove",
+                  "symbol_index": 4
+                },
+                {
+                  "address": 268450340,
+                  "type": 22,
+                  "symbol": 4291821580,
+                  "name": "memcmp",
+                  "symbol_index": 5
+                },
+                {
+                  "address": 268450344,
+                  "type": 22,
+                  "symbol": 4291821584,
+                  "name": "strlen",
+                  "symbol_index": 6
+                },
+                {
+                  "address": 268450348,
+                  "type": 22,
+                  "symbol": 4291821588,
+                  "name": "strnlen",
+                  "symbol_index": 7
+                },
+                {
+                  "address": 268450352,
+                  "type": 22,
+                  "symbol": 4291821592,
+                  "name": "strcmp",
+                  "symbol_index": 8
+                },
+                {
+                  "address": 268450356,
+                  "type": 22,
+                  "symbol": 4291821596,
+                  "name": "strncmp",
+                  "symbol_index": 9
+                },
+                {
+                  "address": 268450360,
+                  "type": 22,
+                  "symbol": 4291821600,
+                  "name": "strcpy",
+                  "symbol_index": 10
+                },
+                {
+                  "address": 268450364,
+                  "type": 22,
+                  "symbol": 4291821604,
+                  "name": "strncpy",
+                  "symbol_index": 11
+                },
+                {
+                  "address": 268450368,
+                  "type": 22,
+                  "symbol": 4291821840,
+                  "name": "__errno",
+                  "symbol_index": 12
+                },
+                {
+                  "address": 268450372,
+                  "type": 22,
+                  "symbol": 4291821824,
+                  "name": "malloc",
+                  "symbol_index": 13
+                },
+                {
+                  "address": 268450376,
+                  "type": 22,
+                  "symbol": 4291821828,
+                  "name": "calloc",
+                  "symbol_index": 14
+                },
+                {
+                  "address": 268450380,
+                  "type": 22,
+                  "symbol": 4291821832,
+                  "name": "realloc",
+                  "symbol_index": 15
+                },
+                {
+                  "address": 268450384,
+                  "type": 22,
+                  "symbol": 4291821836,
+                  "name": "free",
+                  "symbol_index": 16
+                }
+              ],
+              "initializers": [],
+              "initialization_enabled": true,
+              "modules": [
+                {
+                  "name": "libfixture.so",
+                  "sha256": "19ed76fe85ffe5a8be437b9660ad9a2474285f3a60afa0f60f6c3c89fe8af5a7",
+                  "load_bias": 268435456,
+                  "needed": [
+                    "libc.so"
+                  ]
+                }
+              ],
+              "libc_calls": [
+                "memset",
+                "memcpy",
+                "memmove",
+                "memcmp",
+                "strlen",
+                "strnlen",
+                "strcmp",
+                "strncmp",
+                "strcpy",
+                "strncpy",
+                "strcmp",
+                "strnlen",
+                "memcmp",
+                "memcmp",
+                "__errno",
+                "malloc",
+                "malloc",
+                "calloc",
+                "memset",
+                "realloc",
+                "realloc",
+                "calloc",
+                "free",
+                "free",
+                "free",
+                "__errno",
+                "malloc",
+                "free",
+                "malloc",
+                "free"
+              ]
+            }
+          },
+          "backends": {
+            "native": {
+              "actual": {
+                "registers": [
+                  3485482273,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450384,
+                  2146435072,
+                  268441687,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268450580,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000213dc0cf0c00000001000000010000000100000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "node": {
+              "actual": {
+                "registers": [
+                  3485482273,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450384,
+                  2146435072,
+                  268441687,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268450580,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000213dc0cf0c00000001000000010000000100000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "chromium": {
+              "actual": {
+                "registers": [
+                  3485482273,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450384,
+                  2146435072,
+                  268441687,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268450580,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000213dc0cf0c00000001000000010000000100000000000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true,
+              "elapsed_seconds": 1.1480917999870144
+            }
+          }
+        },
+        {
+          "seed": 1,
+          "reference": {
+            "registers": [
+              326211523,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              268450384,
+              2146435072,
+              268441687,
+              4294901760
+            ],
+            "cpsr": 16,
+            "memory": [
+              {
+                "address": 268450580,
+                "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000c39771130c00000001000000010000000100000001000000"
+              }
+            ],
+            "reference": {
+              "engine": "unicorn",
+              "version": "2.1.4",
+              "instructions": 713,
+              "elapsed_seconds": 0.004333499993663281,
+              "load_bias": 268435456,
+              "relocations": [
+                {
+                  "address": 268446216,
+                  "type": 21,
+                  "symbol": 268450580,
+                  "name": "fixture_output",
+                  "symbol_index": 17
+                },
+                {
+                  "address": 268450328,
+                  "type": 22,
+                  "symbol": 4291821576,
+                  "name": "memset",
+                  "symbol_index": 2
+                },
+                {
+                  "address": 268450332,
+                  "type": 22,
+                  "symbol": 4291821568,
+                  "name": "memcpy",
+                  "symbol_index": 3
+                },
+                {
+                  "address": 268450336,
+                  "type": 22,
+                  "symbol": 4291821572,
+                  "name": "memmove",
+                  "symbol_index": 4
+                },
+                {
+                  "address": 268450340,
+                  "type": 22,
+                  "symbol": 4291821580,
+                  "name": "memcmp",
+                  "symbol_index": 5
+                },
+                {
+                  "address": 268450344,
+                  "type": 22,
+                  "symbol": 4291821584,
+                  "name": "strlen",
+                  "symbol_index": 6
+                },
+                {
+                  "address": 268450348,
+                  "type": 22,
+                  "symbol": 4291821588,
+                  "name": "strnlen",
+                  "symbol_index": 7
+                },
+                {
+                  "address": 268450352,
+                  "type": 22,
+                  "symbol": 4291821592,
+                  "name": "strcmp",
+                  "symbol_index": 8
+                },
+                {
+                  "address": 268450356,
+                  "type": 22,
+                  "symbol": 4291821596,
+                  "name": "strncmp",
+                  "symbol_index": 9
+                },
+                {
+                  "address": 268450360,
+                  "type": 22,
+                  "symbol": 4291821600,
+                  "name": "strcpy",
+                  "symbol_index": 10
+                },
+                {
+                  "address": 268450364,
+                  "type": 22,
+                  "symbol": 4291821604,
+                  "name": "strncpy",
+                  "symbol_index": 11
+                },
+                {
+                  "address": 268450368,
+                  "type": 22,
+                  "symbol": 4291821840,
+                  "name": "__errno",
+                  "symbol_index": 12
+                },
+                {
+                  "address": 268450372,
+                  "type": 22,
+                  "symbol": 4291821824,
+                  "name": "malloc",
+                  "symbol_index": 13
+                },
+                {
+                  "address": 268450376,
+                  "type": 22,
+                  "symbol": 4291821828,
+                  "name": "calloc",
+                  "symbol_index": 14
+                },
+                {
+                  "address": 268450380,
+                  "type": 22,
+                  "symbol": 4291821832,
+                  "name": "realloc",
+                  "symbol_index": 15
+                },
+                {
+                  "address": 268450384,
+                  "type": 22,
+                  "symbol": 4291821836,
+                  "name": "free",
+                  "symbol_index": 16
+                }
+              ],
+              "initializers": [],
+              "initialization_enabled": true,
+              "modules": [
+                {
+                  "name": "libfixture.so",
+                  "sha256": "19ed76fe85ffe5a8be437b9660ad9a2474285f3a60afa0f60f6c3c89fe8af5a7",
+                  "load_bias": 268435456,
+                  "needed": [
+                    "libc.so"
+                  ]
+                }
+              ],
+              "libc_calls": [
+                "memset",
+                "memcpy",
+                "memmove",
+                "memcmp",
+                "strlen",
+                "strnlen",
+                "strcmp",
+                "strncmp",
+                "strcpy",
+                "strncpy",
+                "strcmp",
+                "strnlen",
+                "memcmp",
+                "memcmp",
+                "__errno",
+                "malloc",
+                "malloc",
+                "calloc",
+                "memset",
+                "realloc",
+                "realloc",
+                "calloc",
+                "free",
+                "free",
+                "free",
+                "__errno",
+                "malloc",
+                "free",
+                "malloc",
+                "free"
+              ]
+            }
+          },
+          "backends": {
+            "native": {
+              "actual": {
+                "registers": [
+                  326211523,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450384,
+                  2146435072,
+                  268441687,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268450580,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000c39771130c00000001000000010000000100000001000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "node": {
+              "actual": {
+                "registers": [
+                  326211523,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450384,
+                  2146435072,
+                  268441687,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268450580,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000c39771130c00000001000000010000000100000001000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "chromium": {
+              "actual": {
+                "registers": [
+                  326211523,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450384,
+                  2146435072,
+                  268441687,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268450580,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000c39771130c00000001000000010000000100000001000000"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true,
+              "elapsed_seconds": 0.9491519000148401
+            }
+          }
+        },
+        {
+          "seed": 4294967295,
+          "reference": {
+            "registers": [
+              155468166,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              268450384,
+              2146435072,
+              268441687,
+              4294901760
+            ],
+            "cpsr": 16,
+            "memory": [
+              {
+                "address": 268450580,
+                "bytes": "000000000000000001000000ff000000ff000000010000000c000000ff000000010000000c000000864144090c000000010000000100000001000000ffffffff"
+              }
+            ],
+            "reference": {
+              "engine": "unicorn",
+              "version": "2.1.4",
+              "instructions": 709,
+              "elapsed_seconds": 0.0030790000164415687,
+              "load_bias": 268435456,
+              "relocations": [
+                {
+                  "address": 268446216,
+                  "type": 21,
+                  "symbol": 268450580,
+                  "name": "fixture_output",
+                  "symbol_index": 17
+                },
+                {
+                  "address": 268450328,
+                  "type": 22,
+                  "symbol": 4291821576,
+                  "name": "memset",
+                  "symbol_index": 2
+                },
+                {
+                  "address": 268450332,
+                  "type": 22,
+                  "symbol": 4291821568,
+                  "name": "memcpy",
+                  "symbol_index": 3
+                },
+                {
+                  "address": 268450336,
+                  "type": 22,
+                  "symbol": 4291821572,
+                  "name": "memmove",
+                  "symbol_index": 4
+                },
+                {
+                  "address": 268450340,
+                  "type": 22,
+                  "symbol": 4291821580,
+                  "name": "memcmp",
+                  "symbol_index": 5
+                },
+                {
+                  "address": 268450344,
+                  "type": 22,
+                  "symbol": 4291821584,
+                  "name": "strlen",
+                  "symbol_index": 6
+                },
+                {
+                  "address": 268450348,
+                  "type": 22,
+                  "symbol": 4291821588,
+                  "name": "strnlen",
+                  "symbol_index": 7
+                },
+                {
+                  "address": 268450352,
+                  "type": 22,
+                  "symbol": 4291821592,
+                  "name": "strcmp",
+                  "symbol_index": 8
+                },
+                {
+                  "address": 268450356,
+                  "type": 22,
+                  "symbol": 4291821596,
+                  "name": "strncmp",
+                  "symbol_index": 9
+                },
+                {
+                  "address": 268450360,
+                  "type": 22,
+                  "symbol": 4291821600,
+                  "name": "strcpy",
+                  "symbol_index": 10
+                },
+                {
+                  "address": 268450364,
+                  "type": 22,
+                  "symbol": 4291821604,
+                  "name": "strncpy",
+                  "symbol_index": 11
+                },
+                {
+                  "address": 268450368,
+                  "type": 22,
+                  "symbol": 4291821840,
+                  "name": "__errno",
+                  "symbol_index": 12
+                },
+                {
+                  "address": 268450372,
+                  "type": 22,
+                  "symbol": 4291821824,
+                  "name": "malloc",
+                  "symbol_index": 13
+                },
+                {
+                  "address": 268450376,
+                  "type": 22,
+                  "symbol": 4291821828,
+                  "name": "calloc",
+                  "symbol_index": 14
+                },
+                {
+                  "address": 268450380,
+                  "type": 22,
+                  "symbol": 4291821832,
+                  "name": "realloc",
+                  "symbol_index": 15
+                },
+                {
+                  "address": 268450384,
+                  "type": 22,
+                  "symbol": 4291821836,
+                  "name": "free",
+                  "symbol_index": 16
+                }
+              ],
+              "initializers": [],
+              "initialization_enabled": true,
+              "modules": [
+                {
+                  "name": "libfixture.so",
+                  "sha256": "19ed76fe85ffe5a8be437b9660ad9a2474285f3a60afa0f60f6c3c89fe8af5a7",
+                  "load_bias": 268435456,
+                  "needed": [
+                    "libc.so"
+                  ]
+                }
+              ],
+              "libc_calls": [
+                "memset",
+                "memcpy",
+                "memmove",
+                "memcmp",
+                "strlen",
+                "strnlen",
+                "strcmp",
+                "strncmp",
+                "strcpy",
+                "strncpy",
+                "strcmp",
+                "strnlen",
+                "memcmp",
+                "memcmp",
+                "__errno",
+                "malloc",
+                "malloc",
+                "calloc",
+                "memset",
+                "realloc",
+                "realloc",
+                "calloc",
+                "free",
+                "free",
+                "free",
+                "__errno",
+                "malloc",
+                "free",
+                "malloc",
+                "free"
+              ]
+            }
+          },
+          "backends": {
+            "native": {
+              "actual": {
+                "registers": [
+                  155468166,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450384,
+                  2146435072,
+                  268441687,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268450580,
+                    "bytes": "000000000000000001000000ff000000ff000000010000000c000000ff000000010000000c000000864144090c000000010000000100000001000000ffffffff"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "node": {
+              "actual": {
+                "registers": [
+                  155468166,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450384,
+                  2146435072,
+                  268441687,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268450580,
+                    "bytes": "000000000000000001000000ff000000ff000000010000000c000000ff000000010000000c000000864144090c000000010000000100000001000000ffffffff"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "chromium": {
+              "actual": {
+                "registers": [
+                  155468166,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450384,
+                  2146435072,
+                  268441687,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268450580,
+                    "bytes": "000000000000000001000000ff000000ff000000010000000c000000ff000000010000000c000000864144090c000000010000000100000001000000ffffffff"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true,
+              "elapsed_seconds": 0.9846831999893766
+            }
+          }
+        },
+        {
+          "seed": 2147483648,
+          "reference": {
+            "registers": [
+              3909090281,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              268450384,
+              2146435072,
+              268441687,
+              4294901760
+            ],
+            "cpsr": 16,
+            "memory": [
+              {
+                "address": 268450580,
+                "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000e9fbffe80c00000001000000010000000100000000000080"
+              }
+            ],
+            "reference": {
+              "engine": "unicorn",
+              "version": "2.1.4",
+              "instructions": 713,
+              "elapsed_seconds": 0.004681499995058402,
+              "load_bias": 268435456,
+              "relocations": [
+                {
+                  "address": 268446216,
+                  "type": 21,
+                  "symbol": 268450580,
+                  "name": "fixture_output",
+                  "symbol_index": 17
+                },
+                {
+                  "address": 268450328,
+                  "type": 22,
+                  "symbol": 4291821576,
+                  "name": "memset",
+                  "symbol_index": 2
+                },
+                {
+                  "address": 268450332,
+                  "type": 22,
+                  "symbol": 4291821568,
+                  "name": "memcpy",
+                  "symbol_index": 3
+                },
+                {
+                  "address": 268450336,
+                  "type": 22,
+                  "symbol": 4291821572,
+                  "name": "memmove",
+                  "symbol_index": 4
+                },
+                {
+                  "address": 268450340,
+                  "type": 22,
+                  "symbol": 4291821580,
+                  "name": "memcmp",
+                  "symbol_index": 5
+                },
+                {
+                  "address": 268450344,
+                  "type": 22,
+                  "symbol": 4291821584,
+                  "name": "strlen",
+                  "symbol_index": 6
+                },
+                {
+                  "address": 268450348,
+                  "type": 22,
+                  "symbol": 4291821588,
+                  "name": "strnlen",
+                  "symbol_index": 7
+                },
+                {
+                  "address": 268450352,
+                  "type": 22,
+                  "symbol": 4291821592,
+                  "name": "strcmp",
+                  "symbol_index": 8
+                },
+                {
+                  "address": 268450356,
+                  "type": 22,
+                  "symbol": 4291821596,
+                  "name": "strncmp",
+                  "symbol_index": 9
+                },
+                {
+                  "address": 268450360,
+                  "type": 22,
+                  "symbol": 4291821600,
+                  "name": "strcpy",
+                  "symbol_index": 10
+                },
+                {
+                  "address": 268450364,
+                  "type": 22,
+                  "symbol": 4291821604,
+                  "name": "strncpy",
+                  "symbol_index": 11
+                },
+                {
+                  "address": 268450368,
+                  "type": 22,
+                  "symbol": 4291821840,
+                  "name": "__errno",
+                  "symbol_index": 12
+                },
+                {
+                  "address": 268450372,
+                  "type": 22,
+                  "symbol": 4291821824,
+                  "name": "malloc",
+                  "symbol_index": 13
+                },
+                {
+                  "address": 268450376,
+                  "type": 22,
+                  "symbol": 4291821828,
+                  "name": "calloc",
+                  "symbol_index": 14
+                },
+                {
+                  "address": 268450380,
+                  "type": 22,
+                  "symbol": 4291821832,
+                  "name": "realloc",
+                  "symbol_index": 15
+                },
+                {
+                  "address": 268450384,
+                  "type": 22,
+                  "symbol": 4291821836,
+                  "name": "free",
+                  "symbol_index": 16
+                }
+              ],
+              "initializers": [],
+              "initialization_enabled": true,
+              "modules": [
+                {
+                  "name": "libfixture.so",
+                  "sha256": "19ed76fe85ffe5a8be437b9660ad9a2474285f3a60afa0f60f6c3c89fe8af5a7",
+                  "load_bias": 268435456,
+                  "needed": [
+                    "libc.so"
+                  ]
+                }
+              ],
+              "libc_calls": [
+                "memset",
+                "memcpy",
+                "memmove",
+                "memcmp",
+                "strlen",
+                "strnlen",
+                "strcmp",
+                "strncmp",
+                "strcpy",
+                "strncpy",
+                "strcmp",
+                "strnlen",
+                "memcmp",
+                "memcmp",
+                "__errno",
+                "malloc",
+                "malloc",
+                "calloc",
+                "memset",
+                "realloc",
+                "realloc",
+                "calloc",
+                "free",
+                "free",
+                "free",
+                "__errno",
+                "malloc",
+                "free",
+                "malloc",
+                "free"
+              ]
+            }
+          },
+          "backends": {
+            "native": {
+              "actual": {
+                "registers": [
+                  3909090281,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450384,
+                  2146435072,
+                  268441687,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268450580,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000e9fbffe80c00000001000000010000000100000000000080"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "node": {
+              "actual": {
+                "registers": [
+                  3909090281,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450384,
+                  2146435072,
+                  268441687,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268450580,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000e9fbffe80c00000001000000010000000100000000000080"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true
+            },
+            "chromium": {
+              "actual": {
+                "registers": [
+                  3909090281,
+                  1,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  268450384,
+                  2146435072,
+                  268441687,
+                  4294901760
+                ],
+                "cpsr": 16,
+                "memory": [
+                  {
+                    "address": 268450580,
+                    "bytes": "0000000000000000010000000100000001000000010000000c00000001000000010000000c000000e9fbffe80c00000001000000010000000100000000000080"
+                  }
+                ]
+              },
+              "differences": [],
+              "passed": true,
+              "elapsed_seconds": 0.964127399987774
+            }
+          }
+        }
+      ],
+      "artifacts": [
+        {
+          "name": "linked.cpp",
+          "size_bytes": 362547,
+          "sha256": "f2afef125c5b992aaf08683f9da41a6115f507ca24289a347d90ad3b71e01236"
+        },
+        {
+          "name": "linked.exe",
+          "size_bytes": 192000,
+          "sha256": "70ce56bbd441daf1d31fbe53b95bd0bcf646c840fe60267ac3f1f5b64bc9749b"
+        },
+        {
+          "name": "linked.js",
+          "size_bytes": 59662,
+          "sha256": "fe332d50c111a9298e04a8f3e14adfcdfc4d30420cc1487f6f819fb1c01de759"
+        },
+        {
+          "name": "linked.wasm",
+          "size_bytes": 180131,
+          "sha256": "c2a5f7a5b6647311eb776a4646e0a2a5b61b7a88f3f53748a409b6ddda94ebc7"
+        }
+      ],
+      "compile_steps": [
+        {
+          "stage": "translate",
+          "command": [
+            "build/recomp/rearm.exe",
+            "--input",
+            "<repo>\\build\\allocator-e2e\\thumb-O2\\libfixture.so",
+            "--load-bias",
+            "0x10000000",
+            "--entry",
+            "fixture_entry",
+            "--observe",
+            "fixture_output:64",
+            "--output",
+            "<repo>\\build\\allocator-e2e\\thumb-O2\\execution\\linked.cpp",
+            "--sla",
+            "third_party/sla/ARM/ARM7_le.sla",
+            "--initialize",
+            "yes",
+            "--max-instructions",
+            "1000000",
+            "--runtime",
+            "libc-basic"
+          ],
+          "elapsed_seconds": 0.09736230000271462,
+          "peak_sampled_rss_bytes": 17457152,
+          "translation": {
+            "summary": {
+              "instructions": 409,
+              "pcode_ops": 2123,
+              "translation_seconds": 0.0757121
+            },
+            "instructions_per_second": 4200.804623438399,
+            "pcode_ops_per_second": 21805.154561270712
+          }
+        },
+        {
+          "stage": "native_compile",
+          "command": [
+            "clang++",
+            "<repo>\\build\\allocator-e2e\\thumb-O2\\execution\\linked.cpp",
+            "-I",
+            "<repo>",
+            "<repo>\\runtime\\jni32.cpp",
+            "<repo>\\runtime\\aapcs32.cpp",
+            "<repo>\\runtime\\libc_memory32.cpp",
+            "<repo>\\runtime\\libc_imports32.cpp",
+            "<repo>\\runtime\\heap32.cpp",
+            "<repo>\\runtime\\libc_allocator32.cpp",
+            "-std=c++20",
+            "-O2",
+            "-o",
+            "<repo>\\build\\allocator-e2e\\thumb-O2\\execution\\linked.exe"
+          ],
+          "elapsed_seconds": 20.418376299989177,
+          "peak_sampled_rss_bytes": 137338880
+        },
+        {
+          "stage": "wasm_compile",
+          "command": [
+            "third_party/emsdk/upstream/emscripten/em++.exe",
+            "<repo>\\build\\allocator-e2e\\thumb-O2\\execution\\linked.cpp",
+            "-I",
+            "<repo>",
+            "<repo>\\runtime\\jni32.cpp",
+            "<repo>\\runtime\\aapcs32.cpp",
+            "<repo>\\runtime\\libc_memory32.cpp",
+            "<repo>\\runtime\\libc_imports32.cpp",
+            "<repo>\\runtime\\heap32.cpp",
+            "<repo>\\runtime\\libc_allocator32.cpp",
+            "-std=c++20",
+            "-O2",
+            "-sMODULARIZE=1",
+            "-sEXPORT_NAME=createRearmModule",
+            "-sENVIRONMENT=node,web",
+            "-sEXIT_RUNTIME=0",
+            "-sINVOKE_RUN=0",
+            "-sEXPORTED_RUNTIME_METHODS=callMain",
+            "-sALLOW_MEMORY_GROWTH=1",
+            "-o",
+            "<repo>\\build\\allocator-e2e\\thumb-O2\\execution\\linked.js"
+          ],
+          "elapsed_seconds": 28.149965799995698,
+          "peak_sampled_rss_bytes": 157679616
+        }
+      ]
+    }
+  ]
+}

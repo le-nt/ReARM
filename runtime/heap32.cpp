@@ -5,7 +5,7 @@ namespace rearm::libc32 {
 namespace {
 std::uint64_t rounded(std::uint32_t size){return (std::uint64_t(std::max(1u,size))+7)&~std::uint64_t(7);}
 }
-Heap::Heap(jni32::GuestMemory& memory,std::uint32_t base,std::uint32_t bytes,std::uint32_t max_allocations):memory_(memory),max_allocations_(max_allocations){
+Heap::Heap(jni32::GuestMemory& memory,std::uint32_t base,std::uint32_t bytes,std::uint32_t max_allocations):memory_(memory),max_allocations_(max_allocations),base_(base),bytes_(bytes){
  if(!base||(base&7)||(bytes&7)||bytes<8||bytes>128*1024*1024||std::uint64_t(base)+bytes>0x100000000ULL)
   throw jni32::MemoryError("Invalid bounded guest heap arena");
  if(!max_allocations||max_allocations>1048576)throw jni32::MemoryError("Invalid guest heap metadata limit");
@@ -70,5 +70,8 @@ std::uint32_t Heap::reallocate(std::uint32_t at,std::uint32_t size){
 HeapStats Heap::stats()const{
  std::lock_guard lock(mutex_);HeapStats result;result.live_allocations=std::uint32_t(live_.size());result.reserved_bytes=reserved_;result.peak_reserved_bytes=peak_;
  for(const auto& [_,bytes]:free_){result.free_bytes+=bytes;result.largest_free=std::max(result.largest_free,bytes);}return result;
+}
+bool Heap::overlapsArena(std::uint32_t address,std::uint32_t count)const{
+ return count&&std::uint64_t(address)<std::uint64_t(base_)+bytes_&&std::uint64_t(base_)<std::uint64_t(address)+count;
 }
 }
