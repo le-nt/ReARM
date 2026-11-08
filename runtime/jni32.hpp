@@ -31,6 +31,8 @@ class UnsupportedFunction : public Error { public: using Error::Error; };
 // Implementations must bounds-check every read/write and throw MemoryError on
 // unmapped/protected ranges. allocate supplies nonzero aligned guest storage;
 // it must not overlap earlier allocations. No guest address is a host pointer.
+// write must validate the entire destination before modifying it, so a rejected
+// multi-byte write cannot leave a partially modified guest object.
 class GuestMemory {
  public:
   virtual ~GuestMemory() = default;

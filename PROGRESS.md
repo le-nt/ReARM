@@ -127,3 +127,20 @@ Never mark a milestone passed without its actual acceptance evidence.
 - No authorized Roblox binaries/assets are available; compiler/runtime work
   continues independently. The Goal service last reported usageLimited, not
   active; manual execution continued without creating or replacing the Goal.
+
+## Bounded libc memory service foundation
+
+- Added guest memcpy/memmove/memset/memcmp, strlen/strnlen, strcmp/strncmp and
+  strcpy/strncpy semantics over the checked guest-memory interface. No host
+  address is accepted as a guest pointer. Limits fail rather than truncate;
+  zero-count operations make no access and undefined overlaps are diagnosed.
+- 11 service tests pass on Windows and Linux, including1700 seeded differential
+  operations per host against standard C memory/string routines plus bounds,
+  write-protection, null, wrap, terminator, padding and overlap regressions.
+- All eight CTest suites pass on both platforms; strict Windows compiler warnings
+  pass for the new service and tests. These are host component tests, not ARM
+  differential cases and not the R09 100000-case gate.
+- Import resolution, generated callback dispatch, heap/errno and Bionic ABI
+  compatibility are not implemented by this service. Next: connect a deliberately
+  small external-import whitelist to real public ELF imports and compare ARM,
+  native and WASM execution before claiming imported-libc support.
