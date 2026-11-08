@@ -428,6 +428,50 @@ int main() {
     for (auto& worker : workers) worker.join();
     check(errors == 0, "concurrent JNI host operation failed");
   });
+  test("host class entry creates real thread-local class references", [] {
+    Memory memory;Host host(memory);const auto env=host.attachThread(1);
+    host.registerClass("test/Host");const auto first=host.classHandle(1,"test/Host");
+    const auto second=host.classHandle(1,"test/Host");
+    check(first!=second,"local handles must be distinct");
+    check(call(host,Function::IsSameObject,1,{env,first,second})==1,"host class identity lost");
+    check(call(host,Function::GetObjectRefType,1,{env,first})==1,"host entry did not make local reference");
+    throws([&]{host.classHandle(2,"test/Host");});
+    throws([&]{host.classHandle(1,"test/Unknown");});
+    const auto missing=memory.string("test/Missing");
+    call(host,Function::FindClass,1,{env,missing});
+    throws([&]{host.classHandle(1,"test/Host");});
+  });
+  test("native return releases inner frames but preserves outer and global refs", [] {
+    Memory memory;Host host(memory);const auto env=host.attachThread(1);host.registerClass("test/Native");
+    auto outer=host.classHandle(1,"test/Native");host.beginNativeCall(1);
+    auto local=host.classHandle(1,"test/Native");
+    auto global=call(host,Function::NewGlobalRef,1,{env,local});
+    call(host,Function::PushLocalFrame,1,{env,1});
+    auto inner=host.classHandle(1,"test/Native");
+    host.endNativeCall(1);
+    for(auto ref:{local,inner})check(call(host,Function::GetObjectRefType,1,{env,ref})==0,"native local leaked");
+    check(call(host,Function::GetObjectRefType,1,{env,outer})==1,"outer local destroyed");
+    check(call(host,Function::GetObjectRefType,1,{env,global})==2,"global destroyed");
+    throws([&]{host.endNativeCall(1);});
+  });
+  test("nested native calls protect caller frames and prohibit active detach", [] {
+    Memory memory;Host host(memory);const auto env=host.attachThread(1);host.registerClass("test/Native");
+    host.beginNativeCall(1);auto outer=host.classHandle(1,"test/Native");
+    throws([&]{call(host,Function::PopLocalFrame,1,{env,0});});
+    throws([&]{host.detachThread(1);});
+    host.beginNativeCall(1);auto inner=host.classHandle(1,"test/Native");host.endNativeCall(1);
+    check(call(host,Function::GetObjectRefType,1,{env,inner})==0,"nested local leaked");
+    check(call(host,Function::GetObjectRefType,1,{env,outer})==1,"caller local invalidated");
+    host.endNativeCall(1);check(call(host,Function::GetObjectRefType,1,{env,outer})==0,"outer native local leaked");
+  });
+  test("native frame limits and pending exceptions fail before entry", [] {
+    Memory memory;Limits limits;limits.max_frames=2;Host host(memory,0xffe00000,limits);
+    auto env=host.attachThread(1);host.registerClass("test/Native");host.beginNativeCall(1);
+    throws([&]{host.beginNativeCall(1);});host.endNativeCall(1);
+    auto name=memory.string("test/Missing");call(host,Function::FindClass,1,{env,name});
+    throws([&]{host.beginNativeCall(1);});throws([&]{host.endNativeCall(1);});
+    call(host,Function::ExceptionClear,1,{env});host.beginNativeCall(1);host.endNativeCall(1);
+  });
   std::cout << "JNI32 tests: " << passed << " passed, " << failed << " failed\n";
   return failed ? 1 : 0;
 }

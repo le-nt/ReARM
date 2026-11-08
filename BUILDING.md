@@ -151,6 +151,30 @@ single translation unit. Fixed JNI data/callback arenas reject ELF overlaps.
 This explicit host subset does not load Java classes or execute Java bytecode.
 Unsupported callbacks and undeclared class/method requirements fail visibly.
 
+For registered native callbacks, add `--registered --stack` to `validate_jni.py`.
+This builds an opposite-mode native method with six jint arguments, including
+nonzero stack words, and executes four deterministic input values per build.
+The fixture uses `-mfloat-abi=soft` to isolate integer ABI behavior; this gate
+does not validate VFP/NEON execution.
+
+The compiler accepts repeated explicit declarations:
+
+```text
+--jni onload --jni-class fixture/Bridge
+--jni-native 'fixture/Bridge|transform|(IIIIII)I|static'
+--jni-invoke 'fixture/Bridge|transform|(IIIIII)I'
+```
+
+After a successful JNI1.6 OnLoad return, `--jni-invoke` resolves the method that
+guest RegisterNatives installed, creates a local class reference, and starts
+the guest function with JNIEnv*, jclass and jint arguments from runner argv.
+The current invocation subset is one static native method, 0–62 jint arguments,
+and jint/void result. Unspecified arguments default to zero. Declared instance
+methods may be registered but cannot yet be invoked by this runner. Float,
+64-bit, object argument, Java method and general Java VM execution are deferred;
+unsupported invocation profiles fail during translation. Only explicitly
+declared, already initialized host classes are exposed.
+
 ```sh
 python tools/check_pthreads.py \
   --emcc third_party/emsdk/upstream/emscripten/emcc --node node --browser

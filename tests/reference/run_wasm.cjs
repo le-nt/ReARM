@@ -4,7 +4,7 @@
 const path = require('node:path');
 const createModule = require(path.resolve(process.argv[2]));
 createModule({ noInitialRun: true }).then(module => {
-  module.callMain([process.argv[3] ?? '0']);
+  module.callMain(process.argv.length > 3 ? process.argv.slice(3) : ['0']);
 }).catch(error => {
   console.error(error);
   process.exitCode = 1;

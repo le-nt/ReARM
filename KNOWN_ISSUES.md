@@ -8,7 +8,8 @@ This is an implementation checkpoint. Current test outcomes belong in
   comparisons). This does not establish complete ARM/Android compatibility.
 - WSL initially denied enumeration under restricted permissions. After permissions
   changed, native Linux SLEIGH/compiler builds, CTest and64 translated reference cases
-  pass. Fresh Linux bootstrap and hosted CI remain unverified.
+  pass. Hosted clean Linux bootstrap and expanded compiler CI42368507523 passed;
+  hosted JNI smoke CI42435271119 also passed. New changes need their own CI gate.
 - The loader's passing deterministic tests cover a defined ELF32/core REL subset.
   They do not establish a full Android dynamic linker. An initial eager multi-DSO
   profile and constructor execution now pass real-ELF tests; symbol versions,
@@ -19,8 +20,11 @@ This is an implementation checkpoint. Current test outcomes belong in
   exception handling and concurrency are not yet acceptance-tested.
 - Public early fixtures are freestanding ARMv7 ET_EXEC programs. Their success
   will not by itself establish Android shared-library or PIE runtime support.
-- Android/Bionic/JNI, filesystem, graphics, audio, input and networking bridges
-  are roadmap work. No authentic Roblox initialization or gameplay is claimed.
+- JNI32 tables, explicit class/method registration and integer static native calls
+  have public-fixture coverage. This is not Java class loading, bytecode execution,
+  inheritance or a complete Android JNI implementation. Bionic, filesystem,
+  graphics, audio, input and networking remain roadmap work. No authentic Roblox
+  initialization or gameplay is claimed.
 - No authorized exact Roblox client binaries/assets are present. Client-specific
   milestones remain unavailable until their inventory gates can be satisfied;
   general compiler implementation must continue independently.

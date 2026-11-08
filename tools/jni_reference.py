@@ -15,9 +15,35 @@ class ReferenceJni:
     vm = vm_table + 8 * 4
     env = vm + 4
 
-    def __init__(self):
+    def __init__(self, registered=False, extra_args=()):
         self.pending = False
         self.trace = []
+        self.registered = registered
+        self.native_entry = None
+        self.next_handle = 0x10000001
+        self.class_handles = set()
+        self.extra_args = tuple(extra_args)
+        self.native_signature = "(" + "I" * (1 + len(self.extra_args)) + ")I"
+
+    @staticmethod
+    def string(machine, address):
+        data = bytearray()
+        for index in range(4096):
+            byte = bytes(machine.mem_read(address + index, 1))[0]
+            if not byte:
+                return data.decode("ascii")
+            data.append(byte)
+        raise RuntimeError("unterminated reference JNI string")
+
+    def native_invocation(self, machine, arm, seed):
+        if not self.registered:
+            return None
+        if self.pending or machine.reg_read(arm.UC_ARM_REG_R0) != 0x10006 or self.native_entry is None:
+            raise RuntimeError("reference JNI_OnLoad failed or native not registered")
+        handle = self.next_handle
+        self.next_handle += 1
+        self.class_handles.add(handle)
+        return self.native_entry, [self.env, handle, seed, *self.extra_args]
 
     @staticmethod
     def word(machine, address, value):
@@ -58,12 +84,33 @@ class ReferenceJni:
                 self.word(machine, args[1], self.vm)
                 result = 0
             elif slot == 6:
-                # Fixture specifically requests an undeclared class.
-                name = bytes(machine.mem_read(args[1], 16))
-                if name != b"fixture/Missing\0":
+                name = self.string(machine, args[1])
+                if name == "fixture/Bridge" and self.registered:
+                    result = self.next_handle
+                    self.next_handle += 1
+                    self.class_handles.add(result)
+                elif name == "fixture/Missing":
+                    self.pending = True
+                    result = 0
+                else:
                     raise RuntimeError("unexpected reference class request")
-                self.pending = True
-                result = 0
+            elif slot in (113, 215) and self.registered:
+                if args[1] not in self.class_handles:
+                    raise RuntimeError("reference native operation needs class handle")
+                if slot == 113:
+                    name, descriptor = self.string(machine, args[2]), self.string(machine, args[3])
+                    result = 0x20000001
+                else:
+                    if args[3] != 1:
+                        raise RuntimeError("reference fixture expected one native registration")
+                    name_ptr, descriptor_ptr, entry = struct.unpack("<III", machine.mem_read(args[2], 12))
+                    name, descriptor = self.string(machine, name_ptr), self.string(machine, descriptor_ptr)
+                    if not entry or (not entry & 1 and entry & 3):
+                        raise RuntimeError("invalid reference native function address")
+                    self.native_entry = entry
+                    result = 0
+                if (name, descriptor) != ("transform", self.native_signature):
+                    raise RuntimeError("reference undeclared native method")
             elif slot == 228:
                 result = int(self.pending)
             elif slot == 17:

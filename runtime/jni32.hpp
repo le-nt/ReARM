@@ -110,6 +110,12 @@ class Host {
                                std::string signature, bool is_static = false,
                                bool is_native = false);
   Handle makeObject(ThreadId thread, std::string_view class_name);
+  // Host entry into an explicitly registered, already initialized class.
+  Handle classHandle(ThreadId thread, std::string_view class_name);
+  // Paired host-to-native transitions. Return releases all locals in that call,
+  // including unmatched guest PushLocalFrames, while preserving globals/outer calls.
+  void beginNativeCall(ThreadId thread);
+  void endNativeCall(ThreadId thread);
   std::optional<NativeBinding> lookupNative(std::string_view class_name,
                                            std::string_view name,
                                            std::string_view signature) const;

@@ -34,10 +34,18 @@ def main() -> int:
     parser.add_argument("--browser", action="store_true")
     parser.add_argument("--native-only", action="store_true")
     parser.add_argument("--jni-onload", action="store_true", help="finite public JNI fixture validation profile")
+    parser.add_argument("--jni-registered", action="store_true", help="public registered static native callback fixture")
+    parser.add_argument("--jni-stack", action="store_true", help="six-jint registered native fixture with stack arguments")
     parser.add_argument("--cases", type=int, default=4)
     parser.add_argument("--max-instructions", type=int, default=1000000)
     parser.add_argument("--out", type=Path, default=Path("build/link-e2e"))
     args = parser.parse_args()
+    if args.jni_stack and not args.jni_registered:
+        raise validation.FixtureError("--jni-stack requires --jni-registered")
+    extra_args = [7, 0xFFFFFFFF, 0x80000000, 13, 29] if args.jni_stack else []
+    signature = "(" + "I" * (1 + len(extra_args)) + ")I"
+    if args.jni_registered and not args.jni_onload:
+        raise validation.FixtureError("--jni-registered requires --jni-onload")
     case_seeds = validation.seeds(args.cases)
     if not args.native_only and not args.emxx:
         raise validation.FixtureError("--emxx is required unless --native-only is selected")
@@ -85,6 +93,9 @@ def main() -> int:
             command += ["--dependency", dependency]
         if args.jni_onload:
             command += ["--jni", "onload"]
+        if args.jni_registered:
+            command += ["--jni-class", "fixture/Bridge", "--jni-native", f"fixture/Bridge|transform|{signature}|static",
+                        "--jni-invoke", f"fixture/Bridge|transform|{signature}"]
         stage("translate", command, (generated,))
         runtime = (["-I", str(root), str(root / "runtime/jni32.cpp"), str(root / "runtime/aapcs32.cpp")] if args.jni_onload else [])
         stage("native_compile", [args.cxx, str(generated), *runtime, "-std=c++20", "-O2", "-o", str(native)], (native,))
@@ -101,17 +112,19 @@ def main() -> int:
                 spec = importlib.util.spec_from_file_location("jni_reference", Path(__file__).with_name("jni_reference.py"))
                 service = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(service)
-                host = service.ReferenceJni()
+                host = service.ReferenceJni(args.jni_registered, extra_args)
             expected = validation.reference_state(fixture, args.entry, observed, args.max_instructions, seed, args.initialize == "yes", host)
             if host is not None:
-                if host.trace != [1030, 4, 219, 6, 228, 17, 228, 4]:
+                trace = [1030, 4, 219, 6, 228, 17, 228]
+                trace += [6, 113, 215, 4, 4] if args.jni_registered else [4]
+                if host.trace != trace:
                     raise validation.FixtureError(f"unexpected JNI reference trace: {host.trace}")
                 expected["reference"]["jni_slots"] = host.trace
             case = {"seed": seed, "reference": expected, "backends": {}}
             report["cases"].append(case)
-            commands = [("native", [str(native), str(seed)])]
+            commands = [("native", [str(native), str(seed), *map(str, extra_args)])]
             if not args.native_only:
-                commands.append(("node", [args.node, str(root / "tests/reference/run_wasm.cjs"), str(module), str(seed)]))
+                commands.append(("node", [args.node, str(root / "tests/reference/run_wasm.cjs"), str(module), str(seed), *map(str, extra_args)]))
             for backend, command in commands:
                 measured = stage(backend, command)
                 actual = validation.parse_runner_output(measured["stdout"])
@@ -121,7 +134,7 @@ def main() -> int:
             if args.browser:
                 report["active"] = {"stage": "chromium", "seed": seed}
                 checkpoint()
-                actual, elapsed = validation.browser_state(module, seed)
+                actual, elapsed = validation.browser_state(module, seed, extra_args)
                 differences = validation.compare_states(expected, actual)
                 case["backends"]["chromium"] = {"actual": actual, "differences": differences, "passed": not differences,
                                                    "elapsed_seconds": elapsed}

@@ -101,3 +101,29 @@ Never mark a milestone passed without its actual acceptance evidence.
 - Next: explicit host class/method declarations and a RegisterNatives guest fixture,
   then native registration dispatch and measured Android import bridges. No client
   binaries are available; no authentic Roblox initialization is claimed.
+
+## Registered native method vertical slice
+
+- Explicit --jni-class/--jni-native declarations expose only named host classes
+  and native methods; malformed descriptors, duplicates, undeclared classes and
+  unsupported invocation signatures fail during translation (23 profile tests).
+- --jni-invoke resolves guest RegisterNatives output after successful JNI1.6
+  OnLoad, creates a class local reference, marshals jint words into r2/r3 and an
+  aligned guest stack, then runs the registered ARM/Thumb target statically.
+- Host native-call frames protect call boundaries, release nested local frames
+  on return, preserve global/outer refs and reject detach during active calls.
+  The JNI host suite now has42 passing tests; the AAPCS bridge retains13 tests.
+- Seven CTest suites pass on Windows and Linux. The39 reference harness tests,
+  original JNI smoke regression and real linked-library native regression pass.
+- Six-jint callback fixtures cover opposite-mode native functions, nonzero stack
+  arguments and four deterministic inputs at ARM/Thumb O0/O2. Final evidence is
+  recorded under tests/evidence/jni-registration-*.json after successful runs.
+- Hosted JNI smoke CI42435271119 at d3d7358 passed. Registered callback CI is new
+  coverage and must be observed independently after this checkpoint is pushed.
+- Next actionable task: minimal explicit Bionic import bridge profile, beginning
+  with bounded guest memory/string routines and real imported-ELF fixtures.
+  Keep unknown imports fatal. Add allocation/error/ABI behavior from measured
+  fixtures before attempting larger Android library initialization.
+- No authorized Roblox binaries/assets are available; compiler/runtime work
+  continues independently. The Goal service last reported usageLimited, not
+  active; manual execution continued without creating or replacing the Goal.

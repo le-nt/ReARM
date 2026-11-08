@@ -115,7 +115,8 @@ class InstructionEmitter {
 
 void cpp(std::ostream& o,const elf::Image& image,const lift::Program& program,std::uint32_t entry,
  const std::vector<std::pair<std::uint32_t,std::uint32_t>>& observed,std::uint64_t execution_limit,
- const std::vector<std::uint32_t>& initializers,bool jni_onload) {
+ const std::vector<std::uint32_t>& initializers,bool jni_onload,const JniConfig& jni) {
+ validateJniConfig(jni);
  auto reg=[&](const std::string& name){auto it=program.registers.find(name);if(it==program.registers.end())throw std::runtime_error("SLA lacks register "+name);return it->second;};
  std::size_t register_bytes=0;for(const auto& [_,v]:program.registers)register_bytes=std::max<std::size_t>(register_bytes,v.offset+v.size);
  if(jni_onload)o<<"#include \"runtime/aapcs32.hpp\"\n";
@@ -189,13 +190,38 @@ for(const auto& r:memory){
 memory.push_back({0x70000000u,6,std::vector<uint8_t>(1048576)});
 JniMemory jni_memory;rearm::jni32::Host jni_host(jni_memory);jni_host.attachThread(1);
 )CPP";
+ // Configuration validation permits only C++ literal-safe ASCII declaration bytes.
+ for(const auto& c:jni.classes)o<<"jni_host.registerClass(\""<<c<<"\");\n";
+ for(const auto& m:jni.methods)o<<"jni_host.registerMethod(\""<<m.class_name<<"\",\""<<m.name<<"\",\""<<m.signature<<"\","<<(m.is_static?"true":"false")<<",true);\n";
  o<<"memory.push_back({0x7fef0000u,6,std::vector<uint8_t>(65536)});\nstd::array<uint8_t,"<<register_bytes<<"> reg{};\n";
  auto setreg=[&](const std::string& n,const std::string& value){auto v=reg(n);o<<"wr(reg,"<<v.offset<<","<<v.size<<","<<value<<");\n";};
  o<<"const uint32_t calls[]={";
  for(auto at:initializers)o<<at<<"u,";
- o<<entry<<"u};uint64_t steps=0;uint32_t pc=0;\nfor(std::size_t call=0;call<std::size(calls);++call){reg.fill(0);\n";
- setreg("r0",jni_onload?"call+1==std::size(calls)?jni_host.vmPointer():0":"call+1==std::size(calls)&&argc>1?uint32_t(std::strtoull(argv[1],nullptr,0)):0");setreg("sp","0x7ff00000u");setreg("lr","0xffff0000u");setreg("TB","calls[call]&1u");
- o<<"pc=calls[call]&~1u;\nwhile(pc!=0xffff0000u){if(++steps>"<<execution_limit<<"ULL)throw std::runtime_error(\"guest execution budget exhausted\");\n";
+ o<<entry<<"u};uint64_t steps=0;uint32_t pc=0;\nfor(std::size_t call=0;call<std::size(calls)+"<<jni.invoke.size()<<";++call){\nuint32_t target=call<std::size(calls)?calls[call]:0;\n";
+ if(!jni.invoke.empty()){
+  const auto& m=jni.invoke[0];
+  o<<"if(call==std::size(calls)){\n";
+  auto result=reg("r0");
+  o<<"if(rd(reg,"<<result.offset<<","<<result.size<<")!=0x10006u||jni_host.pendingException(1))throw std::runtime_error(\"JNI_OnLoad did not accept JNI 1.6 cleanly\");\n";
+  o<<"auto binding=jni_host.lookupNative(\""<<m.class_name<<"\",\""<<m.name<<"\",\""<<m.signature<<"\");if(!binding||!binding->is_static)throw std::runtime_error(\"requested static native method was not registered\");target=binding->guest_entry;}\n";
+ }
+ o<<"reg.fill(0);\n";
+ setreg("r0",jni_onload?"call+1==std::size(calls)?jni_host.vmPointer():0":"call+1==std::size(calls)&&argc>1?uint32_t(std::strtoull(argv[1],nullptr,0)):0");setreg("sp","0x7ff00000u");setreg("lr","0xffff0000u");setreg("TB","target&1u");
+ if(!jni.invoke.empty()){
+  const auto& m=jni.invoke[0];const auto count=m.signature.find(')')-1;
+  o<<"if(call==std::size(calls)){jni_host.beginNativeCall(1);\n";setreg("r0","jni_host.envPointer(1)");
+  o<<"auto receiver=jni_host.classHandle(1,\""<<m.class_name<<"\");if(!receiver)throw std::runtime_error(\"JNI native receiver allocation failed\");\n";
+  setreg("r1","receiver");
+  // Align public-interface SP to 8 bytes, including outgoing stack words.
+  const auto stack_bytes=((count>2?(count-2)*4:0)+7)&~std::size_t(7);
+  setreg("sp",std::to_string(0x7ff00000u-stack_bytes)+"u");
+  for(std::size_t n=0;n<count;++n){auto value="argc>"+std::to_string(n+1)+"?uint32_t(std::strtoull(argv["+std::to_string(n+1)+"],nullptr,0)):0";
+   if(n<2)setreg("r"+std::to_string(n+2),value);
+   else o<<"store("<<0x7ff00000u-stack_bytes+(n-2)*4<<"u,4,"<<value<<");\n";
+  }
+  o<<"}\n";
+ }
+ o<<"pc=target&~1u;\nwhile(pc!=0xffff0000u){if(++steps>"<<execution_limit<<"ULL)throw std::runtime_error(\"guest execution budget exhausted\");\n";
  setreg("pc","pc");
  if(jni_onload){
   o<<"{std::array<uint32_t,16> abi{};\n";
@@ -205,7 +231,9 @@ JniMemory jni_memory;rearm::jni32::Host jni_host(jni_memory);jni_host.attachThre
  }
  o<<"switch(uint64_t(pc)|(rd(reg,"<<reg("TB").offset<<",1)?0x100000000ULL:0)){\n";
  for(const auto& i:program.instructions){o<<"case "<<number(std::uint64_t(i.address)|(i.thumb?0x100000000ULL:0))<<":\n";InstructionEmitter(o,i,reg("TB")).run();}
- o<<"default:std::cerr<<\"unknown guest target 0x\"<<std::hex<<pc<<'\\n';throw std::runtime_error(\"unknown guest target: rebuild with discovery hints\");}}}\n";
+ o<<"default:std::cerr<<\"unknown guest target 0x\"<<std::hex<<pc<<'\\n';throw std::runtime_error(\"unknown guest target: rebuild with discovery hints\");}}\n";
+ if(!jni.invoke.empty())o<<"if(call==std::size(calls))jni_host.endNativeCall(1);\n";
+ o<<"}\n";
  setreg("pc","pc");
  o<<"uint32_t cpsr=0x10u;\n";
  for(const auto& [name,bit]:std::vector<std::pair<std::string,int>>{{"NG",31},{"ZR",30},{"CY",29},{"OV",28},{"TB",5}}){auto v=reg(name);o<<"cpsr|=uint32_t(rd(reg,"<<v.offset<<","<<v.size<<")!=0)<<"<<bit<<";\n";}

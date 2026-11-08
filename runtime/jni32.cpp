@@ -113,6 +113,7 @@ struct Host::Impl {
     std::string name;
     std::shared_ptr<Object> pending;
     std::vector<std::vector<Handle>> frames{1};
+    std::vector<std::size_t> native_bases;
     std::uint32_t local_count{};
   };
 
@@ -179,6 +180,7 @@ struct Host::Impl {
   void detach(ThreadId id) {
     const auto found = threads.find(id);
     if (found == threads.end()) return;  // Invocation API specifies a no-op.
+    if(!found->second.native_bases.empty())throw Error("Cannot detach during an active JNI native call");
     for (const auto& frame : found->second.frames) for (const Handle handle : frame) references.erase(handle);
     threads.erase(found);
   }
@@ -347,7 +349,8 @@ struct Host::Impl {
       }
       case Function::PopLocalFrame: {
         arity(args, 2);
-        if (state.frames.size() == 1) throw Error("Cannot pop the JNI base local frame");
+        if (state.frames.size() == 1 || (!state.native_bases.empty() && state.frames.size() <= state.native_bases.back()+1))
+          throw Error("Cannot pop the JNI base local frame");
         auto result = object(id, args[1]);
         for (const auto handle : state.frames.back()) { references.erase(handle); --state.local_count; }
         state.frames.pop_back();
@@ -441,6 +444,31 @@ std::optional<NativeBinding> Host::lookupNative(std::string_view class_name, std
   const auto method = klass->second.methods.find({std::string(name), std::string(signature)});
   if (method == klass->second.methods.end() || !method->second.entry) return std::nullopt;
   return NativeBinding{method->second.id, *method->second.entry, method->second.is_static};
+}
+Handle Host::classHandle(ThreadId id,std::string_view class_name) {
+  const std::lock_guard lock(impl_->mutex);
+  auto& state=impl_->thread(id);
+  if(state.pending)throw Error("Host class access with pending JNI exception");
+  const auto found=impl_->classes.find(class_name);
+  if(found==impl_->classes.end())throw Error("Host class is not explicitly registered");
+  return impl_->newReference(id,found->second.object);
+}
+void Host::beginNativeCall(ThreadId id) {
+  const std::lock_guard lock(impl_->mutex);auto& state=impl_->thread(id);
+  if(state.pending)throw Error("Cannot enter native method with pending JNI exception");
+  if(state.frames.size()>=impl_->limits.max_frames)throw Error("JNI native call frame limit exceeded");
+  if(impl_->ensureCapacity(id,16)!=status(JNI_OK))throw Error("JNI native call local capacity exhausted");
+  state.native_bases.push_back(state.frames.size());state.frames.emplace_back();
+}
+void Host::endNativeCall(ThreadId id) {
+  const std::lock_guard lock(impl_->mutex);auto& state=impl_->thread(id);
+  if(state.native_bases.empty())throw Error("JNI native return without matching entry");
+  const auto base=state.native_bases.back();
+  while(state.frames.size()>base){
+    for(auto handle:state.frames.back()){impl_->references.erase(handle);--state.local_count;}
+    state.frames.pop_back();
+  }
+  state.native_bases.pop_back();
 }
 std::optional<ExceptionInfo> Host::pendingException(ThreadId id) const {
   const std::lock_guard lock(impl_->mutex);

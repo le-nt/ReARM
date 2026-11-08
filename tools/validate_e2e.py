@@ -405,14 +405,21 @@ def reference_state(elf: ElfFixture | LinkedFixture, entry: str, observed: list[
     machine.hook_add(uc.UC_HOOK_CODE, instruction_hook)
     started = time.perf_counter()
     initializers = elf.initializers(machine.mem_read) if initialize else []
-    for function, argument in [(function, 0) for function in initializers] + [(address, host.vm if host is not None else seed)]:
+    calls = [(function, [0]) for function in initializers] + [(address, [host.vm if host is not None else seed])]
+    for call_index, (function, arguments) in enumerate(calls):
         # Fixture contract: independent invocation registers, persistent guest
         # memory, and one aggregate instruction budget across initialization.
         machine.reg_write(arm.UC_ARM_REG_CPSR, 0x30 if function & 1 else 0x10)
         for reg in regs:
             machine.reg_write(reg, 0)
-        machine.reg_write(regs[0], argument)
-        machine.reg_write(arm.UC_ARM_REG_SP, STACK_TOP)
+        stack_bytes = ((max(0, len(arguments) - 4) * 4 + 7) // 8) * 8
+        stack = STACK_TOP - stack_bytes
+        for index, argument in enumerate(arguments):
+            if index < 4:
+                machine.reg_write(regs[index], argument)
+            else:
+                machine.mem_write(stack + (index - 4) * 4, struct.pack("<I", argument))
+        machine.reg_write(arm.UC_ARM_REG_SP, stack)
         machine.reg_write(arm.UC_ARM_REG_LR, RETURN_SENTINEL)
         remaining = limit - count
         if remaining <= 0:
@@ -424,6 +431,10 @@ def reference_state(elf: ElfFixture | LinkedFixture, entry: str, observed: list[
             raise FixtureError(f"ARM reference fault at {pc:#x} invoking {function:#x}: {error}") from error
         if machine.reg_read(arm.UC_ARM_REG_PC) != RETURN_SENTINEL:
             raise FixtureError(f"reference did not return to sentinel within aggregate {limit} instructions")
+        if host is not None and call_index == len(initializers) and hasattr(host, "native_invocation"):
+            extra = host.native_invocation(machine, arm, seed)
+            if extra is not None:
+                calls.append(extra)
     elapsed = time.perf_counter() - started
     return {
         "registers": [machine.reg_read(reg) & 0xFFFFFFFF for reg in regs],
@@ -586,7 +597,7 @@ def parse_runner_output(stdout: str) -> dict:
         raise FixtureError(f"runner did not emit one valid JSON state: {stdout[:2000]!r}") from error
 
 
-def browser_state(module: Path, seed: int) -> tuple[dict, float]:
+def browser_state(module: Path, seed: int, extra_args=()) -> tuple[dict, float]:
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:
@@ -607,13 +618,13 @@ def browser_state(module: Path, seed: int) -> tuple[dict, float]:
             page.set_default_timeout(30000)
             page.goto(f"http://127.0.0.1:{server.server_port}/")
             page.add_script_tag(url=module.name)
-            lines = page.evaluate("""async seed => {
+            lines = page.evaluate("""async args => {
                 const lines = [];
                 const module = await createRearmModule({noInitialRun: true,
                     print: line => lines.push(line), printErr: line => console.error(line)});
-                module.callMain([String(seed)]);
+                module.callMain(args.map(String));
                 return lines;
-            }""", seed)
+            }""", [seed, *extra_args])
             browser.close()
         return parse_runner_output("\n".join(lines)), time.perf_counter() - started
     finally:

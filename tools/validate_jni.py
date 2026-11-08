@@ -19,8 +19,12 @@ def main():
     parser.add_argument("--node", default="node")
     parser.add_argument("--browser", action="store_true")
     parser.add_argument("--native-only", action="store_true")
+    parser.add_argument("--registered", action="store_true", help="register and invoke a static native method")
+    parser.add_argument("--stack", action="store_true", help="exercise six-jint native registration and stack marshalling")
     parser.add_argument("--out", type=Path, default=Path("build/jni-e2e"))
     args = parser.parse_args()
+    if args.stack and not args.registered:
+        parser.error("--stack requires --registered")
     root = Path(__file__).resolve().parents[1]
     spec = importlib.util.spec_from_file_location("validation", root / "tools/validate_e2e.py")
     validation = importlib.util.module_from_spec(spec)
@@ -39,14 +43,18 @@ def main():
                 suite = {"mode": mode, "optimization": optimization}
                 report["suites"].append(suite)
                 suite["build"] = validation.run_measured([args.clang, "--target=armv7a-none-eabi", "-m" + mode,
-                    "-" + optimization, "-fPIC", "-nostdlib", "-fuse-ld=lld", "-Wl,-shared,-soname,libjni.so",
-                    str(source), "-o", str(elf)])
+                    "-" + optimization, "-mfloat-abi=soft", "-fPIC", "-nostdlib", "-fuse-ld=lld", "-Wl,-shared,-soname,libjni.so",
+                    *(["-DREGISTER_NATIVE"] if args.registered else []), *(["-DREGISTER_STACK"] if args.stack else []), str(source), "-o", str(elf)])
                 suite["elf_sha256"] = hashlib.sha256(elf.read_bytes()).hexdigest()
                 command = [sys.executable, str(root / "tools/validate_link.py"), "--input", str(elf),
-                    "--entry", "JNI_OnLoad", "--jni-onload", "--cases", "1", "--rearm", args.rearm,
+                    "--entry", "JNI_OnLoad", "--jni-onload", "--cases", "4" if args.registered else "1", "--rearm", args.rearm,
                     "--sla", args.sla, "--cxx", args.cxx, "--out", str(out / "execution"), "--node", args.node]
                 if args.emxx:
                     command += ["--emxx", args.emxx]
+                if args.registered:
+                    command += ["--jni-registered"]
+                if args.stack:
+                    command += ["--jni-stack"]
                 if args.native_only:
                     command += ["--native-only"]
                 if args.browser:
