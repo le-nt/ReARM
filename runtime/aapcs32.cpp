@@ -26,6 +26,7 @@ std::uint32_t arity(jni32::Function f) {
  case ThrowNew:case IsSameObject:case AttachCurrentThread:case GetEnv:
  case AttachCurrentThreadAsDaemon:return 3;
  case NewString:return 3;
+ case GetStringChars:case ReleaseStringChars:case GetStringUTFChars:case ReleaseStringUTFChars:return 3;
  case GetMethodID:case GetStaticMethodID:case RegisterNatives:return 4;
  case GetStringRegion:case GetStringUTFRegion:return 5;
  default:throw jni32::UnsupportedFunction("AAPCS32 unsupported JNI callback ID "+std::to_string(static_cast<std::uint32_t>(f)));

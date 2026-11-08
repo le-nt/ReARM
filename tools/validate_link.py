@@ -37,12 +37,15 @@ def main() -> int:
     parser.add_argument("--jni-registered", action="store_true", help="public registered static native callback fixture")
     parser.add_argument("--jni-stack", action="store_true", help="six-jint registered native fixture with stack arguments")
     parser.add_argument("--jni-strings", action="store_true", help="public UTF16/modified UTF8 string fixture")
+    parser.add_argument("--jni-string-leases", action="store_true")
     parser.add_argument("--runtime", choices=("libc-memory", "libc-basic"))
     parser.add_argument("--codegen", choices=("monolithic", "functions"), default="monolithic")
     parser.add_argument("--cases", type=int, default=4)
     parser.add_argument("--max-instructions", type=int, default=1000000)
     parser.add_argument("--out", type=Path, default=Path("build/link-e2e"))
     args = parser.parse_args()
+    if args.jni_string_leases:
+        args.jni_strings=True
     if args.jni_stack and not args.jni_registered:
         raise validation.FixtureError("--jni-stack requires --jni-registered")
     if args.jni_strings and (not args.jni_onload or args.jni_registered):
@@ -136,12 +139,14 @@ def main() -> int:
                 spec = importlib.util.spec_from_file_location("jni_reference", Path(__file__).with_name("jni_reference.py"))
                 service = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(service)
-                host = service.ReferenceJni(args.jni_registered, extra_args,args.jni_strings)
+                host = service.ReferenceJni(args.jni_registered, extra_args,args.jni_strings,args.jni_string_leases)
             expected = validation.reference_state(fixture, args.entry, observed, args.max_instructions, seed, args.initialize == "yes", host)
             if args.jni_onload:
                 trace = [1030, 4, 219, 6, 228, 17, 228]
                 if args.jni_strings:
                     trace += [167,164,168,220,163,221,220,228,17,163,164]
+                if args.jni_string_leases:
+                    trace += [169,165,170,169,170,166]
                 trace += [6, 113, 215, 4, 4] if args.jni_registered else [4]
                 if host.trace != trace:
                     raise validation.FixtureError(f"unexpected JNI reference trace: {host.trace}")

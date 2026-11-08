@@ -11,7 +11,9 @@ permissions:
 
 concurrency:
   group: public-validation-${{ github.ref }}
-  cancel-in-progress: true
+  # Autonomous checkpoints can arrive faster than the full validation suite.
+  # Let the running checkpoint finish; GitHub retains only the newest pending run.
+  cancel-in-progress: false
 
 jobs:
   linux-e2e:
@@ -138,6 +140,13 @@ jobs:
             --clang clang-18 --cxx clang++-18 \
             --emxx third_party/emsdk/upstream/emscripten/em++ \
             --out build/jni-strings --browser
+      - name: Guest JNI copied string leases
+        run: |
+          build/venv/bin/python tools/validate_jni.py --leases --codegen functions \
+            --rearm build/recomp/rearm --sla third_party/sla/ARM/ARM7_le.sla \
+            --clang clang-18 --cxx clang++-18 \
+            --emxx third_party/emsdk/upstream/emscripten/em++ \
+            --out build/jni-string-leases --browser
       - name: Preserved M0 pthread smoke
         run: |
           build/venv/bin/python tools/check_pthreads.py \
@@ -160,5 +169,6 @@ jobs:
             build/allocator-negative/metrics.json
             build/functions-*/*.json
             build/jni-strings/metrics.json
+            build/jni-string-leases/metrics.json
             build/recomp/Testing/Temporary/LastTest.log
           if-no-files-found: warn

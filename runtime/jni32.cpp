@@ -39,6 +39,7 @@ const char* functionName(Function function) {
     JNI_NAME(AttachCurrentThreadAsDaemon);
     JNI_NAME(NewString); JNI_NAME(GetStringLength); JNI_NAME(NewStringUTF);
     JNI_NAME(GetStringUTFLength); JNI_NAME(GetStringRegion); JNI_NAME(GetStringUTFRegion);
+    JNI_NAME(GetStringChars); JNI_NAME(ReleaseStringChars); JNI_NAME(GetStringUTFChars); JNI_NAME(ReleaseStringUTFChars);
 #undef JNI_NAME
     default: return nullptr;
   }
@@ -46,7 +47,8 @@ const char* functionName(Function function) {
 bool allowedPending(Function function) {
   return function == Function::ExceptionOccurred || function == Function::ExceptionClear ||
          function == Function::ExceptionCheck || function == Function::DeleteGlobalRef ||
-         function == Function::DeleteLocalRef || function == Function::PopLocalFrame;
+         function == Function::DeleteLocalRef || function == Function::PopLocalFrame ||
+         function == Function::ReleaseStringChars || function == Function::ReleaseStringUTFChars;
 }
 bool descriptorType(std::string_view text, std::size_t& at, bool allow_void) {
   if (at >= text.size()) return false;
@@ -109,9 +111,12 @@ struct Host::Impl {
   struct StringStorage {
     std::u16string text;std::shared_ptr<StringBudget> budget;
     StringStorage(std::u16string value,std::shared_ptr<StringBudget> owner):text(std::move(value)),budget(std::move(owner)){budget->used+=text.size()*2;}
+    StringStorage(const StringStorage&)=delete;
+    StringStorage& operator=(const StringStorage&)=delete;
     ~StringStorage(){budget->used-=text.size()*2;}
   };
   struct Object { Kind kind; std::string class_name; std::string message; std::shared_ptr<StringStorage> string{}; };
+  struct StringBuffer {Address address{};std::uint32_t capacity{};bool utf{};std::shared_ptr<Object> value;};
   struct Method { std::uint32_t id{}; bool is_static{}; bool is_native{}; std::optional<Address> entry; };
   using MethodKey = std::pair<std::string, std::string>;
   struct Class { std::shared_ptr<Object> object; bool throwable{}; std::map<MethodKey, Method> methods; };
@@ -138,6 +143,8 @@ struct Host::Impl {
   std::uint32_t next_method = 0x20000000;
   std::uint32_t global_count{};
   std::shared_ptr<StringBudget> string_budget=std::make_shared<StringBudget>();
+  std::vector<StringBuffer> string_buffers;
+  std::uint64_t string_buffer_bytes{};
   mutable std::mutex mutex;
 
   Impl(GuestMemory& memory_, Address base, Limits limits_) : memory(memory_), trampoline_base(base), limits(limits_) {
@@ -147,6 +154,7 @@ struct Host::Impl {
       throw Error("JNI limits must be positive");
     if(!limits.max_string_units||limits.max_string_units>1048576)throw Error("JNI string unit limit must be 1..1048576");
     if(!limits.max_string_storage_bytes)throw Error("JNI string storage budget must be positive");
+    if(!limits.max_string_buffer_bytes||!limits.max_string_buffers||!limits.max_threads)throw Error("JNI string buffer/thread limits must be positive");
     auto string_class=std::make_shared<Object>(Object{Kind::Class,"java/lang/String",{}});
     classes.emplace("java/lang/String",Class{std::move(string_class),false,{}});
     env_table = allocate(kEnvTableWords * 4);
@@ -182,6 +190,7 @@ struct Host::Impl {
   }
   Address attach(ThreadId id, bool daemon, std::string name = {}) {
     if (const auto it = threads.find(id); it != threads.end()) return it->second.env;
+    if(threads.size()>=limits.max_threads)throw Error("JNI attached thread limit exceeded");
     Thread value;
     value.env = allocate(4);
     value.daemon = daemon;
@@ -330,6 +339,39 @@ struct Host::Impl {
         if(function==Function::GetStringUTFRegion){auto encoded=encodeModifiedUtf8(part,limits.max_string_units);bytes.assign(encoded.begin(),encoded.end());}
         else for(auto unit:part){bytes.push_back(std::uint8_t(unit));bytes.push_back(std::uint8_t(unit>>8));}
         checkedRange(args[4],bytes.size());if(!bytes.empty())memory.write(args[4],bytes);return 0;
+      }
+      case Function::GetStringChars:
+      case Function::GetStringUTFChars:
+      case Function::ReleaseStringChars:
+      case Function::ReleaseStringUTFChars: {
+        arity(args,3);auto value=object(id,args[1]);
+        if(!value||value->kind!=Kind::String)throw Error("JNI string buffer operation requires a valid jstring");
+        const bool utf=function==Function::GetStringUTFChars||function==Function::ReleaseStringUTFChars;
+        const bool release=function==Function::ReleaseStringChars||function==Function::ReleaseStringUTFChars;
+        if(release){
+          for(auto& buffer:string_buffers)if(buffer.address==args[2]){
+            if(!buffer.value||buffer.utf!=utf||buffer.value!=value)throw Error("JNI string release has stale pointer, wrong string or wrong encoding");
+            buffer.value.reset();return 0;
+          }
+          throw Error("JNI string release pointer was not acquired");
+        }
+        // Validate optional jboolean* without changing it before reserving a copy.
+        if(args[2]){checkedRange(args[2],1);std::array<std::uint8_t,1> original{};memory.read(args[2],original);memory.write(args[2],original);}
+        std::vector<std::uint8_t> bytes;
+        if(utf){auto encoded=encodeModifiedUtf8(value->string->text,limits.max_string_units);bytes.assign(encoded.begin(),encoded.end());bytes.push_back(0);}
+        else for(auto unit:value->string->text){bytes.push_back(std::uint8_t(unit));bytes.push_back(std::uint8_t(unit>>8));}
+        const auto capacity=std::uint32_t((std::max<std::size_t>(1,bytes.size())+3)&~std::size_t(3));
+        std::size_t selected=string_buffers.size();
+        for(std::size_t n=0;n<string_buffers.size();++n)if(!string_buffers[n].value&&string_buffers[n].capacity>=capacity){selected=n;break;}
+        if(selected==string_buffers.size()){
+          if(string_buffers.size()>=limits.max_string_buffers||capacity>limits.max_string_buffer_bytes-string_buffer_bytes){exception(id,"java/lang/OutOfMemoryError","JNI string buffer pool exhausted");return 0;}
+          auto address=allocate(capacity);string_buffers.push_back({address,capacity,false,{}});string_buffer_bytes+=capacity;
+        }
+        auto& buffer=string_buffers[selected];
+        if(args[2]>=buffer.address&&std::uint64_t(args[2])<std::uint64_t(buffer.address)+buffer.capacity)throw Error("JNI isCopy output overlaps returned string buffer");
+        if(!bytes.empty())memory.write(buffer.address,bytes);
+        if(args[2]){const std::array<std::uint8_t,1> yes{1};memory.write(args[2],yes);}
+        buffer.utf=utf;buffer.value=std::move(value);return buffer.address;
       }
       case Function::FindClass: {
         arity(args, 2);

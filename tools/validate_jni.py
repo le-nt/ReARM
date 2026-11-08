@@ -22,9 +22,12 @@ def main():
     parser.add_argument("--registered", action="store_true", help="register and invoke a static native method")
     parser.add_argument("--stack", action="store_true", help="exercise six-jint native registration and stack marshalling")
     parser.add_argument("--strings", action="store_true")
+    parser.add_argument("--leases", action="store_true")
     parser.add_argument("--codegen", choices=("monolithic","functions"), default="monolithic")
     parser.add_argument("--out", type=Path, default=Path("build/jni-e2e"))
     args = parser.parse_args()
+    if args.leases:
+        args.strings=True
     if args.stack and not args.registered:
         parser.error("--stack requires --registered")
     if args.strings and args.registered:
@@ -48,7 +51,7 @@ def main():
                 report["suites"].append(suite)
                 suite["build"] = validation.run_measured([args.clang, "--target=armv7a-none-eabi", "-m" + mode,
                     "-" + optimization, "-mfloat-abi=soft", "-fPIC", "-nostdlib", "-fuse-ld=lld", "-Wl,-shared,-soname,libjni.so",
-                    *(["-DREGISTER_NATIVE"] if args.registered else []), *(["-DREGISTER_STACK"] if args.stack else []), *(["-DSTRING_APIS"] if args.strings else []), str(source), "-o", str(elf)])
+                    *(["-DREGISTER_NATIVE"] if args.registered else []), *(["-DREGISTER_STACK"] if args.stack else []), *(["-DSTRING_APIS"] if args.strings else []), *(["-DSTRING_LEASES"] if args.leases else []), str(source), "-o", str(elf)])
                 suite["elf_sha256"] = hashlib.sha256(elf.read_bytes()).hexdigest()
                 command = [sys.executable, str(root / "tools/validate_link.py"), "--input", str(elf),
                     "--entry", "JNI_OnLoad", "--jni-onload", "--cases", "4" if args.registered else "1", "--rearm", args.rearm,
@@ -61,6 +64,8 @@ def main():
                     command += ["--jni-stack"]
                 if args.strings:
                     command += ["--jni-strings"]
+                if args.leases:
+                    command += ["--jni-string-leases"]
                 if args.native_only:
                     command += ["--native-only"]
                 if args.browser:

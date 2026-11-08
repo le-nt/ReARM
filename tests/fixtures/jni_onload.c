@@ -65,6 +65,19 @@ __attribute__((visibility("default"))) i32 JNI_OnLoad(Interface* vm,void* reserv
  fixture_output[12]=hash;fixture_output[13]=(unsigned char)encoded[9];
  region(env,text,-1,1,copied);fixture_output[14]=exception(env);clear(env);
  fixture_output[15]=(u32)units(env,new_utf16(env,0,0));
+#ifdef STRING_LEASES
+ const char* (*get_utf)(Interface*,u32,unsigned char*)=(void*)(*env)[169];
+ const unsigned short* (*get_chars)(Interface*,u32,unsigned char*)=(void*)(*env)[165];
+ void (*release_utf)(Interface*,u32,const char*)=(void*)(*env)[170];
+ void (*release_chars)(Interface*,u32,const unsigned short*)=(void*)(*env)[166];
+ unsigned char utf_copy=0,chars_copy=0;const char* utf=get_utf(env,text,&utf_copy);
+ const unsigned short* chars=get_chars(env,text,&chars_copy);
+ u32 copied_hash=0;for(u32 n=0;n<9;++n)copied_hash=copied_hash*33u+(unsigned char)utf[n];
+ fixture_output[10]=(unsigned char)utf[9];fixture_output[11]=((u32)chars[2]<<16)|chars[3];
+ fixture_output[12]=copied_hash;fixture_output[13]=(fixture_output[13]<<16)|((u32)chars_copy<<8)|utf_copy;
+ release_utf(env,text,utf);const char* again=get_utf(env,text,0);fixture_output[14]|=(again==utf)<<1;
+ release_utf(env,text,again);release_chars(env,text,chars);
+#endif
 #endif
 #ifdef REGISTER_NATIVE
  u32 klass=find(env,"fixture/Bridge");

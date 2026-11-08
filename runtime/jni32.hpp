@@ -54,6 +54,8 @@ enum class Function : std::uint32_t {
   NewLocalRef = 25, EnsureLocalCapacity = 26, GetObjectClass = 31,
   GetMethodID = 33, GetStaticMethodID = 113, RegisterNatives = 215,
   NewString = 163, GetStringLength = 164, NewStringUTF = 167,
+  GetStringChars = 165, ReleaseStringChars = 166,
+  GetStringUTFChars = 169, ReleaseStringUTFChars = 170,
   GetStringUTFLength = 168, GetStringRegion = 220, GetStringUTFRegion = 221,
   UnregisterNatives = 216, GetJavaVM = 219, ExceptionCheck = 228,
   GetObjectRefType = 232,
@@ -83,6 +85,9 @@ struct Limits {
   std::uint32_t max_string_bytes = 4096;
   std::uint32_t max_string_units = 4096;
   std::uint32_t max_string_storage_bytes = 16*1024*1024;
+  std::uint32_t max_string_buffer_bytes = 512*1024;
+  std::uint32_t max_string_buffers = 4096;
+  std::uint32_t max_threads = 4096;
   std::uint32_t max_native_methods = 4096;
 };
 

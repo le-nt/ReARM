@@ -111,8 +111,8 @@ int main() {
   test("unsupported table callback traps explicitly", [] {
     Fixture f;
     const auto env_table = f.memory.readU32(f.env);
-    const auto binding = f.host.bindingForAddress(f.memory.readU32(env_table + 169 * 4));
-    check(binding && !binding->supported, "unsupported GetStringUTFChars was advertised");
+    const auto binding = f.host.bindingForAddress(f.memory.readU32(env_table + 224 * 4));
+    check(binding && !binding->supported, "unsupported GetStringCritical was advertised");
     throws<UnsupportedFunction>([&] { call(f.host, binding->function, 1, {f.env, 0}); });
     throws<UnsupportedFunction>([&] { call(f.host, Function::DestroyJavaVM, 1, {f.host.vmPointer()}); });
   });
@@ -523,6 +523,60 @@ int main() {
     check(!call(f.host,Function::NewStringUTF,1,{f.env,input}),"global-held string was not charged");
     check(f.host.pendingException(1)->class_name=="java/lang/OutOfMemoryError","missing string OOM");f.clear();
     call(f.host,Function::DeleteGlobalRef,1,{f.env,global});check(call(f.host,Function::NewStringUTF,1,{f.env,input}),"released string budget not recovered");
+  });
+  test("UTF string leases return a real terminated copy and isCopy true", [] {
+    Fixture f;auto text=call(f.host,Function::NewStringUTF,1,{f.env,f.memory.string("abc")});auto flag=f.memory.allocate(1,1);
+    auto chars=call(f.host,Function::GetStringUTFChars,1,{f.env,text,flag});
+    check(chars&&f.memory.readCString(chars)=="abc","wrong copied UTF string");std::array<std::uint8_t,1> yes{};f.memory.read(flag,yes);check(yes[0]==1,"isCopy not true");
+    call(f.host,Function::ReleaseStringUTFChars,1,{f.env,text,chars});
+  });
+  test("UTF16 string leases preserve NUL and surrogate units", [] {
+    Fixture f;auto text=call(f.host,Function::NewStringUTF,1,{f.env,f.memory.string("A\xc0\x80\xed\xa0\xbd\xed\xb8\x80")});
+    auto chars=call(f.host,Function::GetStringChars,1,{f.env,text,0});check(f.memory.readU32(chars)==0x00000041&&f.memory.readU32(chars+4)==0xde00d83d,"wrong UTF16 lease");
+    call(f.host,Function::ReleaseStringChars,1,{f.env,text,chars});
+  });
+  test("2000 string acquisitions reuse released guest storage", [] {
+    Fixture f;auto text=call(f.host,Function::NewStringUTF,1,{f.env,f.memory.string("reuse")});auto first=call(f.host,Function::GetStringUTFChars,1,{f.env,text,0});auto next=f.memory.next;
+    call(f.host,Function::ReleaseStringUTFChars,1,{f.env,text,first});
+    for(unsigned n=0;n<2000;++n){auto chars=call(f.host,Function::GetStringUTFChars,1,{f.env,text,0});check(chars==first,"released storage not reused");call(f.host,Function::ReleaseStringUTFChars,1,{f.env,text,chars});}check(f.memory.next==next,"released buffer leaked guest arena bytes");
+  });
+  test("wrong string encoding and stale release are rejected", [] {
+    Fixture f;auto a=call(f.host,Function::NewStringUTF,1,{f.env,f.memory.string("a")}),b=call(f.host,Function::NewStringUTF,1,{f.env,f.memory.string("b")});
+    auto chars=call(f.host,Function::GetStringUTFChars,1,{f.env,a,0});
+    throws([&]{call(f.host,Function::ReleaseStringUTFChars,1,{f.env,b,chars});});throws([&]{call(f.host,Function::ReleaseStringChars,1,{f.env,a,chars});});
+    call(f.host,Function::ReleaseStringUTFChars,1,{f.env,a,chars});throws([&]{call(f.host,Function::ReleaseStringUTFChars,1,{f.env,a,chars});});
+  });
+  test("global string aliases permit release from another attached thread", [] {
+    Fixture f;auto text=call(f.host,Function::NewStringUTF,1,{f.env,f.memory.string("cross")});auto global=call(f.host,Function::NewGlobalRef,1,{f.env,text});
+    auto chars=call(f.host,Function::GetStringUTFChars,1,{f.env,text,0});auto second=f.host.attachThread(2);call(f.host,Function::DeleteLocalRef,1,{f.env,text});
+    call(f.host,Function::ReleaseStringUTFChars,2,{second,global,chars});check(call(f.host,Function::GetStringLength,2,{second,global})==5,"global string corrupted");
+  });
+  test("string release remains legal with pending exception", [] {
+    Fixture f;auto text=call(f.host,Function::NewStringUTF,1,{f.env,f.memory.string("release")});auto chars=call(f.host,Function::GetStringUTFChars,1,{f.env,text,0});
+    call(f.host,Function::FindClass,1,{f.env,f.memory.string("missing/Class")});call(f.host,Function::ReleaseStringUTFChars,1,{f.env,text,chars});check(bool(f.host.pendingException(1)),"release cleared exception");f.clear();
+    check(call(f.host,Function::GetStringUTFChars,1,{f.env,text,0})==chars,"pending-exception release did not free buffer");
+  });
+  test("bounded string pool reports OOM and recovers through reuse", [] {
+    Fixture f(Limits{.max_string_buffer_bytes=8,.max_string_buffers=2});auto text=call(f.host,Function::NewStringUTF,1,{f.env,f.memory.string("abc")});
+    auto a=call(f.host,Function::GetStringUTFChars,1,{f.env,text,0}),b=call(f.host,Function::GetStringUTFChars,1,{f.env,text,0});check(a&&b&&a!=b,"concurrent leases alias");
+    check(!call(f.host,Function::GetStringUTFChars,1,{f.env,text,0}),"pool quota ignored");check(f.host.pendingException(1)->class_name=="java/lang/OutOfMemoryError","missing pool OOM");f.clear();
+    call(f.host,Function::ReleaseStringUTFChars,1,{f.env,text,a});check(call(f.host,Function::GetStringUTFChars,1,{f.env,text,0})==a,"quota not recovered");
+  });
+  test("bad isCopy output fails before reserving copy storage", [] {
+    Fixture f;auto text=call(f.host,Function::NewStringUTF,1,{f.env,f.memory.string("abc")});auto before=f.memory.next;
+    throws([&]{call(f.host,Function::GetStringUTFChars,1,{f.env,text,0xffff0000});});check(f.memory.next==before,"bad output leaked allocation");
+  });
+  test("unreleased copy pins string storage after last local reference", [] {
+    Fixture f(Limits{.max_string_storage_bytes=8});auto input=f.memory.string("abcd");auto text=call(f.host,Function::NewStringUTF,1,{f.env,input});
+    check(call(f.host,Function::GetStringUTFChars,1,{f.env,text,0}),"lease acquisition failed");call(f.host,Function::DeleteLocalRef,1,{f.env,text});
+    check(!call(f.host,Function::NewStringUTF,1,{f.env,input}),"leased object was released prematurely");
+  });
+  test("copied buffer writes never mutate immutable Java string storage", [] {
+    Fixture f;auto text=call(f.host,Function::NewStringUTF,1,{f.env,f.memory.string("abc")});auto chars=call(f.host,Function::GetStringUTFChars,1,{f.env,text,0});f.memory.writeU32(chars,0);
+    call(f.host,Function::ReleaseStringUTFChars,1,{f.env,text,chars});auto again=call(f.host,Function::GetStringUTFChars,1,{f.env,text,0});check(f.memory.readCString(again)=="abc","copy was incorrectly written back");
+  });
+  test("attached thread quota fails without altering existing environment", [] {
+    Fixture f(Limits{.max_threads=1});auto next=f.memory.next;throws([&]{f.host.attachThread(2);});check(f.memory.next==next&&call(f.host,Function::GetVersion,1,{f.env})==JNI_VERSION_1_6,"thread quota corrupted active state");
   });
   std::cout << "JNI32 tests: " << passed << " passed, " << failed << " failed\n";
   return failed ? 1 : 0;

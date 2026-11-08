@@ -193,8 +193,15 @@ an intrinsic host class; omit a duplicate --jni-class declaration for it. String
 use bounded UTF16 storage (4096 units/string and16MiB live payload by default),
 shared local/global reference ownership, and exact region writes without adding
 a terminator. Invalid regions raise a pending StringIndexOutOfBoundsException.
-GetStringChars/GetStringUTFChars leases and Java string method execution are
-not yet supported. Any generated profile linking runtime/jni32.cpp must now also
+`validate_jni.py --leases --codegen functions` additionally validates copied
+GetStringChars/GetStringUTFChars buffers and both release functions. Copies use
+a reusable bounded guest pool (512KiB/4096 buffers by default); isCopy is true.
+Release validates string identity and encoding, remains legal with a pending
+exception, and may use a global string reference on another attached thread.
+Unreleased copies retain their string payload and count against both budgets.
+Returned UTF8 copies include a zero terminator; UTF16 length remains explicit.
+Java string method execution and critical string pinning remain unsupported.
+Any generated profile linking runtime/jni32.cpp must now also
 link runtime/modified_utf8.cpp; the CMake target and validation tools do so.
 The ABI slots were measured from the
 [OpenJDK17 JNI header](https://github.com/openjdk/jdk/blob/jdk-17-ga/src/java.base/share/native/include/jni.h);

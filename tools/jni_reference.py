@@ -15,7 +15,7 @@ class ReferenceJni:
     vm = vm_table + 8 * 4
     env = vm + 4
 
-    def __init__(self, registered=False, extra_args=(), strings=False):
+    def __init__(self, registered=False, extra_args=(), strings=False,leases=False):
         self.pending = False
         self.trace = []
         self.registered = registered
@@ -26,6 +26,9 @@ class ReferenceJni:
         self.native_signature = "(" + "I" * (1 + len(self.extra_args)) + ")I"
         self.strings = strings
         self.string_handles = {}
+        self.leases = leases
+        self.buffers = []
+        self.buffer_cursor = self.env + 4
 
     @staticmethod
     def encoded(units):
@@ -119,6 +122,34 @@ class ReferenceJni:
                     result = 0
                 if (name, descriptor) != ("transform", self.native_signature):
                     raise RuntimeError("reference undeclared native method")
+            elif slot in (165,166,169,170) and self.leases:
+                if args[1] not in self.string_handles:
+                    raise RuntimeError("reference lease requires valid jstring")
+                units = self.string_handles[args[1]]
+                utf = slot in (169,170)
+                if slot in (166,170):
+                    found = next((b for b in self.buffers if b['address']==args[2]),None)
+                    if not found or found['units'] is not units or found['utf']!=utf:
+                        raise RuntimeError("reference invalid string release")
+                    found['units'] = None
+                    result = 0
+                else:
+                    data = self.encoded(units)+b"\0" if utf else struct.pack("<"+"H"*len(units),*units)
+                    size = (max(1,len(data))+3)&-4
+                    found = next((b for b in self.buffers if b['units'] is None and b['capacity']>=size),None)
+                    if found is None:
+                        address = self.buffer_cursor
+                        self.buffer_cursor += size
+                        machine.mem_write(address,bytes(size))
+                        found = {'address':address,'capacity':size,'units':None,'utf':utf}
+                        self.buffers.append(found)
+                    if data:
+                        machine.mem_write(found['address'],data)
+                    if args[2]:
+                        machine.mem_write(args[2],b"\1")
+                    found['units'] = units
+                    found['utf'] = utf
+                    result = found['address']
             elif slot in (163,164,167,168,220,221) and self.strings:
                 result = 0
                 if slot in (163,167):

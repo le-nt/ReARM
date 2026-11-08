@@ -265,3 +265,24 @@ using a separate `--out` directory per suite.
 - GetStringChars/GetStringUTFChars and corresponding release functions remain
   explicit unsupported callbacks. Next: bounded copied-buffer leases, proper
   release validation/reuse and guest lifecycle tests before widening JNI support.
+
+## Copied JNI string leases
+
+- GetStringChars/GetStringUTFChars return actual guest copies and isCopy=true.
+  UTF8 copies include a terminator; UTF16 copies preserve explicit code-unit length.
+  Release checks object identity, encoding and acquisition state, and supports
+  valid global aliases on another attached thread and pending-exception cleanup.
+- Reusable copy pool defaults to512KiB/4096 buffers. Unreleased copies retain the
+  object and live-string budget. Attached guest identities are bounded to4096.
+- JNI host suite now62 tests;2000 acquire/release cycles reuse guest storage
+  without advancing the allocator after the first copy. OOM recovery, wrong/stale
+  releases, immutable source storage and metadata/output guards are covered.
+- All12 CTest suites pass on Windows and Linux;39 Python reference tests and
+  strict host compilation pass. Copied-string ARM/Thumb O0/O2 fixtures pass
+  native/Node/Chromium (12 comparisons) plus Linux-native4 comparisons.
+  Evidence: tests/evidence/jni-string-leases-*.json.
+- CI now lets a running checkpoint finish while keeping only the newest pending
+  checkpoint per ref. Continuous engineering no longer cancels every long test run.
+- Next: primitive JNI arrays and bounded region access, followed by a combined
+  JNI/allocator initialization fixture. Critical string pinning and Java method
+  execution remain explicit unsupported calls; no Roblox startup is claimed.
