@@ -187,3 +187,16 @@ using a separate `--out` directory per suite.
 - Next: bounded guest heap allocation/reallocation/free with overflow, ownership,
   alignment and reuse tests; wire only verified allocator imports into a distinct
   runtime profile. No complete Bionic or authentic Roblox startup is claimed.
+
+## Bounded guest heap foundation
+
+- Added eight-byte-aligned guest arena allocation, zeroed allocation, realloc,
+  free/coalescing and bounded metadata. No host pointer crosses the guest ABI.
+- 13 heap tests pass on Windows and Linux, including1000 seeded allocation
+  traces, eight concurrent host threads, overflow/OOM, invalid/double/interior
+  frees, zero-size policy, moving/in-place realloc and guest-write rollback.
+- All ten CTest suites pass on both hosts; strict Windows heap compile passes.
+  This is host component coverage, not yet imported ARM allocator execution.
+- Next: a separate explicit libc-basic profile with malloc/calloc/realloc/free
+  imports and guest-thread errno storage; validate a real imported-ELF fixture
+  before claiming allocator ABI compatibility.
