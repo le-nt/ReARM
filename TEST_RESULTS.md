@@ -226,3 +226,22 @@ using a separate `--out` directory per suite.
   then wire JNI string functions and test real guest string lifecycles.
 - Authentic Roblox initialization is not established. Authorized inputs remain
   unavailable, and no private service or production 2x2/Pizda was modified.
+
+## Optional static instruction function layout
+
+- --codegen functions places statically lowered instructions in small non-inlined
+  C++ functions, retaining the same bounded iterative dispatcher and guest state.
+  --codegen monolithic remains the default. Neither layout interprets p-code.
+- Allocator16 cases and flags16 cases plus registered-JNI4 cases match independent
+  ARM reference on Windows-native, Node-WASM and Chromium-WASM (108 comparisons).
+  Linux-native allocator16 cases additionally pass;124 comparisons in this gate.
+- For exact same ARM O2 ELF, observed native compile changed130.7s→12.0s on
+  Linux Clang18 and23.4s→8.2s on Windows Clang23. These are single observations
+  with uncontrolled concurrent load, not a general speedup guarantee. Default
+  monolithic output was regenerated and its SHA256 remains byte-identical.
+- All12 CTest suites and39 Python harness tests pass. Optional layout evidence:
+  tests/evidence/instruction-functions.json. New hosted CI coverage is pending.
+- Guest execution throughput, source/code-size tradeoffs and millions-instruction
+  translation still need performance gates. Do not mark R31 or musttail complete.
+- Next: actual JNI NewString/NewStringUTF, length and region functions, using the
+  tested modified UTF-8 codec, explicit guest buffers and real guest stack args.

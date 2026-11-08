@@ -115,7 +115,7 @@ class InstructionEmitter {
 
 void cpp(std::ostream& o,const elf::Image& image,const lift::Program& program,std::uint32_t entry,
  const std::vector<std::pair<std::uint32_t,std::uint32_t>>& observed,std::uint64_t execution_limit,
- const std::vector<std::uint32_t>& initializers,bool jni_onload,const JniConfig& jni,bool libc_memory,bool libc_heap) {
+ const std::vector<std::uint32_t>& initializers,bool jni_onload,const JniConfig& jni,bool libc_memory,bool libc_heap,bool instruction_functions) {
  validateJniConfig(jni);
  if(libc_heap&&!libc_memory)throw std::runtime_error("Heap profile requires memory import profile");
  auto reg=[&](const std::string& name){auto it=program.registers.find(name);if(it==program.registers.end())throw std::runtime_error("SLA lacks register "+name);return it->second;};
@@ -171,6 +171,11 @@ public:
  }
 };
 )CPP";
+ auto function_name=[](const lift::Instruction& i){return "step_"+std::to_string(i.address)+(i.thumb?"t":"a");};
+ if(instruction_functions)for(const auto& i:program.instructions){
+  o<<"__attribute__((noinline)) static uint32_t "<<function_name(i)<<"(std::array<uint8_t,"<<register_bytes<<">& reg){uint32_t pc=0;do{\n";
+  InstructionEmitter(o,i,reg("TB")).run();o<<"}while(false);return pc;}\n";
+ }
  o<<"int main(int argc,char** argv){try{\nmemory.clear();\n";
  for(const auto& s:image.segments()) {
    // BSS is allocated at runtime, never expanded into millions of C++ zero tokens.
@@ -240,7 +245,11 @@ memory.push_back({0x70000000u,6,std::vector<uint8_t>(1048576)});
   setreg("r0","abi[0]");setreg("TB","thumb");o<<"pc=abi[15];continue;}}\n";
  }
  o<<"switch(uint64_t(pc)|(rd(reg,"<<reg("TB").offset<<",1)?0x100000000ULL:0)){\n";
- for(const auto& i:program.instructions){o<<"case "<<number(std::uint64_t(i.address)|(i.thumb?0x100000000ULL:0))<<":\n";InstructionEmitter(o,i,reg("TB")).run();}
+ for(const auto& i:program.instructions){
+  o<<"case "<<number(std::uint64_t(i.address)|(i.thumb?0x100000000ULL:0))<<":\n";
+  if(instruction_functions)o<<"pc="<<function_name(i)<<"(reg);break;\n";
+  else InstructionEmitter(o,i,reg("TB")).run();
+ }
  o<<"default:std::cerr<<\"unknown guest target 0x\"<<std::hex<<pc<<'\\n';throw std::runtime_error(\"unknown guest target: rebuild with discovery hints\");}}\n";
  if(!jni.invoke.empty())o<<"if(call==std::size(calls))jni_host.endNativeCall(1);\n";
  o<<"}\n";

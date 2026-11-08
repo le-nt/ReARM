@@ -22,6 +22,7 @@ def main():
     parser.add_argument("--browser", action="store_true")
     parser.add_argument("--native-only", action="store_true")
     parser.add_argument("--allocator", action="store_true")
+    parser.add_argument("--codegen", choices=("monolithic", "functions"), default="monolithic")
     parser.add_argument("--cases", type=int, default=4)
     parser.add_argument("--out", type=Path, default=Path("build/libc-e2e"))
     args = parser.parse_args()
@@ -56,7 +57,7 @@ def main():
                 suite["elf_sha256"] = hashlib.sha256(elf.read_bytes()).hexdigest()
                 command = [sys.executable, str(root / "tools/validate_link.py"), "--input", str(elf), "--runtime", "libc-basic" if args.allocator else "libc-memory",
                     "--cases", str(args.cases), "--rearm", args.rearm, "--sla", args.sla, "--cxx", args.cxx,
-                    "--out", str(out / "execution"), "--node", args.node]
+                    "--out", str(out / "execution"), "--node", args.node, "--codegen", args.codegen]
                 if args.emxx:
                     command += ["--emxx", args.emxx]
                 if args.native_only:

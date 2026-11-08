@@ -10,5 +10,6 @@ void cpp(std::ostream&, const elf::Image&, const lift::Program&, std::uint32_t e
          const std::vector<std::pair<std::uint32_t,std::uint32_t>>& observed,
          std::uint64_t execution_limit,
          const std::vector<std::uint32_t>& initializers = {}, bool jni_onload = false,
-         const JniConfig& jni = {}, bool libc_memory = false, bool libc_heap = false);
+         const JniConfig& jni = {}, bool libc_memory = false, bool libc_heap = false,
+         bool instruction_functions = false);
 }

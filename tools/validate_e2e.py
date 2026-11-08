@@ -672,7 +672,8 @@ def run_pipeline_body(args, root: Path, out: Path, report: dict, checkpoint) -> 
             commands = [compile_command,
                 [args.rearm, "--input", str(elf_path), "--entry", "fixture_entry", "--output", str(source),
                  "--sla", args.sla, "--observe", "fixture_output:64", "--max-instructions", str(args.max_instructions),
-                 "--load-bias", hex(args.load_bias), "--dispatch", args.dispatch, "--initialize", args.initialize],
+                 "--load-bias", hex(args.load_bias), "--dispatch", args.dispatch, "--initialize", args.initialize,
+                 "--codegen", getattr(args,"codegen","monolithic")],
                 [args.cxx, str(source), "-std=c++20", "-O2", "-o", str(native)],
                 [args.emxx, str(source), "-std=c++20", "-O2", "-sMODULARIZE=1", "-sEXPORT_NAME=createRearmModule",
                  "-sENVIRONMENT=node,web", "-sEXIT_RUNTIME=0", "-sINVOKE_RUN=0",
@@ -803,6 +804,7 @@ def main() -> int:
     parser.add_argument("--shared", action="store_true", help="compile PIC ET_DYN using the Android ARM linker profile")
     parser.add_argument("--load-bias", type=lambda x: int(x, 0), default=0)
     parser.add_argument("--dispatch", choices=("iterative", "musttail"), default="iterative")
+    parser.add_argument("--codegen", choices=("monolithic", "functions"), default="monolithic")
     parser.add_argument("--dependency", action="append", default=[], help="explicit guest library PATH@LOAD_BIAS; repeat for multiple modules")
     parser.add_argument("--initialize", choices=("yes", "no"), default="yes")
     args = parser.parse_args()

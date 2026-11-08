@@ -178,6 +178,14 @@ and [ENOMEM constant](https://android.googlesource.com/platform/bionic/+/557b1c4
 Guest pthreads, TLS register access and thread lifecycle remain separate work;
 per-thread errno unit coverage does not establish R17 compatibility.
 
+`--codegen functions` is an optional generated layout: each statically lowered
+instruction has a small non-inlined C++ function, called by the same bounded
+iterative dispatcher. `--codegen monolithic` remains the default. The function
+layout reduces the optimizer's single-function problem, but may trade guest
+runtime performance and code size for compilation time. This is not musttail,
+an interpreter, or acceptance of the R31 optimization milestone. Validation tools
+`validate_e2e.py`, `validate_link.py` and `validate_libc.py` forward this option.
+
 The public JNI guest bridge can be exercised separately:
 
 ```sh

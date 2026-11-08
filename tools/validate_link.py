@@ -37,6 +37,7 @@ def main() -> int:
     parser.add_argument("--jni-registered", action="store_true", help="public registered static native callback fixture")
     parser.add_argument("--jni-stack", action="store_true", help="six-jint registered native fixture with stack arguments")
     parser.add_argument("--runtime", choices=("libc-memory", "libc-basic"))
+    parser.add_argument("--codegen", choices=("monolithic", "functions"), default="monolithic")
     parser.add_argument("--cases", type=int, default=4)
     parser.add_argument("--max-instructions", type=int, default=1000000)
     parser.add_argument("--out", type=Path, default=Path("build/link-e2e"))
@@ -102,7 +103,7 @@ def main() -> int:
     try:
         command = [args.rearm, "--input", str(args.input), "--load-bias", hex(args.load_bias), "--entry", args.entry,
                    "--observe", args.observe, "--output", str(generated), "--sla", args.sla, "--initialize", args.initialize,
-                   "--max-instructions", str(args.max_instructions)]
+                   "--max-instructions", str(args.max_instructions), "--codegen", args.codegen]
         for dependency in args.dependency:
             command += ["--dependency", dependency]
         if args.jni_onload:

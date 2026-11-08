@@ -15,7 +15,9 @@ int main(int argc,char** argv){try{
  rearm::emit::JniConfig jni;
  for(int i=1;i<argc;i+=2){if(i+1==argc)throw std::runtime_error("option requires value");auto key=std::string(argv[i]);if(key=="--dependency")dependencies.push_back(argv[i+1]);else if(key=="--jni-class")jni.classes.push_back(argv[i+1]);else if(key=="--jni-native")jni.methods.push_back(rearm::emit::parseJniMethod(argv[i+1]));else if(key=="--jni-invoke")jni.invoke.push_back(rearm::emit::parseJniMethod(argv[i+1],true));else if(!args.emplace(key,argv[i+1]).second)throw std::runtime_error("duplicate option: "+key);}
  for(auto key:{"--input","--sla","--output"})if(!args.contains(key))throw std::runtime_error(std::string("required option: ")+key);
- for(const auto& [key,_]:args)if(key!="--input"&&key!="--sla"&&key!="--output"&&key!="--entry"&&key!="--observe"&&key!="--max-instructions"&&key!="--load-bias"&&key!="--dispatch"&&key!="--initialize"&&key!="--jni"&&key!="--runtime")throw std::runtime_error("unknown option: "+key);
+ for(const auto& [key,_]:args)if(key!="--input"&&key!="--sla"&&key!="--output"&&key!="--entry"&&key!="--observe"&&key!="--max-instructions"&&key!="--load-bias"&&key!="--dispatch"&&key!="--initialize"&&key!="--jni"&&key!="--runtime"&&key!="--codegen")throw std::runtime_error("unknown option: "+key);
+ const bool instruction_functions=args.contains("--codegen")&&args.at("--codegen")=="functions";
+ if(args.contains("--codegen")&&!instruction_functions&&args.at("--codegen")!="monolithic")throw std::runtime_error("--codegen expects monolithic or functions");
  const bool libc_heap=args.contains("--runtime")&&args.at("--runtime")=="libc-basic";
  const bool libc_memory=libc_heap||(args.contains("--runtime")&&args.at("--runtime")=="libc-memory");
  if(args.contains("--runtime")&&!libc_memory)throw std::runtime_error("--runtime expects libc-memory or libc-basic");
@@ -67,7 +69,7 @@ int main(int argc,char** argv){try{
  if(!limit||limit>10000000)throw std::runtime_error("instruction limit must be 1..10000000");
  auto program=rearm::lift::lift(image,args.at("--sla"),entry,static_cast<std::uint32_t>(limit),linked.constructors,host_entries);
  rearm::ir::verify(program);
- std::ofstream out(args.at("--output"));if(!out)throw std::runtime_error("cannot open output");rearm::emit::cpp(out,image,program,entry,observed,limit,linked.constructors,jni_onload,jni,libc_memory,libc_heap);out.close();if(!out)throw std::runtime_error("failed to write generated source");
+ std::ofstream out(args.at("--output"));if(!out)throw std::runtime_error("cannot open output");rearm::emit::cpp(out,image,program,entry,observed,limit,linked.constructors,jni_onload,jni,libc_memory,libc_heap,instruction_functions);out.close();if(!out)throw std::runtime_error("failed to write generated source");
  std::size_t ops=0;for(const auto& i:program.instructions)ops+=i.ops.size();
  auto seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count();
  std::cout<<"{\"instructions\":"<<program.instructions.size()<<",\"pcode_ops\":"<<ops<<",\"translation_seconds\":"<<seconds<<"}\n";return 0;

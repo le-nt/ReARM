@@ -116,6 +116,21 @@ jobs:
             --clang clang-18 --fixture build/libc-e2e/arm-O2/libfixture.so \
             --stub-dir build/libc-e2e --allocator-fixture build/allocator-e2e/arm-O2/libfixture.so \
             --out build/allocator-negative
+      - name: Optional static instruction functions
+        run: |
+          build/venv/bin/python tools/validate_link.py \
+            --input build/allocator-e2e/arm-O2/libfixture.so --runtime libc-basic \
+            --codegen functions --rearm build/recomp/rearm \
+            --sla third_party/sla/ARM/ARM7_le.sla --cxx clang++-18 \
+            --emxx third_party/emsdk/upstream/emscripten/em++ --browser \
+            --out build/functions-allocator
+          build/venv/bin/python tools/validate_link.py \
+            --input build/jni-registered-stack/thumb-O2/libjni.so \
+            --entry JNI_OnLoad --jni-onload --jni-registered --jni-stack \
+            --codegen functions --rearm build/recomp/rearm \
+            --sla third_party/sla/ARM/ARM7_le.sla --cxx clang++-18 \
+            --emxx third_party/emsdk/upstream/emscripten/em++ --browser \
+            --out build/functions-jni
       - name: Preserved M0 pthread smoke
         run: |
           build/venv/bin/python tools/check_pthreads.py \
@@ -136,5 +151,6 @@ jobs:
             build/libc-negative/metrics.json
             build/allocator-e2e/metrics.json
             build/allocator-negative/metrics.json
+            build/functions-*/*.json
             build/recomp/Testing/Temporary/LastTest.log
           if-no-files-found: warn
