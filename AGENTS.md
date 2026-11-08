@@ -28,6 +28,9 @@
 - Make routine technical decisions independently. If blocked, record the exact
   blocker and continue the next unblocked engineering task rather than retrying
   indefinitely or replacing the approved roadmap.
+- The user has standing authorization to continue feasible roadmap work after
+  tested checkpoints without waiting for another "continue" prompt. Preserve
+  the existing Goal; do not create/reset goals to bypass service usage limits.
 
 ## Resume a session
 

@@ -163,3 +163,27 @@ using a separate `--out` directory per suite.
   compatibility are not implemented by this service. Next: connect a deliberately
   small external-import whitelist to real public ELF imports and compare ARM,
   native and WASM execution before claiming imported-libc support.
+
+## Explicit libc imports: tested vertical slice
+
+- --runtime libc-memory explicitly binds ten memory/string function imports and
+  libc.so dependency metadata to checked guest services. No host library loader,
+  ARM decoder or production interpreter is introduced. Unknown strong imports,
+  function/data conflicts and callback address collisions remain fatal.
+- Real PT_LOAD/DT_NEEDED/PLT fixtures exercise all ten imports at ARM/Thumb O0/O2.
+  Four seeds/build match independent ARM reference on native/Node/Chromium:
+  16 cases /48 comparisons PASS. Linux-native additionally passes16 cases.
+- Expanded native-only differential run passes64 inputs/build (256 cases).
+  The first four inputs repeat the backend gate; do not count them twice when
+  reporting unique cases. Evidence: tests/evidence/libc-imports-*.json.
+- Nine CTest suites pass on Windows and Linux, including7 import-ABI/error cases.
+  39 Python reference tests, strict import-bridge compilation,3 negative real-ELF
+  profile gates, and a native/Node/Chromium registered-JNI regression pass.
+- Hosted CI42436842635 at cf51073 passed. The new imported-libc workflow must
+  be observed separately after push.
+- Standing user instruction: always continue feasible approved work after tested
+  checkpoints without requesting another continue. Existing Goal remains intact;
+  service usageLimited still prevents claiming verified unattended continuation.
+- Next: bounded guest heap allocation/reallocation/free with overflow, ownership,
+  alignment and reuse tests; wire only verified allocator imports into a distinct
+  runtime profile. No complete Bionic or authentic Roblox startup is claimed.

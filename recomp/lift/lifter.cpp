@@ -147,8 +147,14 @@ bool has_fallthrough(const std::vector<Op>& ops) {
 
 Program lift(const elf::Image& image, const std::filesystem::path& sla_path,
              std::uint32_t entry, std::uint32_t maximum,
-             const std::vector<std::uint32_t>& extra_entries) {
+             const std::vector<std::uint32_t>& extra_entries,
+             const std::vector<std::uint32_t>& host_entries) {
   if (!maximum) throw elf::Error("Instruction discovery limit must be positive");
+  for(auto at:host_entries){
+    if(at%4||image.mapped(at,4))throw elf::Error("Host callback collides with guest mapping or is unaligned");
+    if((entry&~1u)==at)throw elf::Error("Program entry must be translated guest code");
+    for(auto extra:extra_entries)if((extra&~1u)==at)throw elf::Error("Initializer entry must be translated guest code");
+  }
   static std::once_flag identifiers;
   std::call_once(identifiers, [] { AttributeId::initialize(); ElementId::initialize(); });
   ElfLoadImage loader(image);
@@ -171,6 +177,10 @@ Program lift(const elf::Image& image, const std::filesystem::path& sla_path,
   std::deque<State> pending;
   std::map<Key, std::pair<std::uint32_t, std::uint32_t>> discovered;
   auto queue = [&](State state, bool required) {
+    if(std::find(host_entries.begin(),host_entries.end(),state.address)!=host_entries.end()){
+      if(state.thumb)throw elf::Error("Host callback direct edge uses unsupported Thumb mode");
+      return;
+    }
     const auto width = state.thumb ? 2u : 4u;
     if (state.address % width || !executable(image, state.address, width)) {
       if (required) throw elf::Error("Instruction target is not aligned executable memory at " + hex(state.address));

@@ -1,0 +1,93 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "profile-disabled",
+      "passed": true,
+      "command": [
+        "build/recomp/rearm.exe",
+        "--input",
+        "build/libc-native-fast/arm-O2/libfixture.so",
+        "--sla",
+        "third_party/sla/ARM/ARM7_le.sla",
+        "--load-bias",
+        "0x10000000",
+        "--entry",
+        "fixture_entry",
+        "--output",
+        "<repo>\\build\\libc-negative\\profile-disabled.cpp"
+      ],
+      "input_sha256": "aa187fa1096bdff0e4a23acfe73595bd8e51544f69adc2a287ced1b2a851c539",
+      "exit_code": 1,
+      "stderr": "ReARM: Module 'libfixture.so' requires missing DT_NEEDED 'libc.so'\n"
+    },
+    {
+      "name": "unknown-import",
+      "passed": true,
+      "command": [
+        "build/recomp/rearm.exe",
+        "--input",
+        "<repo>\\build\\libc-negative\\unknown.so",
+        "--sla",
+        "third_party/sla/ARM/ARM7_le.sla",
+        "--load-bias",
+        "0x10000000",
+        "--entry",
+        "fixture_entry",
+        "--output",
+        "<repo>\\build\\libc-negative\\unknown-import.cpp",
+        "--runtime",
+        "libc-memory"
+      ],
+      "input_sha256": "fb1270782e9473cecff4b95b50d9f37aa270561142430d4d223434040c1919af",
+      "exit_code": 1,
+      "stderr": "ReARM: Module 'unknown.so': Unresolved ELF symbol 'rearm_unknown_import' at 0x100302a4\n"
+    },
+    {
+      "name": "callback-overlap",
+      "passed": true,
+      "command": [
+        "build/recomp/rearm.exe",
+        "--input",
+        "build/libc-native-fast/arm-O2/libfixture.so",
+        "--sla",
+        "third_party/sla/ARM/ARM7_le.sla",
+        "--load-bias",
+        "0xffd00000",
+        "--entry",
+        "fixture_entry",
+        "--output",
+        "<repo>\\build\\libc-negative\\callback-overlap.cpp",
+        "--runtime",
+        "libc-memory"
+      ],
+      "input_sha256": "aa187fa1096bdff0e4a23acfe73595bd8e51544f69adc2a287ced1b2a851c539",
+      "exit_code": 1,
+      "stderr": "ReARM: ELF overlaps libc-memory callback arena\n"
+    }
+  ],
+  "unknown_build": {
+    "command": [
+      "clang",
+      "--target=armv7a-linux-gnueabi",
+      "-marm",
+      "-mfloat-abi=soft",
+      "-nostdlib",
+      "-fPIC",
+      "-shared",
+      "-fuse-ld=lld",
+      "<repo>\\build\\libc-negative\\unknown.c",
+      "-Lbuild/libc-native-fast",
+      "-Wl,--no-as-needed",
+      "-l:libc.so",
+      "-o",
+      "<repo>\\build\\libc-negative\\unknown.so"
+    ],
+    "elapsed_seconds": 0.2451741000113543,
+    "peak_sampled_rss_bytes": 23789568,
+    "rss_sampling_seconds": 0.02,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+}

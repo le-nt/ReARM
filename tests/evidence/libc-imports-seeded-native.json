@@ -1,0 +1,3039 @@
+{
+  "schema_version": 1,
+  "passed": true,
+  "scope": "Explicit ten-function libc-memory profile, public synthetic ELF imports; not full Bionic",
+  "source_sha256_lf_normalized": {
+    "runtime/libc_imports32.hpp": "07cb7c5cf60b61b66b1b113ea286b9b46c68b52908fbdfaca078db4b667211e4",
+    "runtime/libc_imports32.cpp": "effd44d8cd7ec9b8d4cc5e2e58fcf9c987eff91f78215a5a37233f02bc6647e7",
+    "runtime/libc_memory32.cpp": "356681a895bae119345d3635225d00dff5dca708c2675f44b104b3543fb2c21f",
+    "runtime/aapcs32.cpp": "fbaf8a62bce8ed8ae44cf7bfaac1a6f25dfeadc9121891c0bbd1a95c2f43de3a",
+    "recomp/emit/emitter.cpp": "01030a5569b6589fff5ba7a9117acea735cd61dab355d755bc627c7fa69e2553",
+    "recomp/lift/lifter.cpp": "8e0a50e1b2cccf0dff1ab5259fd6fec6ad9b9980c4c09561f96213f85806c247",
+    "recomp/tools/rearm.cpp": "d0a3cca3d02cf6e99c68113f95ea0fc44d540f99db27317fd18a5400c70b067f",
+    "tools/libc_reference.py": "9fb3b07087e85dd5945dfe3deb31638e90d29ba98f40a7a1fd46f0c5af87dee3",
+    "tools/validate_libc.py": "a913c165d85439dfc596af37b1b417a9197ef1e75caadeb9fd39876d466490e6",
+    "tools/validate_link.py": "09a8e073a6bbf9fa8964e045b40dcaae589351c3cbcc6288d7d8d0daec3f04c2",
+    "tools/validate_e2e.py": "07bdcfcf517932bbb675ac417988b7f9ecdbf9f54f8b3f074e4923a6ee46e031",
+    "tests/fixtures/libc_imports.c": "51c56f11050d6919d0808047eb4022ef8a1bfe0388e55767b7caebc3fd819a19",
+    "dependencies.lock.json": "ae7ea54435f60e2025f42ef45f2310e91b29d4720f8d4bc320141132f671921f"
+  },
+  "fixture_source_sha256_raw": "51c56f11050d6919d0808047eb4022ef8a1bfe0388e55767b7caebc3fd819a19",
+  "suites": [
+    {
+      "mode": "arm",
+      "optimization": "O0",
+      "elf_sha256": "a4c991cf29615ce5ec332ee0eb444967ead1574a9b3341882ee70f2a8aa8ef96",
+      "case_count": 64,
+      "build": {
+        "command": [
+          "clang",
+          "--target=armv7a-linux-gnueabi",
+          "-mfloat-abi=soft",
+          "-nostdlib",
+          "-fPIC",
+          "-shared",
+          "-fuse-ld=lld",
+          "-Wl,--hash-style=sysv,--pack-dyn-relocs=none",
+          "-Wl,-z,max-page-size=4096,-z,common-page-size=4096",
+          "-marm",
+          "-O0",
+          "-fno-builtin",
+          "<repo>\\tests\\fixtures\\libc_imports.c",
+          "-Wl,-soname,libfixture.so",
+          "-L<repo>\\build\\libc-seeded-native",
+          "-Wl,--no-as-needed",
+          "-l:libc.so",
+          "-o",
+          "<repo>\\build\\libc-seeded-native\\arm-O0\\libfixture.so"
+        ],
+        "elapsed_seconds": 0.1628463999950327,
+        "peak_sampled_rss_bytes": 21524480,
+        "rss_sampling_seconds": 0.02,
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "artifacts": [
+        {
+          "name": "linked.cpp",
+          "size_bytes": 212655,
+          "sha256": "dc04db60b673ff103c0efde746884b3d40a4bec8e7184bd2d53b6dc953988769"
+        },
+        {
+          "name": "linked.exe",
+          "size_bytes": 169472,
+          "sha256": "f622717397029c1b8f2d639daeb2b6031b73c21e5bc86c93814effff90db8544"
+        }
+      ],
+      "compile_steps": [
+        {
+          "stage": "translate",
+          "command": [
+            "build/recomp/rearm.exe",
+            "--input",
+            "<repo>\\build\\libc-seeded-native\\arm-O0\\libfixture.so",
+            "--load-bias",
+            "0x10000000",
+            "--entry",
+            "fixture_entry",
+            "--observe",
+            "fixture_output:64",
+            "--output",
+            "<repo>\\build\\libc-seeded-native\\arm-O0\\execution\\linked.cpp",
+            "--sla",
+            "third_party/sla/ARM/ARM7_le.sla",
+            "--initialize",
+            "yes",
+            "--max-instructions",
+            "1000000",
+            "--runtime",
+            "libc-memory"
+          ],
+          "elapsed_seconds": 0.10023640000144951,
+          "peak_sampled_rss_bytes": 15667200,
+          "translation": {
+            "summary": {
+              "instructions": 259,
+              "pcode_ops": 1214,
+              "translation_seconds": 0.0691547
+            },
+            "instructions_per_second": 2583.891680030953,
+            "pcode_ops_per_second": 12111.36872416053
+          }
+        },
+        {
+          "stage": "native_compile",
+          "command": [
+            "clang++",
+            "<repo>\\build\\libc-seeded-native\\arm-O0\\execution\\linked.cpp",
+            "-I",
+            "<repo>",
+            "<repo>\\runtime\\jni32.cpp",
+            "<repo>\\runtime\\aapcs32.cpp",
+            "<repo>\\runtime\\libc_memory32.cpp",
+            "<repo>\\runtime\\libc_imports32.cpp",
+            "-std=c++20",
+            "-O2",
+            "-o",
+            "<repo>\\build\\libc-seeded-native\\arm-O0\\execution\\linked.exe"
+          ],
+          "elapsed_seconds": 7.918827100016642,
+          "peak_sampled_rss_bytes": 138555392
+        },
+        {
+          "stage": "native",
+          "command": [
+            "<repo>\\build\\libc-seeded-native\\arm-O0\\execution\\linked.exe",
+            "0"
+          ],
+          "elapsed_seconds": 0.09624670000630431,
+          "peak_sampled_rss_bytes": null
+        }
+      ],
+      "cases": [
+        {
+          "seed": 0,
+          "reference_state_sha256": "7c6cd5b26ab19667773597ae802b0e1aee4d1c2b1f249514bebf55b826bb3b00",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1,
+          "reference_state_sha256": "7f7766053054669d9137f1e3959df44b9516fc622b77b2890b1cfb56ae4afabd",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 4294967295,
+          "reference_state_sha256": "77131b37dc1156fb9e610c94765eb9a56eff4363f1c53180adc0ee25ef96fc8e",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2147483648,
+          "reference_state_sha256": "c5d7a63d2bd637a20d822a73a0668116ceb7b9d1694c5628ad895b1f591ce899",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 6593340,
+          "reference_state_sha256": "b277c566e5dd0eef89b0daf6ee0c512691337d10aae6034813428c1e225c3df6",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 4083746077,
+          "reference_state_sha256": "a86a963dec1f1049efd23f8a972abc03de633dd2b092aca3d3215c181f4c46c3",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2861782008,
+          "reference_state_sha256": "beaacf36ecbfda03654451d8a38859a05ad449f6eca463cab8ba83743e5cc335",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3714728526,
+          "reference_state_sha256": "b399643ff816f5b5ff6278150e7eb505affecfc6437959a3ea9ee292f1b753a4",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 828035903,
+          "reference_state_sha256": "a6efa0cc5e6841bb98ad224e407c5579552b351528470c5b2430919ebf12543e",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 211669633,
+          "reference_state_sha256": "40299ae82927c5c5658acfc102236d18c31b6c0ede4e41fd78b56f6b0d1615fc",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1870173447,
+          "reference_state_sha256": "7819ff951567eaa7d3e1652b9d7d630d373590bcf30a585f962b7d7696651c6b",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3335599755,
+          "reference_state_sha256": "237d0b3cdaebfc836346e16e788bfa9bb2c031f1b0a06c41e913eddaf3894810",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3758421995,
+          "reference_state_sha256": "d8b1d54187b2cf1a4f002c8bb2f358dde6888576b8a8a29d397073386eca298a",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2714548855,
+          "reference_state_sha256": "bf13d11f273107630c9e6a0c3f3b7a687d878f91ea16346919708527a49219a6",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3872024566,
+          "reference_state_sha256": "825ed2c9a87d89acb27310a616802fac9da4105174a4a3eca663a81505da038c",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3970609004,
+          "reference_state_sha256": "dfd9defb7dbb12eefcfc987871212b9843a7b6ec09979d638befa7a7ba33667f",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2443774511,
+          "reference_state_sha256": "120b6d8ff464bbf944bc006ad6d253f6fe7127f7ff9a83eb2280e66c27ba9fd9",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2910517625,
+          "reference_state_sha256": "4fc98c983a1d3e1f9236f284a6bf67a9282193e561a971552bbd6aeda3a5c0e2",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3101796915,
+          "reference_state_sha256": "34e14101ecf277db151f3312bf8cec981610136d39b67ad07a012522b23307de",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 961941728,
+          "reference_state_sha256": "030e81f18040f8883944a8bcbee6088d4666d10e8aaead28357f41b95c6bc134",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2449982949,
+          "reference_state_sha256": "0e9bdf7210c7e3a22cfec5c68f900f5b8942d1ba11a28d16664f378d733862dd",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1037125560,
+          "reference_state_sha256": "52f72b6d0c622eab28e504872d47546de0bca6aab5608bd3381ffad427253072",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2985289803,
+          "reference_state_sha256": "d86bddb2b1095ab408c95bd0d2add6fb0611bb24d86a40cdd69707f80170ac54",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3493030200,
+          "reference_state_sha256": "e32d3d1f6ab0c875ec379527f648331edcf6c6efdf85353c037078760b06d6c1",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 529711602,
+          "reference_state_sha256": "c075206bbe9d9d42d6de704b04c038ea7a95e4b0315533e8146088b79cd11ead",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2990073508,
+          "reference_state_sha256": "80af3a200a395eecc8e0af6076342cb44f993537046283d2d7cdc042db68bfbd",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1936329618,
+          "reference_state_sha256": "d2cfc4b0412335a1ff8a645ea0c2ffe086cf5f91a2915aada3350d91790450da",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1897005406,
+          "reference_state_sha256": "b1bd4880aa27aeb5e1d9c6a229004b50f4cbec2bca45fd2fcbecec5b1a99ba40",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 369287554,
+          "reference_state_sha256": "9d03f8bbd70dc2ee96bf455bd0e6c10d278bf5ed0db1b0bc654ea52cbc3bc949",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 207755259,
+          "reference_state_sha256": "0355c6c10f00f2ba34891121f622a46708b3619bf6c0e0717fc778d7b4b6f3a9",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2637645333,
+          "reference_state_sha256": "478b6846e81add739e0c60a90c82ff4a998200574f61ec255251ca6e006f2a92",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3410903311,
+          "reference_state_sha256": "d15d7eb359bc8aeea27149f8d60b5218b47da5069f9c42de11664048c8ae870e",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1855698872,
+          "reference_state_sha256": "38fd268fedecca25883d5ba4d45577535425e05048b0f8acb45b720fa39dc88a",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 368822862,
+          "reference_state_sha256": "243286144b521148e5e327339dd8109373c6e0c80d2c884ed33f696b2f8a7487",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 4210409207,
+          "reference_state_sha256": "95d8de0ddc9dfcc9873cc3b52f2379ff6962422a9a522e130f02667d32614de8",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3896800290,
+          "reference_state_sha256": "8bfae11acd043cf62ac0ddbe4074e339c6163ab3be5bc4a8645f49d68e649248",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3200315138,
+          "reference_state_sha256": "b9a9be48791b3c0fc63636f45afe91f78f6e26992a3c0942f7387a30030e8697",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3342806226,
+          "reference_state_sha256": "1fdfd6f12b9c0725b294f26cc9d29f7ddc9f270ec530896a1cf4ee624c0b847d",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1980419456,
+          "reference_state_sha256": "9471978b55d6d01b7dcd4bb1213b0adb91a6fb10f7617d542668cacc1a546610",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3638661629,
+          "reference_state_sha256": "4de2836d973bbc7bdea05c5d8dfc234974dfeb4af0fc51e047067383c3035b41",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2971064018,
+          "reference_state_sha256": "7672a34c6e0d311e975618d9c8b4060f8216b621559d173ec02cbc1148ca2bee",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 307807668,
+          "reference_state_sha256": "8a45bb93877b0e1ed6873c4b0ecd6fb2531a3c8d9301de8a44403cdcdd53e7c4",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1462130851,
+          "reference_state_sha256": "43242556ca7d5c656f88de126d926d8ea00ba9d6be656048759774cfe2591ddc",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 444375546,
+          "reference_state_sha256": "0e640c5755b5b1ef496aeb67865a29b5e6d32ff4f4fbe560471b29c7f0ccf147",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1178041787,
+          "reference_state_sha256": "07b9414d96013d3c901c77158aea6b9276eac8c3453b6a3da1d0f795fc985b93",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2575918619,
+          "reference_state_sha256": "86082457ded967f095eedf7179fa5de93c87101ad15dd3c02023bdc6f344222e",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 469879678,
+          "reference_state_sha256": "b96b6170d91ac7eb797c14024d282499e02cb6553e97a3c7942a71aeeab83786",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2293047529,
+          "reference_state_sha256": "1edcf4001f2e43c118fa3c7585bcf2040b349bfc2255ec0c2082c1f727331487",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3132276881,
+          "reference_state_sha256": "177eb89bc4c5e5c988175fa5fedd6a5892efff1fc94df6bb7482a01fba45991a",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3065162209,
+          "reference_state_sha256": "c725311a2944f263c0c2739323a3472e9d2db541c8fa57aaefa591fcb123160c",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2454846694,
+          "reference_state_sha256": "42c4bad0e3167b580fc2aff4869377331d93c40ae95885291e9bf00a7f56fd92",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 341846528,
+          "reference_state_sha256": "ce8709718334fbde2acb959f667c629b68d87c5f2ffb817efc82a87add2754da",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 891580560,
+          "reference_state_sha256": "b0c92fed1cf849cb8323da1ef6a0e6aeee6715c50ca5aff41e09d4744bf62be8",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3723725931,
+          "reference_state_sha256": "f78b1d939cd51b3de159083d33a856f571a26d5b41221a1731d3f543aeebd27d",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 598339796,
+          "reference_state_sha256": "9f3c8b682098dace0177e15e436947ef2b5d464db86ebce7611da3c8575524fd",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2883370925,
+          "reference_state_sha256": "6034bfeaeda3af02280f93009da3f681803b278c302a0c3da98f0c88f089beec",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3104388761,
+          "reference_state_sha256": "dd963091a5d16b3bd0bb3a9571239cc4f95a5ccc28b2cd26795dbd7c3082a34c",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1687255028,
+          "reference_state_sha256": "86ea88c57f7ae60a1b3a4699d6927e64c85dbf56f65a50477f4309497fb6f51d",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 127240867,
+          "reference_state_sha256": "e0e1d70ee2de327a943a434c491ba467c7e4ae9ba9195650e47a645876d927e1",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1861716387,
+          "reference_state_sha256": "baf84fb0f63a36ec9aa45b82eb65855015e5f775b1b86ea85f1e7a5c74b8998c",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1740074498,
+          "reference_state_sha256": "7d78a52394657548698e8852eae7deb130d67a86fd33015c5a58bb868234c002",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3298429977,
+          "reference_state_sha256": "b776b17e16e9268fea6035c29dee8e5093fffcce4e6cf6a5fbeffcba76f04c7b",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 640990261,
+          "reference_state_sha256": "fb7e729f747ec80399eeb984c107a24a1909e54c3c09076e330d224450d5c522",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2281363820,
+          "reference_state_sha256": "d65613880c507cd7f21ab962abf11951b9313b761f752fa1416692a1ea646fcb",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "mode": "arm",
+      "optimization": "O2",
+      "elf_sha256": "aa187fa1096bdff0e4a23acfe73595bd8e51544f69adc2a287ced1b2a851c539",
+      "case_count": 64,
+      "build": {
+        "command": [
+          "clang",
+          "--target=armv7a-linux-gnueabi",
+          "-mfloat-abi=soft",
+          "-nostdlib",
+          "-fPIC",
+          "-shared",
+          "-fuse-ld=lld",
+          "-Wl,--hash-style=sysv,--pack-dyn-relocs=none",
+          "-Wl,-z,max-page-size=4096,-z,common-page-size=4096",
+          "-marm",
+          "-O2",
+          "-fno-builtin",
+          "<repo>\\tests\\fixtures\\libc_imports.c",
+          "-Wl,-soname,libfixture.so",
+          "-L<repo>\\build\\libc-seeded-native",
+          "-Wl,--no-as-needed",
+          "-l:libc.so",
+          "-o",
+          "<repo>\\build\\libc-seeded-native\\arm-O2\\libfixture.so"
+        ],
+        "elapsed_seconds": 0.18142459998489358,
+        "peak_sampled_rss_bytes": 30085120,
+        "rss_sampling_seconds": 0.02,
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "artifacts": [
+        {
+          "name": "linked.cpp",
+          "size_bytes": 286729,
+          "sha256": "8d306c52de2f8abb57d2b279ff8dfcb0670c059673cc0522dffcaae547f27c55"
+        },
+        {
+          "name": "linked.exe",
+          "size_bytes": 169984,
+          "sha256": "615d72685b3ad59d04a1e79ae90c4d7f7dd11511638852fcec453cbedd3ef716"
+        }
+      ],
+      "compile_steps": [
+        {
+          "stage": "translate",
+          "command": [
+            "build/recomp/rearm.exe",
+            "--input",
+            "<repo>\\build\\libc-seeded-native\\arm-O2\\libfixture.so",
+            "--load-bias",
+            "0x10000000",
+            "--entry",
+            "fixture_entry",
+            "--observe",
+            "fixture_output:64",
+            "--output",
+            "<repo>\\build\\libc-seeded-native\\arm-O2\\execution\\linked.cpp",
+            "--sla",
+            "third_party/sla/ARM/ARM7_le.sla",
+            "--initialize",
+            "yes",
+            "--max-instructions",
+            "1000000",
+            "--runtime",
+            "libc-memory"
+          ],
+          "elapsed_seconds": 0.08913650002796203,
+          "peak_sampled_rss_bytes": 12783616,
+          "translation": {
+            "summary": {
+              "instructions": 249,
+              "pcode_ops": 1639,
+              "translation_seconds": 0.0737734
+            },
+            "instructions_per_second": 2793.468443588081,
+            "pcode_ops_per_second": 18387.52923309584
+          }
+        },
+        {
+          "stage": "native_compile",
+          "command": [
+            "clang++",
+            "<repo>\\build\\libc-seeded-native\\arm-O2\\execution\\linked.cpp",
+            "-I",
+            "<repo>",
+            "<repo>\\runtime\\jni32.cpp",
+            "<repo>\\runtime\\aapcs32.cpp",
+            "<repo>\\runtime\\libc_memory32.cpp",
+            "<repo>\\runtime\\libc_imports32.cpp",
+            "-std=c++20",
+            "-O2",
+            "-o",
+            "<repo>\\build\\libc-seeded-native\\arm-O2\\execution\\linked.exe"
+          ],
+          "elapsed_seconds": 15.709597299981397,
+          "peak_sampled_rss_bytes": 137961472
+        },
+        {
+          "stage": "native",
+          "command": [
+            "<repo>\\build\\libc-seeded-native\\arm-O2\\execution\\linked.exe",
+            "0"
+          ],
+          "elapsed_seconds": 0.10764819997712038,
+          "peak_sampled_rss_bytes": null
+        }
+      ],
+      "cases": [
+        {
+          "seed": 0,
+          "reference_state_sha256": "acd81474ac6fd5f0c3613c717fbb4f48f1735d7b2d09c88d1b88404ba9afbf6e",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1,
+          "reference_state_sha256": "de8c888568969d218d004c0066ed1f2b8e43f87fa843b62096c024c609c56d9a",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 4294967295,
+          "reference_state_sha256": "e440f56bb4c0170794d968f81c266e2850dbae03ac8d6e66844e252fea521320",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2147483648,
+          "reference_state_sha256": "e8286e138136b843826c618d3d0b14543f8a1a4f6ccd18b1d56c0459a8600777",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 6593340,
+          "reference_state_sha256": "99f257e300069e41c4d597f2cfb8d2090c19441e861a21616fdc871fb29a85d9",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 4083746077,
+          "reference_state_sha256": "2bada96081e4b5cc9f4e1fb94fd6bcfdef17a84452756f92b031ec567e1f7ea6",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2861782008,
+          "reference_state_sha256": "be4e00d61893ad3230fb9fb15d353c2f42d341240e9294a8e392befda76c7a1e",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3714728526,
+          "reference_state_sha256": "6ba948320188cc1edda32f661f30e2bb4f7e1d1539909949e27c2162abfd6788",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 828035903,
+          "reference_state_sha256": "c7977272aaca7af5f5fd21934073d387041b75a69fde80a6bb0b3eea4a8b1cff",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 211669633,
+          "reference_state_sha256": "5b0a30666f84cebfbe299175d48ab64ecac888ff276e67bb2e5a5c893ba948b4",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1870173447,
+          "reference_state_sha256": "48b201b6818af633f825c150376b5027f9993b4337d9a898e6700f90fc893228",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3335599755,
+          "reference_state_sha256": "ac4835a5f13e693c4609eeecac1087dc3a9fe90bc789bd9f0366ed21c8dbc39d",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3758421995,
+          "reference_state_sha256": "f7ae94f025a1b56aca8957eeb290528204be66f88a45fdf7ca46939acecd5235",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2714548855,
+          "reference_state_sha256": "05da34d90f38900b9770262100b905b70eaed9ef8f08d387705700e608ed6733",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3872024566,
+          "reference_state_sha256": "f3fc4577d9525ea0a7d4d8ec71813a535722e9ed4897bb1f6845daee2ddc7515",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3970609004,
+          "reference_state_sha256": "6d31b0d29f29a00cec00147ca7f5839b5c3551a4625de94ad57228a3d6c58f32",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2443774511,
+          "reference_state_sha256": "42e06716b0eb3e28b28401a0e0955c3f55da3cf3dbd5308433f0c8014c480a21",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2910517625,
+          "reference_state_sha256": "e94eb2f0a46944a011175f43d520160de88e4352fc88611b6be2540b44b0b4d8",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3101796915,
+          "reference_state_sha256": "8edebd090a803518f9ae7084b4fd5a937f0c09d284317d80f769bd13d405d685",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 961941728,
+          "reference_state_sha256": "6e7730567847e44fdc33c9459fe20ef37f4419b44425581655a91faedf9180cf",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2449982949,
+          "reference_state_sha256": "958e6198cebe2a92bf5ae4bc93670a7de3d1639d890a84c99cc6c481dcb04acd",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1037125560,
+          "reference_state_sha256": "975f9a382d0ada2167417c8e13241513fa1604ad4102600881b5bc0fe2481a3f",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2985289803,
+          "reference_state_sha256": "b4666281da91ff8052bfc4f1d793b3f421ac1422560fa047f1f568518b2e02c6",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3493030200,
+          "reference_state_sha256": "40d409e476a07c16a083f7db999db1784fac87f66a51a7d8610863f30d4c3f96",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 529711602,
+          "reference_state_sha256": "c0f5c6c59995708a61bbdfc439757fd76117600b16f8073e58dd3a3c1875f062",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2990073508,
+          "reference_state_sha256": "01845305bc5c7bb697612f702eb34e78f16488ae37cdc8afb0185d857728382f",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1936329618,
+          "reference_state_sha256": "2953608c0f9df9b317445cd86c48af9295cce76b27ddea6539dcf2991dbffdf5",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1897005406,
+          "reference_state_sha256": "5731674e91d69619f0e75396e9e8b79a374753099a369274874eab7b107b9124",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 369287554,
+          "reference_state_sha256": "16ff1fae64e34318c7bb1fcd63afb2664aee97aa834f0add7cf72e6710f4a571",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 207755259,
+          "reference_state_sha256": "63c12017b6bc365e587bcc3357c1ac936a35aec873c04435d6920d58a078a9d5",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2637645333,
+          "reference_state_sha256": "fc3c8f0b200e8412a11f014778d2c2c0e7c92f60fb077cdd8183e8227f8690f0",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3410903311,
+          "reference_state_sha256": "afb49b6508fe3a4fa0c2182b5a943966dc0d1f6e52b88972936ad02a200e2528",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1855698872,
+          "reference_state_sha256": "e5d85390b45916bf585f23809aa9e0e7af281e9e9bd2527fe6ad976bdc0672ff",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 368822862,
+          "reference_state_sha256": "a90f7afc6909b55d76933d84b8fa5c198c6173e71d031e450af7aca2eeb4b729",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 4210409207,
+          "reference_state_sha256": "5f613df1dfb9b550b29e12b46985a9cf71f383eecd49105d104cf167ee326d88",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3896800290,
+          "reference_state_sha256": "99403f53b2bc2cfa5bd100f234b68757f6730bda1fc9a888ca48480927ed13d9",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3200315138,
+          "reference_state_sha256": "b4205322bdf3ab05b03159f8d4f863265fee8b36410be8cffe017256dac58599",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3342806226,
+          "reference_state_sha256": "08e34bf3a4fef080c1460f8a581eb13b9b852db3ce92ccf711d657c14c286915",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1980419456,
+          "reference_state_sha256": "40b03f8a18c49f3a94370ae6ebedf72b91b5864423d19a35dd31441a6df23368",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3638661629,
+          "reference_state_sha256": "2d283c43374c5e236f68d34e27b456b371eb129356e2c31ca69f4d2a701aafaa",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2971064018,
+          "reference_state_sha256": "1c49e43c7490097e82cc735821822d57de5834db1f14eac5831c51e546bed1a6",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 307807668,
+          "reference_state_sha256": "fd9225b95396ec834f8424db1bb0fdd941ddccb4c2010f60c497340882939ee1",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1462130851,
+          "reference_state_sha256": "030c1845a1bacc49ec37862781d2a8409a53e2d69844202d8cdd102eff838cc4",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 444375546,
+          "reference_state_sha256": "0c04df4f07fb3cd9212da5e84b54d1cfe377292f4d14f8984c73dfdae617ce62",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1178041787,
+          "reference_state_sha256": "9165bba46e2284addf579326a909787ce41a32ed6c2df86f816d635c295e3fe4",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2575918619,
+          "reference_state_sha256": "7063760f24efff30a2dd135d948ee75323e8ba9aa9274d466f5b8a7fdc72090c",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 469879678,
+          "reference_state_sha256": "269a56f5d8275e6b760508116ea5f3317d0289d5a60ecf7b6cf18e8dbec1156f",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2293047529,
+          "reference_state_sha256": "5c0b638e6f55f01e94d92e121dccbd21af7649f829ba5a6ca1073f2a99b18a15",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3132276881,
+          "reference_state_sha256": "ed8c36d235338b6cf674cc5b4b764cecfb04b4d5d4a86f48a338a0289c8f9234",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3065162209,
+          "reference_state_sha256": "e13d40111d05862d457fb4f7a892ee23a39aa7f74b7733e520a2e359f0f69d4b",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2454846694,
+          "reference_state_sha256": "bb7f9519f00bc18a17c65ee7510e289456b2ed5514269ac2b9c36d9d0d083ba2",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 341846528,
+          "reference_state_sha256": "624a6ae428566266f9686004dad27b3eae8e1bcab7887fd9e8fa023faa1a1824",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 891580560,
+          "reference_state_sha256": "ff686f6be64eb6f0c1872984a8262b5b559ce6560182dc9f728f669788c857bc",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3723725931,
+          "reference_state_sha256": "a49b0ced8d33cc6f4e4c7bc4177080fa69d50c04db910e87a8c1438eaeac2728",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 598339796,
+          "reference_state_sha256": "622fa01675e8989c4516cf0165cad94bbc7cf1c83af5d912c999686c66e992a3",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2883370925,
+          "reference_state_sha256": "86c528eb2c6b9c0898dbbf269c24b48bd634f41d6641ab2d3383be8e441164bb",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3104388761,
+          "reference_state_sha256": "d749de848cfcd72e1b92df89ec8139b98a31ec7d08713a46cdc597c26b92f6e7",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1687255028,
+          "reference_state_sha256": "7b6add519a7de0c9fa8f102f03c8bc739913cf5aded0e943c81cdad8a9711fb4",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 127240867,
+          "reference_state_sha256": "38f43504138643432c02aff8de5a4d3b68d305fc108b6958bdedd3643379e2f0",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1861716387,
+          "reference_state_sha256": "1219d9be56cd6908854e477a34f1c1f000af779735fa7bf4ece89bb49543c4dc",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1740074498,
+          "reference_state_sha256": "9a901a3f827c8759847526ad0c1e78e59680279eac85332055c5cc8a064fb94d",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3298429977,
+          "reference_state_sha256": "ef12e81676eba094d87c7d162b8da9dc51a5410c673adb94b7c7d66e6c1b127d",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 640990261,
+          "reference_state_sha256": "9e3ab8899442a0c303a0f2de35dcae0a0d43835466c5ea8b0fefddb603d2b803",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2281363820,
+          "reference_state_sha256": "c23e3c090ede73070765d2d7389d9f83e329790d04b0e5f05af1a3a1d49329e9",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "mode": "thumb",
+      "optimization": "O0",
+      "elf_sha256": "5d3abd3bdb1ad36c3260377750fe61b5674a6649e510099f75ce883e5d1d11ee",
+      "case_count": 64,
+      "build": {
+        "command": [
+          "clang",
+          "--target=armv7a-linux-gnueabi",
+          "-mfloat-abi=soft",
+          "-nostdlib",
+          "-fPIC",
+          "-shared",
+          "-fuse-ld=lld",
+          "-Wl,--hash-style=sysv,--pack-dyn-relocs=none",
+          "-Wl,-z,max-page-size=4096,-z,common-page-size=4096",
+          "-mthumb",
+          "-O0",
+          "-fno-builtin",
+          "<repo>\\tests\\fixtures\\libc_imports.c",
+          "-Wl,-soname,libfixture.so",
+          "-L<repo>\\build\\libc-seeded-native",
+          "-Wl,--no-as-needed",
+          "-l:libc.so",
+          "-o",
+          "<repo>\\build\\libc-seeded-native\\thumb-O0\\libfixture.so"
+        ],
+        "elapsed_seconds": 0.4398673000105191,
+        "peak_sampled_rss_bytes": 40488960,
+        "rss_sampling_seconds": 0.02,
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "artifacts": [
+        {
+          "name": "linked.cpp",
+          "size_bytes": 166971,
+          "sha256": "7f247966eb6b6d82987b67bde18323cec5f9261d49baf81c588b4cc8132d5510"
+        },
+        {
+          "name": "linked.exe",
+          "size_bytes": 167936,
+          "sha256": "eb7b37a18367abcab308225f517ca5b18855ad0d2a1582ec05af57521703f23b"
+        }
+      ],
+      "compile_steps": [
+        {
+          "stage": "translate",
+          "command": [
+            "build/recomp/rearm.exe",
+            "--input",
+            "<repo>\\build\\libc-seeded-native\\thumb-O0\\libfixture.so",
+            "--load-bias",
+            "0x10000000",
+            "--entry",
+            "fixture_entry",
+            "--observe",
+            "fixture_output:64",
+            "--output",
+            "<repo>\\build\\libc-seeded-native\\thumb-O0\\execution\\linked.cpp",
+            "--sla",
+            "third_party/sla/ARM/ARM7_le.sla",
+            "--initialize",
+            "yes",
+            "--max-instructions",
+            "1000000",
+            "--runtime",
+            "libc-memory"
+          ],
+          "elapsed_seconds": 0.13496110000414774,
+          "peak_sampled_rss_bytes": 16130048,
+          "translation": {
+            "summary": {
+              "instructions": 229,
+              "pcode_ops": 927,
+              "translation_seconds": 0.108448
+            },
+            "instructions_per_second": 1696.7852217636207,
+            "pcode_ops_per_second": 6868.645854038761
+          }
+        },
+        {
+          "stage": "native_compile",
+          "command": [
+            "clang++",
+            "<repo>\\build\\libc-seeded-native\\thumb-O0\\execution\\linked.cpp",
+            "-I",
+            "<repo>",
+            "<repo>\\runtime\\jni32.cpp",
+            "<repo>\\runtime\\aapcs32.cpp",
+            "<repo>\\runtime\\libc_memory32.cpp",
+            "<repo>\\runtime\\libc_imports32.cpp",
+            "-std=c++20",
+            "-O2",
+            "-o",
+            "<repo>\\build\\libc-seeded-native\\thumb-O0\\execution\\linked.exe"
+          ],
+          "elapsed_seconds": 10.783824199985247,
+          "peak_sampled_rss_bytes": 138743808
+        },
+        {
+          "stage": "native",
+          "command": [
+            "<repo>\\build\\libc-seeded-native\\thumb-O0\\execution\\linked.exe",
+            "0"
+          ],
+          "elapsed_seconds": 0.11746879998827353,
+          "peak_sampled_rss_bytes": null
+        }
+      ],
+      "cases": [
+        {
+          "seed": 0,
+          "reference_state_sha256": "f9a82de55d0737c06def435c10b8f24c3efa010b56981a61efa8c29cf88347ac",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1,
+          "reference_state_sha256": "754468a3c861e28f1a1be53f11c4ed3046316a2684edb09f076f957c852571aa",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 4294967295,
+          "reference_state_sha256": "c1868330720f4034cb656f79c570a01b7d3dd21bcc0298a337742d63a593c153",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2147483648,
+          "reference_state_sha256": "8673031a6bc3c166449b215cfd5008a4343149e3a116fc904b5715ee873e9992",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 6593340,
+          "reference_state_sha256": "58d33785708e7057be214f7110f0f7977aa8e941c4b328c915b624ee8e85ae64",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 4083746077,
+          "reference_state_sha256": "01ab8589c40a1f6eb513568f9af0d76cfc645789b26275a092bc6db82edf2762",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2861782008,
+          "reference_state_sha256": "28fa893dd77ff421498ada0fea02a3dbfe445d716cfd557b85ae4b1511a1cdb2",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3714728526,
+          "reference_state_sha256": "4399f49b3b7b2e2bc7d7a373ff01471d7e04220d55321e707b123914b932197e",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 828035903,
+          "reference_state_sha256": "e4d2e8fbe793537e9f1b34e5461ddec8aa41270e5f26148ba15360cbacef9bef",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 211669633,
+          "reference_state_sha256": "a2545974d03e7428ac26fdd6d740c46cb231e0083ccce911957aab116b2f10a0",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1870173447,
+          "reference_state_sha256": "33e76b9027d58928b2ee1740b40350e16be7f0ec2586a44bc62aa8bebcb40204",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3335599755,
+          "reference_state_sha256": "f6df7b57b8296cb8f57357353b400b7480ccd2004ad8de0826c4d048da46b8dc",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3758421995,
+          "reference_state_sha256": "0b330851e7bed2b2f950427df1cb3b6e3252e36f81d8b4113035eecd4fa77615",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2714548855,
+          "reference_state_sha256": "db8a276cfcc129d05aa7a4adfd2f10282c9697a158e9a13e1f785d1a226031f7",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3872024566,
+          "reference_state_sha256": "6342ced068a9ab34667c7b30b38a485ee0cf8900156fe2cc9e4fc1e28e15dd85",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3970609004,
+          "reference_state_sha256": "38478f86e762ed0384d430326d0fea0aabb3d96bf5d0e60ef785dd7f0fb94014",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2443774511,
+          "reference_state_sha256": "b3971062a3d154a1b9de8384d1444f119e95b8c474a8b4283ab773c0d8e42d82",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2910517625,
+          "reference_state_sha256": "3cfa7e4790e5ae5eafa86c4d30682fe16525e838e2a30c80ba74d7932d78add7",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3101796915,
+          "reference_state_sha256": "bc035bca0ecf8c878d37b34f36536a85baae475e93582abbb4a9624293049f15",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 961941728,
+          "reference_state_sha256": "866b02bd5ed157df6dd59d1f183b06676ed9670ca92d3047ea05e2f51e0aca23",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2449982949,
+          "reference_state_sha256": "3b10e03b2befcbf7e69539b8096a278d3388052309d25079075c8aed45b5953d",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1037125560,
+          "reference_state_sha256": "f4f69251ef5c43d1eabd187f690b3b3523a9e451bfa439a31d9c0fca66f65d58",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2985289803,
+          "reference_state_sha256": "5ad655ae1c6e843be79f3fd7ce21b56c9f32c94e95e0dba419a0a5e1463e56e8",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3493030200,
+          "reference_state_sha256": "9b76bbcf832f15210050754b6e278beaa4c29b04367136e655d7d126b66e8497",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 529711602,
+          "reference_state_sha256": "8535ef265c36518bf9a44b292803e8082801557052a9e196d1634a34e7d9cbdd",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2990073508,
+          "reference_state_sha256": "1b4a5463a37b607020a9847dc095ba512c61661ed4d5095de0e421be1423c461",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1936329618,
+          "reference_state_sha256": "9623177c7a973a813a735320cbc559539730707d4ab20484abeb38c94fc4df71",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1897005406,
+          "reference_state_sha256": "f994680842619244ec6ffd5fcfcbb10932778a1f3a2c0bb2904481966ac12877",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 369287554,
+          "reference_state_sha256": "ac60731a325a6fd3ffafea3dddd92f08813aac89782e56a7f5d630487a3b0a23",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 207755259,
+          "reference_state_sha256": "cf671b4538858ff44179ba9bf55e114177a4d59f2a7507a482473710f75a2106",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2637645333,
+          "reference_state_sha256": "4bb42de929c0ec058580d89dac648006e4969f6f04d81a771a4e92a121371f92",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3410903311,
+          "reference_state_sha256": "89d523b6f143ad401603697cb3855497ed8aa1b70d734fd19b850e231726c387",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1855698872,
+          "reference_state_sha256": "08198adf95b2b59c39969dd07ec62297a13d1130185ef05e909bd6195af951a9",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 368822862,
+          "reference_state_sha256": "9d5c9b23d0faf1448d76dd6dfd2b10064c620637cdd686425d80aec26d3d3ff6",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 4210409207,
+          "reference_state_sha256": "aef099a93c0173a008bd68d079d0743ff3edf1194378e07cdcd1e65804fcb7b9",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3896800290,
+          "reference_state_sha256": "5ea9cafca69e1abbcd6bd11aa779e1230346829ca730c3e8db75c26a7047e99b",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3200315138,
+          "reference_state_sha256": "1f973bd9182632ff47bc1e19f6b190ea3de35daf3aeaf4fc7339e85ed119fc7c",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3342806226,
+          "reference_state_sha256": "b32aaff3319448516b6dc3653c5fe8dd60e8f52737decb73744c867d299d4382",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1980419456,
+          "reference_state_sha256": "67f9bc8f4f07ef0195075cb9095db21725ea6fb4d6fb9aa97a9d736dbbe96637",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3638661629,
+          "reference_state_sha256": "1d231a8a66994965b10c958c5f839510df7bce90959e22d54f6cc063162d4e18",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2971064018,
+          "reference_state_sha256": "eb0573425217dd95840665a27db22ea71daad12cde41f76c10d4047461b92e92",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 307807668,
+          "reference_state_sha256": "76a5e69f4550592baf0d9678694223b2e83fa5a9ac9b73c7101a03373f5487bb",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1462130851,
+          "reference_state_sha256": "40a0b4ca001144e4db3a51745ed0a7cb274c9ae906c635a4a9053bf4bb8a87b0",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 444375546,
+          "reference_state_sha256": "3b2808a2237931f9f8080217491f1db0698c6eb7b39b37682985958ebcf25650",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1178041787,
+          "reference_state_sha256": "ddcff0c024be3b7e3cd02189b71960fab292070393da37104c060000a2c97808",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2575918619,
+          "reference_state_sha256": "60eb507cdc0e2439bd751daf52890b4ee9c925d69822d3a21769a8c48e0b11b2",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 469879678,
+          "reference_state_sha256": "84cdeac64a6b2d4085efbe73c0054921d3b47d70b634a8011e3c39e4abc3a103",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2293047529,
+          "reference_state_sha256": "f37749f76ebabdff9c1892ef66292bff6b6c3f7630f794a5e7b0fb8c9f13c59a",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3132276881,
+          "reference_state_sha256": "6cae71a44e582f73daa7e6ddef8657afa8a7ba15ef46b2e120929c6d5c592870",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3065162209,
+          "reference_state_sha256": "a1a3c712fda17e753e7908a2297710627013852ce4735f4bc52af2c1feb2239f",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2454846694,
+          "reference_state_sha256": "acbc5b265b8b04ba92d6433c4b58b47040a91e4210d75273b5bc89a8e049babb",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 341846528,
+          "reference_state_sha256": "00dd5950bd7ae76b938c2652f007fa2ab933cc8c58a0c2150802b4d1d5fdbc3c",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 891580560,
+          "reference_state_sha256": "98ac5133e3d8a086d91e6cf85af483359f0594b2636269e5ea1220300261ab84",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3723725931,
+          "reference_state_sha256": "4915ce8601c84c2bad02c58c357d3507edfa3a598b26ae61ef925cd3513a652f",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 598339796,
+          "reference_state_sha256": "7cf332a8a75b06349357ce4cc6a2b11883aa83e9b4a589a9a3a23ed76506ca7e",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2883370925,
+          "reference_state_sha256": "d2cb274214040b5b7742a5d770cc6caed5bc7ac12a6747b1aebf72d8cd4545c1",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3104388761,
+          "reference_state_sha256": "9ed6930f0cd35715c4f120b5073bfb3eb4fb1bced76d3b1e05e5da8c3b55bb7e",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1687255028,
+          "reference_state_sha256": "6942b0075ac8f2da3c1518d9f74a798e1d9773c5619ea4258b0b81a5473f6f17",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 127240867,
+          "reference_state_sha256": "4618d4c8a08e2e0e36eacb7a56f8b9c89033ec06e39c72836a3a9e25b69dee71",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1861716387,
+          "reference_state_sha256": "3055578fffe61c5bf88b62f07c717293fa6d655189521e997d2e52c184f8c379",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1740074498,
+          "reference_state_sha256": "205b0f1e4848c43d74799d453c719c2681aba70e858d1a02ecaff554a8ef4441",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3298429977,
+          "reference_state_sha256": "596b2b587fb6408a8100f598b62a34101422417169d173bb0239d0d6293d3425",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 640990261,
+          "reference_state_sha256": "65f047fbb7bb688c4a54fcdcef79dcfaaf906fbd03588e229e49f2e7aaef20c6",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2281363820,
+          "reference_state_sha256": "c77e6c1dedc8fc56013417daaa7f62eebe232a52ca5207a8c1f83bcdc9569c59",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        }
+      ]
+    },
+    {
+      "mode": "thumb",
+      "optimization": "O2",
+      "elf_sha256": "652e7798c29575b35feb71adffa521132357838c0041ffe0fdf18fa8eb699306",
+      "case_count": 64,
+      "build": {
+        "command": [
+          "clang",
+          "--target=armv7a-linux-gnueabi",
+          "-mfloat-abi=soft",
+          "-nostdlib",
+          "-fPIC",
+          "-shared",
+          "-fuse-ld=lld",
+          "-Wl,--hash-style=sysv,--pack-dyn-relocs=none",
+          "-Wl,-z,max-page-size=4096,-z,common-page-size=4096",
+          "-mthumb",
+          "-O2",
+          "-fno-builtin",
+          "<repo>\\tests\\fixtures\\libc_imports.c",
+          "-Wl,-soname,libfixture.so",
+          "-L<repo>\\build\\libc-seeded-native",
+          "-Wl,--no-as-needed",
+          "-l:libc.so",
+          "-o",
+          "<repo>\\build\\libc-seeded-native\\thumb-O2\\libfixture.so"
+        ],
+        "elapsed_seconds": 0.23332569998456165,
+        "peak_sampled_rss_bytes": 39567360,
+        "rss_sampling_seconds": 0.02,
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "artifacts": [
+        {
+          "name": "linked.cpp",
+          "size_bytes": 257480,
+          "sha256": "c895bd4fdb08da4fa07d77e45741c32803fdd09f6d5eff59efcb9fd912874c14"
+        },
+        {
+          "name": "linked.exe",
+          "size_bytes": 171008,
+          "sha256": "ec42b0172bd46c8ece3d84c6c627482e036a725a8446934d011c83cb10fb1541"
+        }
+      ],
+      "compile_steps": [
+        {
+          "stage": "translate",
+          "command": [
+            "build/recomp/rearm.exe",
+            "--input",
+            "<repo>\\build\\libc-seeded-native\\thumb-O2\\libfixture.so",
+            "--load-bias",
+            "0x10000000",
+            "--entry",
+            "fixture_entry",
+            "--observe",
+            "fixture_output:64",
+            "--output",
+            "<repo>\\build\\libc-seeded-native\\thumb-O2\\execution\\linked.cpp",
+            "--sla",
+            "third_party/sla/ARM/ARM7_le.sla",
+            "--initialize",
+            "yes",
+            "--max-instructions",
+            "1000000",
+            "--runtime",
+            "libc-memory"
+          ],
+          "elapsed_seconds": 0.11017180001363158,
+          "peak_sampled_rss_bytes": 16994304,
+          "translation": {
+            "summary": {
+              "instructions": 256,
+              "pcode_ops": 1411,
+              "translation_seconds": 0.0855066
+            },
+            "instructions_per_second": 2323.643618133906,
+            "pcode_ops_per_second": 12807.270098386489
+          }
+        },
+        {
+          "stage": "native_compile",
+          "command": [
+            "clang++",
+            "<repo>\\build\\libc-seeded-native\\thumb-O2\\execution\\linked.cpp",
+            "-I",
+            "<repo>",
+            "<repo>\\runtime\\jni32.cpp",
+            "<repo>\\runtime\\aapcs32.cpp",
+            "<repo>\\runtime\\libc_memory32.cpp",
+            "<repo>\\runtime\\libc_imports32.cpp",
+            "-std=c++20",
+            "-O2",
+            "-o",
+            "<repo>\\build\\libc-seeded-native\\thumb-O2\\execution\\linked.exe"
+          ],
+          "elapsed_seconds": 10.906489299988607,
+          "peak_sampled_rss_bytes": 139751424
+        },
+        {
+          "stage": "native",
+          "command": [
+            "<repo>\\build\\libc-seeded-native\\thumb-O2\\execution\\linked.exe",
+            "0"
+          ],
+          "elapsed_seconds": 0.07805320000625215,
+          "peak_sampled_rss_bytes": null
+        }
+      ],
+      "cases": [
+        {
+          "seed": 0,
+          "reference_state_sha256": "7c9d477f6b57cbd3d155f04a1e6a43dc6d8e30a374b87a87940e3fcb00cd7857",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1,
+          "reference_state_sha256": "76bb968da78f277217904ec8ba146f521ffa3fac1b9f054d8f1e0f7bd6b9c50f",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 4294967295,
+          "reference_state_sha256": "c0e2b4983c3e69ebb335f34fcee26a9d93fbafc17ba4e30dc21bd320122837a7",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2147483648,
+          "reference_state_sha256": "5978c6aff3cfda3569838b2088c920afea2c68926697921ab311c3641a93af2e",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 6593340,
+          "reference_state_sha256": "041b174da0d10a4b2756008b078c2568b87974523e3d323f37b7ce9fb1ac1548",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 4083746077,
+          "reference_state_sha256": "14fd91690f40358f056e75d7c495f32a97e74d0e0008483afa68590bf20df9fd",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2861782008,
+          "reference_state_sha256": "136135fc761bff71c9881a21a91d8d9c0c26cfa05081024f5a0521073eee86b8",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3714728526,
+          "reference_state_sha256": "6363baa358a99bf06f53c030b6a1cca61e56f85aac28b64afcd86c2b4949d119",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 828035903,
+          "reference_state_sha256": "d1d478765e10d3f811849ec88d22148e021ad05d1c5415f1574fae32e9f9a427",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 211669633,
+          "reference_state_sha256": "f15fc5393cb1c8e4bad031625f1124018a4b1607c2a61bac5691daee7cb90ea5",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1870173447,
+          "reference_state_sha256": "30675308784c60f4d16561c9aab3f56572bd0fbb659642205cbb9348ad8b0213",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3335599755,
+          "reference_state_sha256": "0e9b1782701d67a0dbf88a2e17a98a396a8e93f75550714e23912b86a98d232b",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3758421995,
+          "reference_state_sha256": "f41fe2472ef8be28c0e36becf1186c861370ac803d32f78f59fb2fe510cf0fff",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2714548855,
+          "reference_state_sha256": "b87884c8bca8555ddbea7391c3f58f93fd3d3df84b65120a40baf61c209e275f",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3872024566,
+          "reference_state_sha256": "f3cde3a6d4418596ef9797e0bd213aa2c366e842ec43ab43eb999988cc9a13c8",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3970609004,
+          "reference_state_sha256": "2bb698550a30ede72c3306e5a61811f1ac4b08bfbef196195febc33547db6a8d",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2443774511,
+          "reference_state_sha256": "4961ba66e0b4e8d3f49ce6d0ffe89407eba5712f66ec7606b80682d54773b706",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2910517625,
+          "reference_state_sha256": "78faf20c9ef76407c9edbafa45b980f62d9cbf3ed9556c1292aaa9dae1253f42",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3101796915,
+          "reference_state_sha256": "0a528a2c41fdf212d55a4db116c9342a8b430e39105d526d21c6fd0c5e77a673",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 961941728,
+          "reference_state_sha256": "6c30874baf9c4fc37f451520d5270d56ae2bbd35cf447cb6fcf5f7d827061fb2",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2449982949,
+          "reference_state_sha256": "de495cf2d11ebb6422bd0e55c6047968917a73013bb4e2c208012ea92aaee5ff",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1037125560,
+          "reference_state_sha256": "3b0e70a2fc3d29a0b7ec902bd0c76be9efa5fe2aab60769c29b8a8093bfba6a1",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2985289803,
+          "reference_state_sha256": "ebbcde7b8c96785439add32bcadb81061feca7164547af09f672f198147c4842",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3493030200,
+          "reference_state_sha256": "86780d8b39a18fb2e0cb8ba6996324607f606d6b14f61e5f1a5ce362a7f24996",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 529711602,
+          "reference_state_sha256": "72c98ee957ad45fbfe82f41b5515f6b35f18365fdf499f5e6951fb76555e2a1a",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2990073508,
+          "reference_state_sha256": "9a6b209653bed0f08e24d4392e8034eb570e81c54b12ebd32dc488ae24835ae2",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1936329618,
+          "reference_state_sha256": "35d2205bac8913b103e154ab80a4d8f897103024ac27779d05bbea19ee115603",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1897005406,
+          "reference_state_sha256": "c52168d925cb4cb6fbbf5807baf2cdc81d319449607779cc7c8ec6c3a0f19b0d",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 369287554,
+          "reference_state_sha256": "fbbdf016b66ce1dc1b55065c454414e05af08521f069c973fcd60386484184a8",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 207755259,
+          "reference_state_sha256": "d6f6120e4259b9cfde56dff977fadbe9ac5ff5877f0609e8b69d8c4a3e1af8c1",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2637645333,
+          "reference_state_sha256": "5b5f3007b002d3a2cddb40031919825c04491ae06b37145527be2579653570b9",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3410903311,
+          "reference_state_sha256": "30d486d640c1f5b1b98ed3fb91cc80b113d75fbd842ab7f57813d5ebbffbeade",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1855698872,
+          "reference_state_sha256": "a1a2304057ad4df2263734575340166b57accb1d5ea05b284b05c3c74b0d19ca",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 368822862,
+          "reference_state_sha256": "8263682a20fb4d668fbab30756db7e7990d1b9092e23422996deb46d1ec85687",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 4210409207,
+          "reference_state_sha256": "bea55592f61e6c16e6f49efadbe5baff8c7df8533c7f4a238610bd1ab1ad9997",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3896800290,
+          "reference_state_sha256": "646ffeedbb43b128a32b806539ce123154c76f33cd813bdcdecfb5a711f7b0e4",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3200315138,
+          "reference_state_sha256": "0281181deaa8b34a9d0743948de65250f3d7ea46415e7fbcea840f991063ba7b",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3342806226,
+          "reference_state_sha256": "b38d61a27f46894dcc705a452b58cb97341b40752128464cc298d783fae82341",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1980419456,
+          "reference_state_sha256": "b85a46735d992d697eb9c28c7b02f3aad7bed2a859214b14b32c9494e7c5faa5",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3638661629,
+          "reference_state_sha256": "5b2d933a83f4dc7a1395fb9796f313ba372c010fd6e7cbeb0dce8cde57be8f57",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2971064018,
+          "reference_state_sha256": "7b3b8f6fd26c315c8090aaf74bc8e48c12d697d5dc3bec9591f298940d311797",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 307807668,
+          "reference_state_sha256": "0e523ebc6b83528f124fdec841a7e115f4f2a4ae9f9aebf0338efc9e74d02153",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1462130851,
+          "reference_state_sha256": "f0ccfa4835a062c7f912cd6efb95093ee51e6aafe107e9c1bb8a25022a6534fd",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 444375546,
+          "reference_state_sha256": "61739159a275961b8cdb5b0aa49fa1d4729973976213c709ae6e781846d72bbf",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1178041787,
+          "reference_state_sha256": "a18954b9c19e06593005439900b458e07dd56f0d9cf9b4e9bf8548562a8b710d",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2575918619,
+          "reference_state_sha256": "e6f52d8f1964fbeb8491a337400e082ba3fc9d1e0ed19b465e9a61cadc87d08e",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 469879678,
+          "reference_state_sha256": "d323803404d35b2191bc40df8068b8a9cbc6ffdee227f11a3fe1a312085b26cb",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2293047529,
+          "reference_state_sha256": "f46e2909d8d37eff3ec47dd0623169aafcfa046a3ba224846a6a12d11620a398",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3132276881,
+          "reference_state_sha256": "27d597e3fb5343aaa3eef27ceb4707ac2f7fea355899170db0f735ec5e3fff16",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3065162209,
+          "reference_state_sha256": "8e66d4d7bddfffd7e56dc6d98c49932f3d9d386f47127e744b54971c577f85ab",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2454846694,
+          "reference_state_sha256": "31684d8fba3097432ac91229e3062131116ec6a1f91f581b87cae8cf70fdd0ed",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 341846528,
+          "reference_state_sha256": "0ee96e91bba2bdd5b001094b0b137085fe37c13cd73a134bd216d3bb1682fb6d",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 891580560,
+          "reference_state_sha256": "c0b66d0b2f08d95a7261fb20278afff34187d3bda5d3487c1cb6c293852e9934",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3723725931,
+          "reference_state_sha256": "4ee423932b3c1b75138bb18471577d8be8864e45bbdcad52f352952fda16c003",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 598339796,
+          "reference_state_sha256": "a114a95798d18122526a2971012524d7573c3a1830096790d2cdfdb9130d20aa",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2883370925,
+          "reference_state_sha256": "e816aedbcbdb6549ac30437729d770a3a2ab0f61b10d2358052f58cc8bcee67a",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3104388761,
+          "reference_state_sha256": "adf06653f411174aa03fefe2858da420177426290548d81d7343c36ccd04be4f",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1687255028,
+          "reference_state_sha256": "69c1b7d52181067b0bcd61161547ab678b9bd488f46d7869313e7d34c1492925",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 127240867,
+          "reference_state_sha256": "55639acc586f48e882e642589d044e2708475d6935c023fc94b943d26d71ea85",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1861716387,
+          "reference_state_sha256": "2ef1bbe26de71b8e923da3f7ac57788f63aa9ca2982f685f3a8d798ccbebdf11",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 1740074498,
+          "reference_state_sha256": "92c6d04293a80da7a5a57eb9d55701445b71f30207df629da63cff243e3639db",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 3298429977,
+          "reference_state_sha256": "b4701f870f058dc41d49767e643bd8daba1a3fa064220f9b1adf588662b42958",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 640990261,
+          "reference_state_sha256": "fc1f528782eb1729516351a966cbbd72a11900c41f01ad2cddcb98db3c6dfa00",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        },
+        {
+          "seed": 2281363820,
+          "reference_state_sha256": "2479ed70eb76b92a6843448c7ca31c24a0995cc95240af3a0453901b8db28bac",
+          "backends": {
+            "native": {
+              "passed": true,
+              "differences": []
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

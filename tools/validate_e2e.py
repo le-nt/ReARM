@@ -405,7 +405,8 @@ def reference_state(elf: ElfFixture | LinkedFixture, entry: str, observed: list[
     machine.hook_add(uc.UC_HOOK_CODE, instruction_hook)
     started = time.perf_counter()
     initializers = elf.initializers(machine.mem_read) if initialize else []
-    calls = [(function, [0]) for function in initializers] + [(address, [host.vm if host is not None else seed])]
+    argument = seed if host is None else host.entryArgument(seed) if hasattr(host, "entryArgument") else host.vm
+    calls = [(function, [0]) for function in initializers] + [(address, [argument])]
     for call_index, (function, arguments) in enumerate(calls):
         # Fixture contract: independent invocation registers, persistent guest
         # memory, and one aggregate instruction budget across initialization.

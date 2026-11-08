@@ -93,6 +93,17 @@ jobs:
             --clang clang-18 --cxx clang++-18 \
             --emxx third_party/emsdk/upstream/emscripten/em++ \
             --out build/jni-registered-stack --browser
+      - name: Explicit libc memory imports
+        run: |
+          build/venv/bin/python tools/validate_libc.py \
+            --rearm build/recomp/rearm --sla third_party/sla/ARM/ARM7_le.sla \
+            --clang clang-18 --cxx clang++-18 \
+            --emxx third_party/emsdk/upstream/emscripten/em++ \
+            --out build/libc-e2e --browser
+          build/venv/bin/python tools/check_libc_profile.py \
+            --rearm build/recomp/rearm --sla third_party/sla/ARM/ARM7_le.sla \
+            --clang clang-18 --fixture build/libc-e2e/arm-O2/libfixture.so \
+            --stub-dir build/libc-e2e --out build/libc-negative
       - name: Preserved M0 pthread smoke
         run: |
           build/venv/bin/python tools/check_pthreads.py \
@@ -109,5 +120,7 @@ jobs:
             build/m0-pthreads/*.json
             build/jni-e2e/metrics.json
             build/jni-registered-stack/metrics.json
+            build/libc-e2e/metrics.json
+            build/libc-negative/metrics.json
             build/recomp/Testing/Temporary/LastTest.log
           if-no-files-found: warn

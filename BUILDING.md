@@ -134,6 +134,32 @@ and configuration.
 
 ## Preserved M0 pthread toolchain smoke
 
+To validate explicit libc memory/string imports through real ELF PLT relocations:
+
+```sh
+python tools/validate_libc.py --rearm build/recomp/rearm \
+  --sla third_party/sla/ARM/ARM7_le.sla --clang clang-18 --cxx clang++-18 \
+  --emxx third_party/emsdk/upstream/emscripten/em++ --browser
+python tools/check_libc_profile.py --rearm build/recomp/rearm \
+  --sla third_party/sla/ARM/ARM7_le.sla --clang clang-18 \
+  --fixture build/libc-e2e/arm-O2/libfixture.so --stub-dir build/libc-e2e
+```
+
+`--runtime libc-memory` explicitly supplies the `libc.so` dependency and ten
+function imports: memcpy, memmove, memset, memcmp, strlen, strnlen, strcmp,
+strncmp, strcpy and strncpy. Generated code requires the repository include
+path plus `runtime/jni32.cpp`, `runtime/aapcs32.cpp`, `runtime/libc_memory32.cpp`
+and `runtime/libc_imports32.cpp`. The compiler/test harness handles these links.
+The generated link-metadata libc.so is never loaded or executed; the production
+runner uses checked guest memory services, and Unicorn uses an independent
+Python implementation. Unknown strong imports, function/data type conflicts and
+callback arena collisions fail. This is a bounded integer/pointer ABI subset,
+not a complete Bionic runtime. Heap allocation, errno, file/thread/network and
+other services remain separate work. Memory transfers default to16MiB and
+string scans to1MiB; over-limit requests produce errors, not successful truncation.
+JNI and libc profiles can coexist in generated code, but combined profile
+execution is not yet acceptance-tested by this harness.
+
 The public JNI guest bridge can be exercised separately:
 
 ```sh

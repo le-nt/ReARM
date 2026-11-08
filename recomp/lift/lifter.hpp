@@ -37,5 +37,6 @@ struct Program {
 // Dynamic destinations remain runtime dispatcher checks; no speculative sweep.
 Program lift(const elf::Image& image, const std::filesystem::path& sla_path,
              std::uint32_t entry, std::uint32_t max_instructions = 100000,
-             const std::vector<std::uint32_t>& extra_entries = {});
+             const std::vector<std::uint32_t>& extra_entries = {},
+             const std::vector<std::uint32_t>& host_entries = {});
 }  // namespace rearm::lift
