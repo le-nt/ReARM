@@ -118,4 +118,5 @@ using a separate `--out` directory per suite.
 - Next: explicit host class/method declarations and a RegisterNatives guest fixture,
   then native registration dispatch and measured Android import bridges. No client
   binaries are available; no authentic Roblox initialization is claimed.
-`n- Linux-native JNI guest validation additionally passed all four ARM/Thumb O0/O2 builds using Clang18 and pinned Unicorn2.1.4 in a workspace venv; see tests/evidence/jni-onload-linux.json.
+
+- Linux-native JNI guest validation additionally passed all four ARM/Thumb O0/O2 builds using Clang18 and pinned Unicorn2.1.4 in a workspace venv; see tests/evidence/jni-onload-linux.json.
